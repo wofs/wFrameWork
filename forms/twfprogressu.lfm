@@ -1,0 +1,23 @@
+object wfProgress: TwfProgress
+  Left = 496
+  Height = 27
+  Top = 145
+  Width = 422
+  BorderStyle = bsDialog
+  Caption = 'Прогресс...'
+  ClientHeight = 27
+  ClientWidth = 422
+  FormStyle = fsStayOnTop
+  OnCloseQuery = FormCloseQuery
+  Position = poScreenCenter
+  LCLVersion = '1.8.2.0'
+  object Bar: TProgressBar
+    Left = 0
+    Height = 20
+    Top = 0
+    Width = 422
+    Align = alTop
+    Smooth = True
+    TabOrder = 0
+  end
+end

@@ -1,0 +1,971 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="10"/>
+    <BuildModes Active="Debug"/>
+    <Units Count="122">
+      <Unit0>
+        <Filename Value="project1.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="152"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="unit1.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Unit1"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="78"/>
+        <CursorPos Y="109"/>
+        <UsageCount Value="152"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="..\wfibconnection.pas"/>
+        <UnitName Value="wfIBConnection"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="3" Y="11"/>
+        <UsageCount Value="6"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\packages\fcl-db\src\sqldb\interbase\ibconnection.pp"/>
+        <UnitName Value="IBConnection"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="104"/>
+        <CursorPos X="3" Y="55"/>
+        <UsageCount Value="10"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\packages\fcl-db\src\sqldb\sqldb.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="273"/>
+        <CursorPos X="14" Y="295"/>
+        <UsageCount Value="13"/>
+        <Bookmarks Count="1">
+          <Item0 X="14" Y="2853" ID="9"/>
+        </Bookmarks>
+      </Unit4>
+      <Unit5>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\packages\fcl-db\src\base\db.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1944"/>
+        <CursorPos X="15" Y="1966"/>
+        <UsageCount Value="14"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\packages\fcl-db\src\base\database.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="537"/>
+        <CursorPos X="3" Y="540"/>
+        <UsageCount Value="10"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\rtl\objpas\classes\classesh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1701"/>
+        <CursorPos X="16" Y="1726"/>
+        <UsageCount Value="24"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="..\wfbase.pas"/>
+        <UnitName Value="wfBase"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="112"/>
+        <CursorPos Y="330"/>
+        <UsageCount Value="6"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="unit1.lfm"/>
+        <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="159"/>
+        <CursorPos X="16" Y="179"/>
+        <UsageCount Value="25"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="..\wfdbgrid.pas"/>
+        <UnitName Value="wfDBGrid"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="226"/>
+        <CursorPos X="27" Y="228"/>
+        <UsageCount Value="6"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="..\wfsqlquery.pas"/>
+        <UnitName Value="wfSQLQuery"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="53" Y="27"/>
+        <UsageCount Value="6"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="..\wfentity.pas"/>
+        <UnitName Value="wfEntity"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="145"/>
+        <CursorPos X="61" Y="165"/>
+        <UsageCount Value="6"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\packages\fcl-db\src\base\dataset.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1750"/>
+        <CursorPos X="3" Y="1754"/>
+        <UsageCount Value="10"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\packages\fcl-db\src\base\bufdataset.pas"/>
+        <UnitName Value="BufDataset"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="585"/>
+        <CursorPos X="3" Y="446"/>
+        <UsageCount Value="6"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="..\vendor\wftypes.pas"/>
+        <UnitName Value="wfTypes"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="5" Y="24"/>
+        <UsageCount Value="23"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="..\vendor\wfclasses.pas"/>
+        <UnitName Value="wfClasses"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="323"/>
+        <CursorPos X="3" Y="321"/>
+        <UsageCount Value="20"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\packages\fcl-db\src\base\fields.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="3397"/>
+        <CursorPos X="3" Y="3401"/>
+        <UsageCount Value="10"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="..\wfversions.pas"/>
+        <UnitName Value="wfVersions"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="6"/>
+        <CursorPos X="30" Y="86"/>
+        <UsageCount Value="6"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="D:\Soft\Lazarus_1.9_trunk\lazarus_trunk\components\ideintf\units\x86_64-win64\nogui\lazstringgridedit.lfm"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="38" Y="24"/>
+        <UsageCount Value="6"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\components\sqldb\sqlstringspropertyeditordlg.pas"/>
+        <UnitName Value="SQLStringsPropertyEditorDlg"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="111"/>
+        <CursorPos X="10" Y="134"/>
+        <UsageCount Value="6"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\components\sqldb\registersqldb.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="111"/>
+        <CursorPos X="78" Y="134"/>
+        <UsageCount Value="6"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="..\components\wfsqlquery.pas"/>
+        <UnitName Value="wfSQLQuery"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="16"/>
+        <UsageCount Value="10"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="..\wframework.pas"/>
+        <UnitName Value="wFrameWork"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="5"/>
+        <CursorPos X="50" Y="11"/>
+        <UsageCount Value="6"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="..\components\wfdbgrid.pas"/>
+        <UnitName Value="wfDBGrid"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1082"/>
+        <CursorPos X="5" Y="1127"/>
+        <ExtraEditorCount Value="1"/>
+        <ExtraEditor1>
+          <EditorIndex Value="-1"/>
+          <TopLine Value="707"/>
+          <CursorPos Y="732"/>
+        </ExtraEditor1>
+        <UsageCount Value="39"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="..\components\wftreeview.pas"/>
+        <UnitName Value="wfTreeView"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="96"/>
+        <CursorPos X="14" Y="118"/>
+        <ExtraEditorCount Value="1"/>
+        <ExtraEditor1>
+          <EditorIndex Value="-1"/>
+          <TopLine Value="336"/>
+          <CursorPos X="49" Y="345"/>
+        </ExtraEditor1>
+        <UsageCount Value="36"/>
+        <Bookmarks Count="1">
+          <Item0 X="30" Y="769"/>
+        </Bookmarks>
+      </Unit25>
+      <Unit26>
+        <Filename Value="..\components\wfentity.pas"/>
+        <UnitName Value="wfEntity"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="243"/>
+        <CursorPos X="76" Y="252"/>
+        <UsageCount Value="25"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="..\components\wfbase.pas"/>
+        <UnitName Value="wfBase"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="638"/>
+        <CursorPos X="60" Y="667"/>
+        <UsageCount Value="25"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="..\vendor\wfresourcestrings.pas"/>
+        <UnitName Value="wfResourceStrings"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="15"/>
+        <CursorPos X="41" Y="29"/>
+        <UsageCount Value="11"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="..\vendor\wffunc.pas"/>
+        <UnitName Value="wfFunc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="16"/>
+        <CursorPos X="20" Y="27"/>
+        <UsageCount Value="22"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\comctrls.pp"/>
+        <UnitName Value="ComCtrls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="126"/>
+        <CursorPos X="74" Y="159"/>
+        <UsageCount Value="14"/>
+        <Bookmarks Count="1">
+          <Item0 X="15" Y="3451"/>
+        </Bookmarks>
+      </Unit30>
+      <Unit31>
+        <Filename Value="..\components\wfversions.pas"/>
+        <UnitName Value="wfVersions"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="5"/>
+        <UsageCount Value="17"/>
+      </Unit31>
+      <Unit32>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\rtl\objpas\classes\stringl.inc"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="6"/>
+      </Unit32>
+      <Unit33>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\rtl\objpas\classes\classes.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="170"/>
+        <CursorPos Y="183"/>
+        <UsageCount Value="9"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\rtl\objpas\classes\resref.inc"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="6"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\include\treeview.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="33"/>
+        <CursorPos Y="56"/>
+        <UsageCount Value="11"/>
+      </Unit35>
+      <Unit36>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\controls.pp"/>
+        <UnitName Value="Controls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1231"/>
+        <CursorPos X="51" Y="1252"/>
+        <UsageCount Value="9"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\components\ideintf\propedits.pp"/>
+        <UnitName Value="PropEdits"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="247"/>
+        <CursorPos Y="270"/>
+        <UsageCount Value="8"/>
+      </Unit37>
+      <Unit38>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\dbgrids.pas"/>
+        <UnitName Value="DBGrids"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="3538"/>
+        <CursorPos Y="3561"/>
+        <UsageCount Value="9"/>
+      </Unit38>
+      <Unit39>
+        <Filename Value="D:\fpcupdeluxe\components\ztoolbars\uztoolbarsmanager.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="3" Y="11"/>
+        <UsageCount Value="6"/>
+      </Unit39>
+      <Unit40>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\lclclasses.pp"/>
+        <UnitName Value="LCLClasses"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="19"/>
+        <CursorPos X="3" Y="42"/>
+        <UsageCount Value="8"/>
+      </Unit40>
+      <Unit41>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\include\control.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1291"/>
+        <CursorPos X="27" Y="1312"/>
+        <UsageCount Value="9"/>
+      </Unit41>
+      <Unit42>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\include\wincontrol.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="5376"/>
+        <CursorPos Y="5398"/>
+        <UsageCount Value="9"/>
+      </Unit42>
+      <Unit43>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\grids.pas"/>
+        <UnitName Value="Grids"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1060"/>
+        <CursorPos X="15" Y="1081"/>
+        <UsageCount Value="8"/>
+      </Unit43>
+      <Unit44>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\rtl\objpas\classes\collect.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="65"/>
+        <CursorPos X="3" Y="68"/>
+        <UsageCount Value="17"/>
+      </Unit44>
+      <Unit45>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\rtl\objpas\classes\persist.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="46"/>
+        <CursorPos X="3" Y="49"/>
+        <UsageCount Value="17"/>
+      </Unit45>
+      <Unit46>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\components my\grid_semaphor\semaphordbgrids.pas"/>
+        <UnitName Value="SemaphorDBGrids"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="20" Y="50"/>
+        <UsageCount Value="17"/>
+      </Unit46>
+      <Unit47>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\interfaces\win32\win32memostrings.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="112"/>
+        <CursorPos Y="138"/>
+        <UsageCount Value="11"/>
+      </Unit47>
+      <Unit48>
+        <Filename Value="..\components\wfcombobox.pas"/>
+        <UnitName Value="wfComboBox"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="15"/>
+        <ExtraEditorCount Value="1"/>
+        <ExtraEditor1>
+          <EditorIndex Value="-1"/>
+          <TopLine Value="165"/>
+          <CursorPos X="68" Y="189"/>
+        </ExtraEditor1>
+        <UsageCount Value="13"/>
+      </Unit48>
+      <Unit49>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\stdctrls.pp"/>
+        <UnitName Value="StdCtrls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="240"/>
+        <CursorPos X="3" Y="263"/>
+        <UsageCount Value="9"/>
+      </Unit49>
+      <Unit50>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\include\customcombobox.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="178"/>
+        <CursorPos X="33" Y="209"/>
+        <UsageCount Value="8"/>
+      </Unit50>
+      <Unit51>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\rtl\inc\objpash.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="180"/>
+        <CursorPos X="21" Y="203"/>
+        <UsageCount Value="9"/>
+      </Unit51>
+      <Unit52>
+        <Filename Value="..\forms\twfprogressu.pas"/>
+        <ComponentName Value="wfProgress"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="TwfProgressU"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="5"/>
+        <UsageCount Value="12"/>
+      </Unit52>
+      <Unit53>
+        <Filename Value="..\forms\twfprogressu.lfm"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="38" Y="8"/>
+        <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit53>
+      <Unit54>
+        <Filename Value="..\wfreport.pas"/>
+        <UnitName Value="wfReport"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="8"/>
+      </Unit54>
+      <Unit55>
+        <Filename Value="..\components\wfreport.pas"/>
+        <UnitName Value="wfReport"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1033"/>
+        <CursorPos Y="1073"/>
+        <UsageCount Value="26"/>
+        <Bookmarks Count="2">
+          <Item0 Y="910"/>
+          <Item1 X="61" Y="493" ID="1"/>
+        </Bookmarks>
+      </Unit55>
+      <Unit56>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\interfaces\win32\win32object.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="391"/>
+        <CursorPos Y="413"/>
+        <UsageCount Value="10"/>
+      </Unit56>
+      <Unit57>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\include\customform.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2242"/>
+        <CursorPos Y="2266"/>
+        <UsageCount Value="8"/>
+      </Unit57>
+      <Unit58>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\forms.pp"/>
+        <UnitName Value="Forms"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="392"/>
+        <CursorPos X="13" Y="418"/>
+        <UsageCount Value="11"/>
+      </Unit58>
+      <Unit59>
+        <Filename Value="..\forms\wfreportviewer.pas"/>
+        <ComponentName Value="wfReportViewer"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="wfReportViewer"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="43" Y="26"/>
+        <UsageCount Value="13"/>
+      </Unit59>
+      <Unit60>
+        <Filename Value="..\forms\twfreportviewer.lfm"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="39"/>
+        <UsageCount Value="8"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit60>
+      <Unit61>
+        <Filename Value="..\forms\wfreportviewer.lfm"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="25"/>
+        <UsageCount Value="8"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit61>
+      <Unit62>
+        <Filename Value="D:\Soft\Lazarus_1.9_trunk\components\lazarus-ccr\components\fpspreadsheet\source\common\fpspreadsheet.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="556"/>
+        <CursorPos X="28" Y="354"/>
+        <UsageCount Value="16"/>
+      </Unit62>
+      <Unit63>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\rtl\win\tthread.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="79"/>
+        <CursorPos X="3" Y="97"/>
+        <UsageCount Value="10"/>
+      </Unit63>
+      <Unit64>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\interfaces\win32\win32callback.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2604"/>
+        <CursorPos Y="2635"/>
+        <UsageCount Value="10"/>
+      </Unit64>
+      <Unit65>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\components my\wthread\wcthread.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="300"/>
+        <CursorPos Y="323"/>
+        <UsageCount Value="9"/>
+      </Unit65>
+      <Unit66>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\rtl\objpas\classes\compon.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="466"/>
+        <CursorPos Y="473"/>
+        <UsageCount Value="9"/>
+      </Unit66>
+      <Unit67>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\rtl\objpas\classes\lists.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="325"/>
+        <CursorPos Y="348"/>
+        <UsageCount Value="8"/>
+      </Unit67>
+      <Unit68>
+        <Filename Value="..\components\wfibconnection.pas"/>
+        <UnitName Value="wfIBConnection"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="5"/>
+        <UsageCount Value="11"/>
+      </Unit68>
+      <Unit69>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\components\lazutils\maps.pp"/>
+        <UnitName Value="Maps"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="680"/>
+        <CursorPos Y="703"/>
+        <UsageCount Value="10"/>
+      </Unit69>
+      <Unit70>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\components\ideintf\actionseditor.pas"/>
+        <UnitName Value="ActionsEditor"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="462"/>
+        <CursorPos Y="485"/>
+        <UsageCount Value="8"/>
+      </Unit70>
+      <Unit71>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\components\lazutils\laz2_dom.pas"/>
+        <UnitName Value="Laz2_DOM"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2155"/>
+        <CursorPos X="59" Y="2184"/>
+        <UsageCount Value="8"/>
+      </Unit71>
+      <Unit72>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\include\application.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1390"/>
+        <CursorPos Y="1401"/>
+        <UsageCount Value="8"/>
+      </Unit72>
+      <Unit73>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\include\screen.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="890"/>
+        <CursorPos Y="913"/>
+        <UsageCount Value="9"/>
+      </Unit73>
+      <Unit74>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\rtl\inc\objpas.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="260"/>
+        <CursorPos Y="283"/>
+        <UsageCount Value="8"/>
+      </Unit74>
+      <Unit75>
+        <Filename Value="D:\Soft\Lazarus_1.9_trunk\components\lazarus-ccr\components\fpspreadsheet\source\visual\fpspreadsheetctrls.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="95"/>
+        <CursorPos X="15" Y="117"/>
+        <UsageCount Value="13"/>
+      </Unit75>
+      <Unit76>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\include\interfacebase.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="31"/>
+        <CursorPos Y="54"/>
+        <UsageCount Value="8"/>
+      </Unit76>
+      <Unit77>
+        <Filename Value="..\vendor\wfdialogs.pas"/>
+        <UnitName Value="wfDialogs"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="5"/>
+        <UsageCount Value="8"/>
+      </Unit77>
+      <Unit78>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\rtl\objpas\sysutils\sysstrh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="32"/>
+        <CursorPos X="3" Y="55"/>
+        <UsageCount Value="9"/>
+      </Unit78>
+      <Unit79>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\rtl\objpas\sysutils\sysutilh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="298"/>
+        <CursorPos X="13" Y="320"/>
+        <UsageCount Value="9"/>
+      </Unit79>
+      <Unit80>
+        <Filename Value="..\components\wfsqltransaction.pas"/>
+        <UnitName Value="wfSQLTransaction"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="5"/>
+        <UsageCount Value="8"/>
+      </Unit80>
+      <Unit81>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\rtl\objpas\sysutils\intfh.inc"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="10" Y="33"/>
+        <UsageCount Value="8"/>
+      </Unit81>
+      <Unit82>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\rtl\objpas\sysutils\sysuintf.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="100"/>
+        <CursorPos X="3" Y="84"/>
+        <UsageCount Value="8"/>
+      </Unit82>
+      <Unit83>
+        <Filename Value="..\includes\def.inc"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="11" Y="4"/>
+        <UsageCount Value="8"/>
+      </Unit83>
+      <Unit84>
+        <Filename Value="..\def.inc"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="21" Y="11"/>
+        <UsageCount Value="14"/>
+      </Unit84>
+      <Unit85>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\include\buttoncontrol.inc"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="22"/>
+        <UsageCount Value="8"/>
+      </Unit85>
+      <Unit86>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\include\buttons.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="147"/>
+        <CursorPos Y="170"/>
+        <UsageCount Value="8"/>
+      </Unit86>
+      <Unit87>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\lclmessageglue.pas"/>
+        <UnitName Value="LCLMessageGlue"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="85"/>
+        <CursorPos Y="123"/>
+        <UsageCount Value="8"/>
+      </Unit87>
+      <Unit88>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\graphics.pp"/>
+        <UnitName Value="Graphics"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1418"/>
+        <CursorPos X="51" Y="1438"/>
+        <UsageCount Value="8"/>
+      </Unit88>
+      <Unit89>
+        <Filename Value="D:\Soft\Lazarus_1.9_trunk\components\lazarus-ccr\components\fpspreadsheet\source\common\fpstypes.pas"/>
+        <UnitName Value="fpsTypes"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="675"/>
+        <CursorPos X="3" Y="698"/>
+        <UsageCount Value="13"/>
+      </Unit89>
+      <Unit90>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\rtl\inc\varianth.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="10"/>
+        <CursorPos X="54" Y="111"/>
+        <UsageCount Value="8"/>
+      </Unit90>
+      <Unit91>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\imglist.pp"/>
+        <UnitName Value="ImgList"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="146"/>
+        <CursorPos X="44" Y="169"/>
+        <UsageCount Value="8"/>
+      </Unit91>
+      <Unit92>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\include\imglist.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="64"/>
+        <CursorPos X="3" Y="66"/>
+        <UsageCount Value="8"/>
+      </Unit92>
+      <Unit93>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\lresources.pp"/>
+        <UnitName Value="LResources"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="5336"/>
+        <CursorPos Y="5359"/>
+        <UsageCount Value="14"/>
+      </Unit93>
+      <Unit94>
+        <Filename Value="D:\Soft\Lazarus_1.9_trunk\components\lazarus-ccr\components\fpspreadsheet\source\common\fpsopendocument.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="3381"/>
+        <CursorPos Y="3404"/>
+        <UsageCount Value="13"/>
+      </Unit94>
+      <Unit95>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\components my\ibx\runtime\IBSQL.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2210"/>
+        <CursorPos X="35" Y="2239"/>
+        <UsageCount Value="9"/>
+      </Unit95>
+      <Unit96>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\components my\ibx\runtime\IBIntf.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="183"/>
+        <CursorPos X="12" Y="206"/>
+        <UsageCount Value="9"/>
+      </Unit96>
+      <Unit97>
+        <Filename Value="..\wfsqlscript.pas"/>
+        <UnitName Value="wfSQLScript"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="9"/>
+      </Unit97>
+      <Unit98>
+        <Filename Value="..\components\wfsqlscript.pas"/>
+        <UnitName Value="wfSQLScript"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="36" Y="21"/>
+        <UsageCount Value="10"/>
+      </Unit98>
+      <Unit99>
+        <Filename Value="..\wfplugins.pas"/>
+        <UnitName Value="wfPlugins"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="9"/>
+      </Unit99>
+      <Unit100>
+        <Filename Value="..\components\wfplugins.pas"/>
+        <UnitName Value="wfPlugins"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="25" Y="29"/>
+        <UsageCount Value="9"/>
+      </Unit100>
+      <Unit101>
+        <Filename Value="..\..\components\wfbase.pas"/>
+        <UnitName Value="wfBase"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="17"/>
+      </Unit101>
+      <Unit102>
+        <Filename Value="..\..\vendor\wfresourcestrings.pas"/>
+        <UnitName Value="wfResourceStrings"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="30" Y="24"/>
+        <UsageCount Value="9"/>
+      </Unit102>
+      <Unit103>
+        <Filename Value="..\..\components\wfibconnection.pas"/>
+        <UnitName Value="wfIBConnection"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="29"/>
+        <CursorPos X="75" Y="45"/>
+        <UsageCount Value="16"/>
+      </Unit103>
+      <Unit104>
+        <Filename Value="..\..\vendor\wftypes.pas"/>
+        <UnitName Value="wfTypes"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="21"/>
+        <CursorPos X="71" Y="53"/>
+        <UsageCount Value="9"/>
+      </Unit104>
+      <Unit105>
+        <Filename Value="..\..\components\wfentity.pas"/>
+        <UnitName Value="wfEntity"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="300"/>
+        <CursorPos X="62" Y="267"/>
+        <UsageCount Value="16"/>
+      </Unit105>
+      <Unit106>
+        <Filename Value="..\..\components\wftreeview.pas"/>
+        <UnitName Value="wfTreeView"/>
+        <TopLine Value="307"/>
+        <CursorPos Y="330"/>
+        <UsageCount Value="17"/>
+        <Loaded Value="True"/>
+      </Unit106>
+      <Unit107>
+        <Filename Value="..\..\components\wfstatusprogressbar.pas"/>
+        <UnitName Value="wfStatusProgressBar"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="45"/>
+        <CursorPos X="84" Y="64"/>
+        <UsageCount Value="14"/>
+      </Unit107>
+      <Unit108>
+        <Filename Value="..\..\wfstatusprogressbar.pas"/>
+        <UnitName Value="wfStatusProgressBar"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="9"/>
+      </Unit108>
+      <Unit109>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\include\statuspanels.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="3"/>
+        <CursorPos X="3" Y="22"/>
+        <UsageCount Value="13"/>
+      </Unit109>
+      <Unit110>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\include\statusbar.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="70"/>
+        <CursorPos Y="93"/>
+        <UsageCount Value="12"/>
+      </Unit110>
+      <Unit111>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\lcltype.pp"/>
+        <UnitName Value="LCLType"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2775"/>
+        <CursorPos X="3" Y="2798"/>
+        <UsageCount Value="10"/>
+      </Unit111>
+      <Unit112>
+        <Filename Value="D:\Soft\Lazarus_1.8.2_x64\lcl\lclproc.pas"/>
+        <UnitName Value="LCLProc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="101"/>
+        <CursorPos X="11" Y="124"/>
+        <UsageCount Value="10"/>
+      </Unit112>
+      <Unit113>
+        <Filename Value="..\..\components\wfplugins.pas"/>
+        <UnitName Value="wfPlugins"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="517"/>
+        <CursorPos X="33" Y="529"/>
+        <UsageCount Value="11"/>
+        <Bookmarks Count="1">
+          <Item0 X="14" Y="350"/>
+        </Bookmarks>
+      </Unit113>
+      <Unit114>
+        <Filename Value="..\..\components\wfsqlquery.pas"/>
+        <UnitName Value="wfSQLQuery"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="92" Y="22"/>
+        <UsageCount Value="17"/>
+      </Unit114>
+      <Unit115>
+        <Filename Value="..\..\components\wfcombobox.pas"/>
+        <UnitName Value="wfComboBox"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="128"/>
+        <CursorPos X="43" Y="131"/>
+        <UsageCount Value="17"/>
+      </Unit115>
+      <Unit116>
+        <Filename Value="..\..\components\wfdbgrid.pas"/>
+        <UnitName Value="wfDBGrid"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="17"/>
+      </Unit116>
+      <Unit117>
+        <Filename Value="..\..\components\wfreport.pas"/>
+        <UnitName Value="wfReport"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="420"/>
+        <CursorPos X="52" Y="366"/>
+        <UsageCount Value="16"/>
+      </Unit117>
+      <Unit118>
+        <Filename Value="..\..\vendor\wffunc.pas"/>
+        <UnitName Value="wfFunc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="34"/>
+        <CursorPos X="78" Y="24"/>
+        <UsageCount Value="9"/>
+      </Unit118>
+      <Unit119>
+        <Filename Value="..\..\components\wfsqltransaction.pas"/>
+        <UnitName Value="wfSQLTransaction"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="33"/>
+        <CursorPos X="17" Y="76"/>
+        <UsageCount Value="16"/>
+      </Unit119>
+      <Unit120>
+        <Filename Value="..\..\components\wfsettings.pas"/>
+        <UnitName Value="wfSettings"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="37"/>
+        <UsageCount Value="16"/>
+      </Unit120>
+      <Unit121>
+        <Filename Value="..\..\def.inc"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="64" Y="11"/>
+        <UsageCount Value="10"/>
+      </Unit121>
+    </Units>
+    <JumpHistory Count="1">
+      <Position1>
+        <Filename Value="..\..\components\wftreeview.pas"/>
+        <Caret Line="298" Column="33" TopLine="271"/>
+      </Position1>
+    </JumpHistory>
+  </ProjectSession>
+  <Debugging>
+    <BreakPoints Count="1">
+      <Item1>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="D:\Soft\Lazarus_1.8.2_x64\fpc\3.0.4\source\packages\fcl-db\src\sqldb\sqldb.pp"/>
+        <Line Value="1915"/>
+      </Item1>
+    </BreakPoints>
+    <Watches Count="2">
+      <Item1>
+        <Expression Value="aFieldName"/>
+      </Item1>
+      <Item2>
+        <Expression Value="uRowIndex"/>
+      </Item2>
+    </Watches>
+  </Debugging>
+</CONFIG>

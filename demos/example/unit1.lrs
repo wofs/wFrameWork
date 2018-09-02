@@ -1,0 +1,124 @@
+{ This is an automatically generated lazarus resource file }
+
+LazarusResources.Add('TForm1','FORMDATA',[
+  'TPF0'#6'TForm1'#5'Form1'#4'Left'#3#147#1#6'Height'#3'q'#1#3'Top'#3#180#0#5'W'
+  +'idth'#3#184#2#7'Caption'#6#5'Form1'#12'ClientHeight'#3'q'#1#11'ClientWidth'
+  +#3#184#2#8'OnCreate'#7#10'FormCreate'#10'LCLVersion'#6#7'1.8.2.0'#0#6'TPanel'
+  +#6'Panel1'#4'Left'#2#0#6'Height'#2'+'#3'Top'#3'F'#1#5'Width'#3#184#2#5'Align'
+  +#7#8'alBottom'#12'ClientHeight'#2'+'#11'ClientWidth'#3#184#2#8'TabOrder'#2#0
+  +#0#7'TButton'#7'Button1'#4'Left'#2#8#6'Height'#2#25#3'Top'#2#8#5'Width'#2'P'
+  +#5'Align'#7#8'alCustom'#7'Caption'#6#8'FillGrid'#7'OnClick'#7#12'Button1Clic'
+  +'k'#8'TabOrder'#2#0#0#0#7'TButton'#7'Button2'#4'Left'#2'k'#6'Height'#2#25#3
+  +'Top'#2#8#5'Width'#2'K'#7'Caption'#6#7'Button2'#7'OnClick'#7#12'Button2Click'
+  +#8'TabOrder'#2#1#0#0#7'TButton'#7'mExport'#4'Left'#3'`'#2#6'Height'#2#25#3'T'
+  +'op'#2#8#5'Width'#2'K'#7'Caption'#6#6'Export'#7'OnClick'#7#12'mExportClick'#8
+  +'TabOrder'#2#2#0#0#7'TButton'#7'Button3'#4'Left'#3#207#0#6'Height'#2#25#3'To'
+  +'p'#2#8#5'Width'#2'K'#7'Caption'#6#7'Button3'#7'OnClick'#7#12'Button3Click'#8
+  +'TabOrder'#2#3#0#0#0#5'TMemo'#5'Memo1'#4'Left'#2#0#6'Height'#2':'#3'Top'#3#12
+  +#1#5'Width'#3#184#2#5'Align'#7#8'alBottom'#10'ScrollBars'#7#10'ssAutoBoth'#8
+  +'TabOrder'#2#1#0#0#9'TSplitter'#9'Splitter1'#6'Cursor'#7#8'crVSplit'#4'Left'
+  +#2#0#6'Height'#2#5#3'Top'#3#7#1#5'Width'#3#184#2#5'Align'#7#8'alBottom'#12'R'
+  +'esizeAnchor'#7#8'akBottom'#0#0#9'TSplitter'#9'Splitter2'#4'Left'#3#211#0#6
+  +'Height'#3#7#1#3'Top'#2#0#5'Width'#2#5#0#0#11'TwfTreeView'#11'wfTreeView1'#4
+  +'Left'#2#0#6'Height'#3#7#1#3'Top'#2#0#5'Width'#3#211#0#5'Align'#7#6'alLeft'#8
+  +'DragMode'#7#11'dmAutomatic'#11'MultiSelect'#9#8'ReadOnly'#9#8'TabOrder'#2#4
+  +#7'Options'#11#19'tvoAllowMultiselect'#17'tvoAutoItemHeight'#16'tvoHideSelec'
+  +'tion'#21'tvoKeepCollapsedNodes'#11'tvoReadOnly'#14'tvoShowButtons'#12'tvoSh'
+  +'owLines'#11'tvoShowRoot'#11'tvoToolTips'#13'tvoThemedDraw'#0#5'wBase'#7#7'w'
+  +'fBase1'#7'wEntity'#7#11'DEPARTMENTS'#10'wTableName'#6#11'DEPARTMENTS'#19'wS'
+  +'QLGetRoot.Strings'#1#6#143'SELECT T1.ID, T1.IDPARENT, T1.NAME, (SELECT COUN'
+  +'T(*) FROM DEPARTMENTS T WHERE T.IDPARENT=T1.ID) CCOUNT FROM DEPARTMENTS T1 '
+  +'WHERE T1.IDPARENT='''''#0#7'wFilled'#8#0#0#9'TGroupBox'#9'GroupBox1'#4'Left'
+  +#3#216#0#6'Height'#3#7#1#3'Top'#2#0#5'Width'#3#224#1#5'Align'#7#8'alClient'#7
+  +'Caption'#6#9'GroupBox1'#12'ClientHeight'#3#245#0#11'ClientWidth'#3#220#1#8
+  +'TabOrder'#2#5#0#9'TwfDBGrid'#9'wfDBGrid1'#4'Left'#2#0#6'Height'#3#224#0#3'T'
+  +'op'#2#21#5'Width'#3#220#1#5'Align'#7#8'alClient'#15'AutoFillColumns'#9#5'Co'
+  +'lor'#7#8'clWindow'#7'Columns'#14#1#12'SizePriority'#2#0#13'Title.Caption'#6
+  +#0#5'Width'#2#20#9'FieldName'#6#2'ID'#0#1#13'Title.Caption'#6#4'NAME'#5'Widt'
+  +'h'#3#168#1#9'FieldName'#6#4'NAME'#0#0#8'DragMode'#7#11'dmAutomatic'#7'Optio'
+  +'ns'#11#8'dgTitles'#11'dgIndicator'#14'dgColumnResize'#12'dgColumnMove'#10'd'
+  +'gColLines'#10'dgRowLines'#6'dgTabs'#21'dgAlwaysShowSelection'#15'dgConfirmD'
+  +'elete'#14'dgCancelOnExit'#16'dgTruncCellHints'#14'dgRowHighlight'#0#8'TabOr'
+  +'der'#2#0#11'wGroupTrees'#14#1#4'Tree'#7#11'wfTreeView1'#14'GridGroupField'#6
+  +#8'IDPARENT'#0#0#16'wGroupComboBoxes'#14#0#15'wSearchComboBox'#7#9'ComboBox1'
+  +#27'wSearchComboBoxHistoryCount'#2#10#23'wSearchFieldsContaining'#6#4'NAME'
+  +#12'wMultiSelect'#9#5'wBase'#7#7'wfBase1'#22'wColumnsString.Strings'#1#6#29
+  +'ID{}<20>|0; NAME{NAME}<424>|1'#0#7'wFilled'#8#7'wEntity'#7#7'WORKERS'#0#0#9
+  +'TComboBox'#9'ComboBox1'#4'Left'#2#0#6'Height'#2#21#3'Top'#2#0#5'Width'#3#220
+  +#1#5'Align'#7#5'alTop'#10'ItemHeight'#2#13#8'TabOrder'#2#1#0#0#0#15'TwfIBCon'
+  +'nection'#15'wfIBConnection1'#9'Connected'#9#11'LoginPrompt'#8#12'DatabaseNa'
+  +'me'#6':D:\Projects\Lazarus\wFrameWork\demos\example\FDATABASE.FDB'#14'KeepC'
+  +'onnection'#8#8'Password'#6#9'masterkey'#8'UserName'#6#6'SYSDBA'#22'CheckTra'
+  +'nsactionParams'#8#4'left'#2'!'#3'top'#2#24#0#0#7'TwfBase'#7'wfBase1'#10'Con'
+  +'nection'#7#15'wfIBConnection1'#4'left'#2'!'#3'top'#2'c'#0#0#9'TwfEntity'#7
+  +'WORKERS'#9'TableName'#6#7'WORKERS'#17'SQLCreate.Strings'#1#6#171'CREATE TAB'
+  +'LE WORKERS ( '#10'     ID        GUID NOT NULL /* GUID = CHAR(32) NOT NULL '
+  +'*/, '#10'     IDPARENT  GUID /* GUID = CHAR(32) NOT NULL */, '#10'     NAME'
+  +'      VARCHAR(500) '#10' );'#6'?ALTER TABLE WORKERS ADD CONSTRAINT PK_WORKE'
+  +'RS PRIMARY KEY (ID);'#6#12'SET TERM ^ ;'#6#191'CREATE OR ALTER TRIGGER WORK'
+  +'ERS_BI0 FOR WORKERS '#10' ACTIVE BEFORE INSERT POSITION 0 '#10' AS '#10' be'
+  +'gin '#10'    IF (NEW.ID IS NULL) THEN '#10'     NEW.ID = REPLACE(UUID_TO_CH'
+  +'AR(GEN_UUID()),''-'',''''); '#10' end '#10' ^'#6#12'SET TERM ; ^'#0#18'SQLG'
+  +'etList.Strings'#1#6'&SELECT ID, IDPARENT, NAME FROM WORKERS'#0#23'SQLGetLis'
+  +'tShort.Strings'#1#6#21'SELECT * FROM WORKERS'#0#22'SQLGetListFull.Strings'#1
+  +#6#21'SELECT * FROM WORKERS'#0#18'SQLItemGet.Strings'#1#6'"SELECT * FROM WOR'
+  +'KERS WHERE ID=:ID'#0#18'SQLItemNew.Strings'#1#6'KINSERT INTO WORKERS (IDPAR'
+  +'ENT, NAME) VALUES (:IDPARENT, :NAME) RETURNING ID'#0#21'SQLItemUpdate.Strin'
+  +'gs'#1#6'KUPDATE WORKERS SET IDPARENT=:IDPARENT, NAME=:NAME WHERE ID=:ID RET'
+  ,'URNING ID'#0#18'SQLItemDel.Strings'#1#6' DELETE FROM WORKERS WHERE ID=:ID'#0
+  +#15'SQLDrop.Strings'#1#6#18'DROP TABLE WORKERS'#0#11'aSQLPresets'#7#6'spList'
+  +#4'left'#2'l'#3'top'#2'@'#0#0#9'TwfEntity'#11'DEPARTMENTS'#9'TableName'#6#11
+  +'DEPARTMENTS'#17'SQLCreate.Strings'#1#6#175'CREATE TABLE DEPARTMENTS ( '#10
+  +'     ID        GUID NOT NULL /* GUID = CHAR(32) NOT NULL */, '#10'     IDPA'
+  +'RENT  GUID /* GUID = CHAR(32) NOT NULL */, '#10'     NAME      VARCHAR(500)'
+  +' '#10' );'#6'GALTER TABLE DEPARTMENTS ADD CONSTRAINT PK_DEPARTMENTS PRIMARY'
+  +' KEY (ID);'#6#12'SET TERM ^ ;'#6#199'CREATE OR ALTER TRIGGER DEPARTMENTS_BI'
+  +'0 FOR DEPARTMENTS '#10' ACTIVE BEFORE INSERT POSITION 0 '#10' AS '#10' begi'
+  +'n '#10'    IF (NEW.ID IS NULL) THEN '#10'     NEW.ID = REPLACE(UUID_TO_CHAR'
+  +'(GEN_UUID()),''-'',''''); '#10' end '#10' ^'#6#12'SET TERM ; ^'#0#22'SQLTre'
+  +'eGetRoot.Strings'#1#6#143'SELECT T1.ID, T1.IDPARENT, T1.NAME, (SELECT COUNT'
+  +'(*) FROM DEPARTMENTS T WHERE T.IDPARENT=T1.ID) CCOUNT FROM DEPARTMENTS T1 W'
+  +'HERE T1.IDPARENT='''''#0#18'SQLGetList.Strings'#1#6#152'SELECT T1.ID, T1.ID'
+  +'PARENT, T1.NAME, (SELECT COUNT(*) FROM DEPARTMENTS T WHERE T.IDPARENT=T1.ID'
+  +') CCOUNT FROM DEPARTMENTS T1 ORDER BY T1.IDPARENT, T1.NAME'#0#23'SQLGetList'
+  +'Short.Strings'#1#6#25'SELECT * FROM DEPARTMENTS'#0#22'SQLGetListFull.String'
+  +'s'#1#6#25'SELECT * FROM DEPARTMENTS'#0#18'SQLItemGet.Strings'#1#6'&SELECT *'
+  +' FROM DEPARTMENTS WHERE ID=:ID'#0#18'SQLItemNew.Strings'#1#6'OINSERT INTO D'
+  +'EPARTMENTS (IDPARENT, NAME) VALUES (:IDPARENT, :NAME) RETURNING ID'#0#21'SQ'
+  +'LItemUpdate.Strings'#1#6'OUPDATE DEPARTMENTS SET IDPARENT=:IDPARENT, NAME=:'
+  +'NAME WHERE ID=:ID RETURNING ID'#0#18'SQLItemDel.Strings'#1#6'$DELETE FROM D'
+  +'EPARTMENTS WHERE ID=:ID'#0#15'SQLDrop.Strings'#1#6#22'DROP TABLE DEPARTMENT'
+  +'S'#0#11'aSQLPresets'#7#6'spTree'#4'left'#2'l'#3'top'#3#128#0#0#0#9'TwfRepor'
+  +'t'#9'wfReport1'#5'Items'#14#1#4'Name'#6#4'TEST'#11'Description'#6#29#208#161
+  +#208#190#208#183#208#180#208#176#208#189#208#184#208#181' '#208#190#209#130
+  +#209#135#208#181#209#130#208#176#16'SQLQuery.Strings'#1#6#25'SELECT * FROM D'
+  +'EPARTMENTS'#0#12'SQLQueryStep'#2#1#8'FirstRow'#2#2#8'FirstCol'#2#1#11'Heade'
+  +'rColor'#7#8'clYellow'#14'UseProgressBar'#9#9'UseViewer'#9#18'ExportTemplate'
+  +'File'#6#16'TemplateTEST.xls'#17'ExportTemplateDir'#6#9'templates'#0#1#4'Nam'
+  +'e'#6#7'WORKERS'#11'Description'#6'#'#208#173#208#186#209#129#208#191#208#190
+  +#209#128#209#130' '#209#128#208#176#208#177#208#190#209#130#208#189#208#184
+  +#208#186#208#190#208#178#16'SQLQuery.Strings'#1#6#21'SELECT * FROM WORKERS'#0
+  +#8'FirstRow'#2#0#8'FirstCol'#2#0#15'DefaultColWidth'#2#0#14'UseProgressBar'#9
+  +#10'ReportType'#7#5'rtCSV'#0#0#4'Base'#7#7'wfBase1'#4'left'#3#3#1#3'top'#2't'
+  +#0#0#9'TwfEntity'#8'SETTINGS'#9'TableName'#6#8'SETTINGS'#17'SQLCreate.String'
+  +'s'#1#6#172'CREATE TABLE SETTINGS ( '#10'     ID        GUID NOT NULL /* GUI'
+  +'D = CHAR(32) NOT NULL */, '#10'     IDPARENT  GUID /* GUID = CHAR(32) NOT N'
+  +'ULL */, '#10'     NAME      VARCHAR(500) '#10' );'#6'AALTER TABLE SETTINGS '
+  +'ADD CONSTRAINT PK_SETTINGS PRIMARY KEY (ID);'#6#12'SET TERM ^ ;'#6#193'CREA'
+  +'TE OR ALTER TRIGGER SETTINGS_BI0 FOR SETTINGS '#10' ACTIVE BEFORE INSERT PO'
+  +'SITION 0 '#10' AS '#10' begin '#10'    IF (NEW.ID IS NULL) THEN '#10'     N'
+  +'EW.ID = REPLACE(UUID_TO_CHAR(GEN_UUID()),''-'',''''); '#10' end '#10' ^'#6
+  +#12'SET TERM ; ^'#0#22'SQLTreeGetRoot.Strings'#1#6#137'SELECT T1.ID, T1.IDPA'
+  +'RENT, T1.NAME, (SELECT COUNT(*) FROM SETTINGS T WHERE T.IDPARENT=T1.ID) CCO'
+  +'UNT FROM SETTINGS T1 WHERE T1.IDPARENT='''''#0#18'SQLGetList.Strings'#1#6
+  +#146'SELECT T1.ID, T1.IDPARENT, T1.NAME, (SELECT COUNT(*) FROM SETTINGS T WH'
+  +'ERE T.IDPARENT=T1.ID) CCOUNT FROM SETTINGS T1 ORDER BY T1.IDPARENT, T1.NAME'
+  +#0#23'SQLGetListShort.Strings'#1#6#22'SELECT * FROM SETTINGS'#0#22'SQLGetLis'
+  +'tFull.Strings'#1#6#22'SELECT * FROM SETTINGS'#0#18'SQLItemGet.Strings'#1#6
+  +'#SELECT * FROM SETTINGS WHERE ID=:ID'#0#18'SQLItemNew.Strings'#1#6'LINSERT '
+  +'INTO SETTINGS (IDPARENT, NAME) VALUES (:IDPARENT, :NAME) RETURNING ID'#0#21
+  +'SQLItemUpdate.Strings'#1#6'LUPDATE SETTINGS SET IDPARENT=:IDPARENT, NAME=:N'
+  +'AME WHERE ID=:ID RETURNING ID'#0#18'SQLItemDel.Strings'#1#6'!DELETE FROM SE'
+  +'TTINGS WHERE ID=:ID'#0#15'SQLDrop.Strings'#1#6#20'DROP TABLE SETTINGS;'#0#11
+  +'aSQLPresets'#7#6'spTree'#4'left'#3'X'#1#3'top'#2'O'#0#0#0
+]);
