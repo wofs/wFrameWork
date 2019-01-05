@@ -66,6 +66,8 @@ function IsEmpty(aObject:TObject):boolean;
 
 function IsEntry(aSearch:string; aInText:string):boolean;
 
+function GetApplicationPathUnsafe:string;
+
 function GetSpreadSheetFormat(aFileName:string):TsSpreadsheetFormat;
 function GetMD5Hash(aStr: string): string;
 function GetUID:string;
@@ -210,6 +212,11 @@ end;
 function IsEntry(aSearch: string; aInText: string): boolean;
 begin
   Result:= UTF8Pos(aSearch, aInText)>0;
+end;
+
+function GetApplicationPathUnsafe: string;
+begin
+  Result:= SysToUTF8(ExtractFilePath(ParamStr(0)));
 end;
 
 function GetSpreadSheetFormat(aFileName:string):TsSpreadsheetFormat;

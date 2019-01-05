@@ -52,6 +52,7 @@ type
     fTableName: string;
     function GetTableName: string;
     procedure SetGridColumnsString(aValue: TStrings);
+    procedure SetSQL(aType: TwfEntitySQLType; AValue: string);
     procedure SetSQLPresets(aValue: TwfEntitySQLPresets);
     procedure SetDescription(aValue: TStrings);
     procedure SetSQLCreate(aValue: TStrings);
@@ -73,7 +74,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
 
-    property SQL[aType: TwfEntitySQLType]:string read GetSQL;
+    property SQL[aType: TwfEntitySQLType]:string read GetSQL write SetSQL;
     property Script[aType: TwfEntityScriptType]:TStrings read GetScript;
   published
     // Description of the entity
@@ -186,6 +187,20 @@ end;
 procedure TwfEntity.SetGridColumnsString(aValue: TStrings);
 begin
   fGridColumnsString.Assign(aValue);
+end;
+
+procedure TwfEntity.SetSQL(aType: TwfEntitySQLType; AValue: string);
+begin
+  case aType of
+    estList: SQLGetList.Text:= AValue;
+    estListFull: SQLGetListFull.Text:= AValue;
+    estListShort: SQLGetListShort.Text:= AValue;
+    estItemDel: SQLItemDel.Text:= AValue;
+    estItemGet: SQLItemGet.Text:= AValue;
+    estItemNew: SQLItemNew.Text:= AValue;
+    estItemUpdate: SQLItemUpdate.Text:= AValue;
+    estTreeGetRoot: SQLTreeGetRoot.Text:= AValue;
+  end;
 end;
 
 function TwfEntity.GetSQL(aType: TwfEntitySQLType): string;
