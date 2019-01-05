@@ -80,28 +80,28 @@ end;
 function TwfIBConnection.GetDomainOrProcedureString: string;
 begin
   {$IFDEF USEGUID}
-    Result:= 'CREATE DOMAIN GUID AS '+wfLineEnding
-      +' CHAR(32) CHARACTER SET OCTETS '+wfLineEnding
+    Result:= 'CREATE DOMAIN GUID AS '+wfLE
+      +' CHAR(32) CHARACTER SET OCTETS '+wfLE
       +' COLLATE OCTETS;';
   {$ELSE}
-    Result:='CREATE TABLE WF_SETTINGS ('+wfLineEnding
-      +' NAME    VARCHAR(50),'+wfLineEnding
-      +' FVALUE  VARCHAR(255)'+wfLineEnding
+    Result:='CREATE TABLE WF_SETTINGS ('+wfLE
+      +' NAME    VARCHAR(50),'+wfLE
+      +' FVALUE  VARCHAR(255)'+wfLE
       +' );'
-      +'COMMIT RETAIN ;'+wfLineEnding
-      +'INSERT INTO WF_SETTINGS (NAME, FVALUE) VALUES (''WF_DEPARTMENT'', ''0''); '+wfLineEnding
-      +'COMMIT RETAIN ;'+wfLineEnding
-      +'SET TERM ^ ;'+wfLineEnding
-      +' create or alter procedure WF_GET_DEPARTMENTSALT'+wfLineEnding
-      +' returns ('+wfLineEnding
-      +'     SALT bigint)'+wfLineEnding
-      +' as'+wfLineEnding
-      +' begin'+wfLineEnding
-        +'   SALT = (SELECT FVALUE FROM WF_SETTINGS WHERE NAME=''WF_DEPARTMENT'');'+wfLineEnding
-        +'   SALT = :SALT*1000000000000000000;'+wfLineEnding
-        +'   suspend;'+wfLineEnding
-        +' end'+wfLineEnding
-      +' ^'+wfLineEnding
+      +'COMMIT RETAIN ;'+wfLE
+      +'INSERT INTO WF_SETTINGS (NAME, FVALUE) VALUES (''WF_DEPARTMENT'', ''0''); '+wfLE
+      +'COMMIT RETAIN ;'+wfLE
+      +'SET TERM ^ ;'+wfLE
+      +' create or alter procedure WF_GET_DEPARTMENTSALT'+wfLE
+      +' returns ('+wfLE
+      +'     SALT bigint)'+wfLE
+      +' as'+wfLE
+      +' begin'+wfLE
+        +'   SALT = (SELECT FVALUE FROM WF_SETTINGS WHERE NAME=''WF_DEPARTMENT'');'+wfLE
+        +'   SALT = :SALT*1000000000000000000;'+wfLE
+        +'   suspend;'+wfLE
+        +' end'+wfLE
+      +' ^'+wfLE
       +' SET TERM ; ^';
 
   {$ENDIF}
@@ -110,23 +110,23 @@ end;
 function TwfIBConnection.GetBeforeInsertTrigger(aTableName, aIDField:string): string;
 begin
   {$IFDEF USEGUID}
-    Result:= 'CREATE OR ALTER TRIGGER %s_BI0 FOR %s '+wfLineEnding
-      +' ACTIVE BEFORE INSERT POSITION 0 '+wfLineEnding
-      +' AS '+wfLineEnding
-      +' begin '+wfLineEnding
-      +'    IF (NEW.%s IS NULL) THEN '+wfLineEnding
-      +'     NEW.%s = REPLACE(UUID_TO_CHAR(GEN_UUID()),''-'',''''); '+wfLineEnding
+    Result:= 'CREATE OR ALTER TRIGGER %s_BI0 FOR %s '+wfLE
+      +' ACTIVE BEFORE INSERT POSITION 0 '+wfLE
+      +' AS '+wfLE
+      +' begin '+wfLE
+      +'    IF (NEW.%s IS NULL) THEN '+wfLE
+      +'     NEW.%s = REPLACE(UUID_TO_CHAR(GEN_UUID()),''-'',''''); '+wfLE
       +' end';
   {$ELSE}
-    Result:='SET TERM ^ ;'+wfLineEnding
-      +' CREATE OR ALTER TRIGGER %s_BI FOR %s'+wfLineEnding
-      +' ACTIVE BEFORE INSERT POSITION 0'+wfLineEnding
-      +' AS'+wfLineEnding
-      +' BEGIN'+wfLineEnding
-      +'   IF (NEW.%s IS NULL) THEN'+wfLineEnding
-      +'     NEW.%s = (SELECT SALT FROM WF_GET_DEPARTMENTSALT)+GEN_ID(GEN_%s_%s,1);'+wfLineEnding
-      +' END'+wfLineEnding
-      +' ^'+wfLineEnding
+    Result:='SET TERM ^ ;'+wfLE
+      +' CREATE OR ALTER TRIGGER %s_BI FOR %s'+wfLE
+      +' ACTIVE BEFORE INSERT POSITION 0'+wfLE
+      +' AS'+wfLE
+      +' BEGIN'+wfLE
+      +'   IF (NEW.%s IS NULL) THEN'+wfLE
+      +'     NEW.%s = (SELECT SALT FROM WF_GET_DEPARTMENTSALT)+GEN_ID(GEN_%s_%s,1);'+wfLE
+      +' END'+wfLE
+      +' ^'+wfLE
       +' SET TERM ; ^';
   {$ENDIF}
 

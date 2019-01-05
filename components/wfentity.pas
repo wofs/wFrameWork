@@ -252,40 +252,40 @@ case aValue of
       if fSQLCreate.Count = 0 then
         begin
         {$IFDEF USEGUID}
-           fSQLCreate.Append(Format('CREATE TABLE %s ( '+wfLineEnding
-              +'     ID        GUID NOT NULL /* GUID = CHAR(32) NOT NULL */, '+wfLineEnding
-              +'     IDPARENT  GUID /* GUID = CHAR(32) NOT NULL */, '+wfLineEnding
-              +'     NAME      VARCHAR(500) '+wfLineEnding
+           fSQLCreate.Append(Format('CREATE TABLE %s ( '+wfLE
+              +'     ID        GUID NOT NULL /* GUID = CHAR(32) NOT NULL */, '+wfLE
+              +'     IDPARENT  GUID /* GUID = CHAR(32) NOT NULL */, '+wfLE
+              +'     NAME      VARCHAR(500) '+wfLE
               +' );',[TableName]));
            fSQLCreate.Append('COMMIT;');
            fSQLCreate.Append(Format('ALTER TABLE %s ADD CONSTRAINT PK_%s PRIMARY KEY (ID);',[TableName,TableName]));
            fSQLCreate.Append('SET TERM ^ ;');
-           fSQLCreate.Append(Format('CREATE OR ALTER TRIGGER %s_BI0 FOR %s '+wfLineEnding
-              +' ACTIVE BEFORE INSERT POSITION 0 '+wfLineEnding
-              +' AS '+wfLineEnding
-              +' begin '+wfLineEnding
-              +'    IF (NEW.ID IS NULL) THEN '+wfLineEnding
-              +'     NEW.ID = REPLACE(UUID_TO_CHAR(GEN_UUID()),''-'',''''); '+wfLineEnding
-              +' end '+wfLineEnding
+           fSQLCreate.Append(Format('CREATE OR ALTER TRIGGER %s_BI0 FOR %s '+wfLE
+              +' ACTIVE BEFORE INSERT POSITION 0 '+wfLE
+              +' AS '+wfLE
+              +' begin '+wfLE
+              +'    IF (NEW.ID IS NULL) THEN '+wfLE
+              +'     NEW.ID = REPLACE(UUID_TO_CHAR(GEN_UUID()),''-'',''''); '+wfLE
+              +' end '+wfLE
               +' ^',[TableName,TableName]));
            fSQLCreate.Append('SET TERM ; ^');
         {$ELSE}
-            fSQLCreate.Append(Format('CREATE TABLE %s ( '+wfLineEnding
-               +'     ID        BIGINT NOT NULL, '+wfLineEnding
-               +'     IDPARENT  BIGINT, '+wfLineEnding
-               +'     NAME      VARCHAR(500) '+wfLineEnding
+            fSQLCreate.Append(Format('CREATE TABLE %s ( '+wfLE
+               +'     ID        BIGINT NOT NULL, '+wfLE
+               +'     IDPARENT  BIGINT, '+wfLE
+               +'     NAME      VARCHAR(500) '+wfLE
                +' );',[TableName]));
             fSQLCreate.Append('COMMIT;');
             fSQLCreate.Append(Format('ALTER TABLE %s ADD CONSTRAINT PK_%s PRIMARY KEY (ID);',[TableName,TableName]));
             fSQLCreate.Append(Format('CREATE SEQUENCE GEN_%s_ID START WITH 0 INCREMENT BY 1;',[TableName]));
             fSQLCreate.Append('SET TERM ^ ;');
-            fSQLCreate.Append(Format('CREATE OR ALTER TRIGGER %s_BI FOR %s'+wfLineEnding
-               +' ACTIVE BEFORE INSERT POSITION 0'+wfLineEnding
-               +' AS'+wfLineEnding
-               +' BEGIN'+wfLineEnding
-               +'   IF (NEW.ID IS NULL) THEN'+wfLineEnding
-               +'     NEW.ID = (SELECT SALT FROM WF_GET_DEPARTMENTSALT)+GEN_ID(GEN_%s_ID,1);'+wfLineEnding
-               +' END '+wfLineEnding
+            fSQLCreate.Append(Format('CREATE OR ALTER TRIGGER %s_BI FOR %s'+wfLE
+               +' ACTIVE BEFORE INSERT POSITION 0'+wfLE
+               +' AS'+wfLE
+               +' BEGIN'+wfLE
+               +'   IF (NEW.ID IS NULL) THEN'+wfLE
+               +'     NEW.ID = (SELECT SALT FROM WF_GET_DEPARTMENTSALT)+GEN_ID(GEN_%s_ID,1);'+wfLE
+               +' END '+wfLE
                +' ^',[TableName,TableName,TableName]));
             fSQLCreate.Append('SET TERM ; ^');
 
@@ -332,38 +332,38 @@ case aValue of
       if fSQLCreate.Count = 0 then
         begin
         {$IFDEF USEGUID}
-           fSQLCreate.Append(Format('CREATE TABLE %s ( '+wfLineEnding
-              +'     ID        GUID NOT NULL /* GUID = CHAR(32) NOT NULL */, '+wfLineEnding
-              +'     IDPARENT  GUID /* GUID = CHAR(32) NOT NULL */, '+wfLineEnding
-              +'     NAME      VARCHAR(500) '+wfLineEnding
+           fSQLCreate.Append(Format('CREATE TABLE %s ( '+wfLE
+              +'     ID        GUID NOT NULL /* GUID = CHAR(32) NOT NULL */, '+wfLE
+              +'     IDPARENT  GUID /* GUID = CHAR(32) NOT NULL */, '+wfLE
+              +'     NAME      VARCHAR(500) '+wfLE
               +' );',[TableName]));
            fSQLCreate.Append(Format('ALTER TABLE %s ADD CONSTRAINT PK_%s PRIMARY KEY (ID);',[TableName,TableName]));
            fSQLCreate.Append('SET TERM ^ ;');
-           fSQLCreate.Append(Format('CREATE OR ALTER TRIGGER %s_BI0 FOR %s '+wfLineEnding
-              +' ACTIVE BEFORE INSERT POSITION 0 '+wfLineEnding
-              +' AS '+wfLineEnding
-              +' begin '+wfLineEnding
-              +'    IF (NEW.ID IS NULL) THEN '+wfLineEnding
-              +'     NEW.ID = REPLACE(UUID_TO_CHAR(GEN_UUID()),''-'',''''); '+wfLineEnding
-              +' end '+wfLineEnding
+           fSQLCreate.Append(Format('CREATE OR ALTER TRIGGER %s_BI0 FOR %s '+wfLE
+              +' ACTIVE BEFORE INSERT POSITION 0 '+wfLE
+              +' AS '+wfLE
+              +' begin '+wfLE
+              +'    IF (NEW.ID IS NULL) THEN '+wfLE
+              +'     NEW.ID = REPLACE(UUID_TO_CHAR(GEN_UUID()),''-'',''''); '+wfLE
+              +' end '+wfLE
               +' ^',[TableName,TableName]));
            fSQLCreate.Append('SET TERM ; ^');
         {$ELSE}
-            fSQLCreate.Append(Format('CREATE TABLE %s ( '+wfLineEnding
-               +'     ID        BIGINT NOT NULL, '+wfLineEnding
-               +'     IDPARENT  BIGINT, '+wfLineEnding
-               +'     NAME      VARCHAR(500) '+wfLineEnding
+            fSQLCreate.Append(Format('CREATE TABLE %s ( '+wfLE
+               +'     ID        BIGINT NOT NULL, '+wfLE
+               +'     IDPARENT  BIGINT, '+wfLE
+               +'     NAME      VARCHAR(500) '+wfLE
                +' );',[TableName]));
             fSQLCreate.Append(Format('ALTER TABLE %s ADD CONSTRAINT PK_%s PRIMARY KEY (ID);',[TableName,TableName]));
             fSQLCreate.Append(Format('CREATE SEQUENCE GEN_%s_ID START WITH 0 INCREMENT BY 1;',[TableName]));
             fSQLCreate.Append('SET TERM ^ ;');
-            fSQLCreate.Append(Format('CREATE OR ALTER TRIGGER %s_BI FOR %s'+wfLineEnding
-               +' ACTIVE BEFORE INSERT POSITION 0'+wfLineEnding
-               +' AS'+wfLineEnding
-               +' BEGIN'+wfLineEnding
-               +'   IF (NEW.ID IS NULL) THEN'+wfLineEnding
-               +'     NEW.ID = (SELECT SALT FROM WF_GET_DEPARTMENTSALT)+GEN_ID(GEN_%s_ID,1);'+wfLineEnding
-               +' END '+wfLineEnding
+            fSQLCreate.Append(Format('CREATE OR ALTER TRIGGER %s_BI FOR %s'+wfLE
+               +' ACTIVE BEFORE INSERT POSITION 0'+wfLE
+               +' AS'+wfLE
+               +' BEGIN'+wfLE
+               +'   IF (NEW.ID IS NULL) THEN'+wfLE
+               +'     NEW.ID = (SELECT SALT FROM WF_GET_DEPARTMENTSALT)+GEN_ID(GEN_%s_ID,1);'+wfLE
+               +' END '+wfLE
                +' ^',[TableName,TableName,TableName]));
             fSQLCreate.Append('SET TERM ; ^');
         {$ENDIF}

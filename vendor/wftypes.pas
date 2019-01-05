@@ -67,7 +67,7 @@ type
   TwfEntityScriptType = (esctCreate, esctDrop);
 
 const
-  wfLineEnding = #10;
+  wfLE = #10;
   {$IFDEF USEGUID}
     wfEmptyBaseID = '';
   {$ELSE}
