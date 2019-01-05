@@ -15,8 +15,8 @@ unit wfODBCConnection;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, odbcconn,
-  SQLDB;
+  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, wfTypes,
+  wfResourceStrings, odbcconn, SQLDB;
 
 type
 
@@ -24,15 +24,21 @@ type
 
   TwfODBCConnection = class(TODBCConnection)
   private
-    function Connect(aHost, aUserName, aPassword, aDataBase: string;
-      const aReadOnly:boolean = true; const aDriver: string = 'ODBC Driver 11 for SQL Server'): boolean;
+    fonLog: TTextEvent;
+    procedure AsyncInit(Data: PtrInt);
 
   protected
+    procedure wfLog(const aValue: string);
 
   public
+    constructor Create(AOwner: TComponent); override;
+
+    function Connect(aHost, aUserName, aPassword, aDataBase: string;
+      const aReadOnly:boolean = true; const aDriver: string = 'ODBC Driver 11 for SQL Server'): boolean;
+    procedure Disconnect;
 
   published
-
+    property onLog:TTextEvent read fonLog write fonLog;
   end;
 
 procedure Register;
@@ -45,6 +51,22 @@ begin
   RegisterComponents('WF',[TwfODBCConnection]);
 end;
 
+procedure TwfODBCConnection.AsyncInit(Data: PtrInt);
+begin
+  if not(csDesigning in ComponentState) then Connected:= false;
+end;
+
+{@@ ----------------------------------------------------------------------------
+  // Connect to DataBase
+  @param    aHost          Host
+  @param    aBaseName      BaseName
+  @param    aUserName      UserName
+  @param    aPassword      Password
+  @param    aDataBase      Password
+  @param    aReadOnly      Password
+  @param    aDriver        Password
+  @result   boolean        status of connect
+-------------------------------------------------------------------------------}
 function TwfODBCConnection.Connect(aHost, aUserName, aPassword,
   aDataBase: string; const aReadOnly: boolean; const aDriver: string): boolean;
 begin
@@ -65,9 +87,40 @@ begin
 
     Connected:= true;
     Result:= true;
+
+    wfLog(rsMessageConectedSucefull);
   except
     raise
   end;
+end;
+
+{@@ ----------------------------------------------------------------------------
+  // Disconnect from DataBase
+-------------------------------------------------------------------------------}
+procedure TwfODBCConnection.Disconnect;
+begin
+  if not Assigned(self) then exit;
+   try
+     Connected:= false;
+     wfLog(rsMessageDisconnectSucefull);
+   except
+     raise;
+   end;
+end;
+
+{@@ ----------------------------------------------------------------------------
+  // Log write
+  @param    aValue     Text for write to Log
+-------------------------------------------------------------------------------}
+procedure TwfODBCConnection.wfLog(const aValue: string);
+begin
+  if Assigned(onLog) then onLog(self, aValue);
+end;
+
+constructor TwfODBCConnection.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  Application.QueueAsyncCall(@AsyncInit,0);
 end;
 
 end.

@@ -28,6 +28,7 @@ uses
     rsExceptErrorFindFieldName                        = 'Error find field Name %s !';
     rsExceptErrorLongTransactionIsActive              = 'Long Transaction is active!';
     rsMessageCreatedDataBaseSucefull                  = 'Created DataBase Sucefull';
+    rsMessageCreatedDataBaseInterrupted               = 'Database creation was interrupted!';
     rsMessageConectedSucefull                         = 'Conected Sucefull';
     rsMessageDisconnectSucefull                       = 'Disconnect Sucefull';
     rsWarningNumberOfEntriesWasLimited                = 'Error! The number of entries exceeded the maximum (%d)';

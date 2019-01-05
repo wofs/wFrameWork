@@ -68,6 +68,8 @@ type
     fTransactionRead: TwfSQLTransaction;
     fTransactionWrite: TwfSQLTransaction;
 
+    procedure CreateNewDataBaseFireBird(const uHost, uPort, uBaseName,
+      uUserName, uPassword: string);
     function GetInitializedDefaultProc: boolean;
     function GetLongTransactionStatus: boolean;
 
@@ -318,6 +320,12 @@ begin
   Result:= VarToStr(uVariant);
 end;
 
+{@@ ----------------------------------------------------------------------------
+  // Get Field Type By Var
+  @param    aVariantValue    Variant Value
+  @result   TFieldType       TFieldType Value
+-------------------------------------------------------------------------------}
+
 function TwfBase.GetFieldTypeByVar(aVariantValue: Variant): TFieldType;
 begin
   case GetVarType(aVariantValue) of
@@ -336,6 +344,11 @@ begin
 
 end;
 
+{@@ ----------------------------------------------------------------------------
+  // Get Domain Or Procedure String
+  @result   string           string Value
+-------------------------------------------------------------------------------}
+
 function TwfBase.GetDomainOrProcedureString: string;
 begin
   Result:='';
@@ -344,6 +357,12 @@ begin
   end;
 end;
 
+{@@ ----------------------------------------------------------------------------
+  // Get Before Insert Trigger
+  @param    aTableName       string Value
+  @param    aIDField         string Value
+  @result   string           string Value
+-------------------------------------------------------------------------------}
 function TwfBase.GetBeforeInsertTrigger(aTableName, aIDField:string): string;
 begin
  Result:='';
@@ -352,6 +371,11 @@ begin
  end;
 end;
 
+{@@ ----------------------------------------------------------------------------
+  // Convert ArrayOfInt64 To String
+  @param    aArr        ArrayOfInt64 Value
+  @result   string      String Value
+-------------------------------------------------------------------------------}
 function TwfBase.AsString(aArr: ArrayOfInt64): string;
 var
   i: Integer;
@@ -889,7 +913,7 @@ begin
     UTF8Insert(' ORDER BY '+aOrderBy,Result,aPosOrderBy);
 end;
 
-procedure TwfBase.CreateNewDataBase(const uHost, uPort, uBaseName, uUserName,
+procedure TwfBase.CreateNewDataBaseFireBird(const uHost, uPort, uBaseName, uUserName,
   uPassword: string);
 begin
  try
@@ -921,6 +945,19 @@ begin
  except
    raise;
  end;
+end;
+
+procedure TwfBase.CreateNewDataBase(const uHost, uPort, uBaseName, uUserName,
+  uPassword: string);
+begin
+    case Engine of
+      seFirebird: CreateNewDataBaseFireBird(uHost, uPort, uBaseName, uUserName, uPassword)
+      else
+        begin
+          ShowMessage(Format(rsMessageCreatedDataBaseInterrupted+'%s',['This database engine is not available.']));
+          wfLog(Format(rsMessageCreatedDataBaseInterrupted+'%s',['This database engine is not available.']));
+        end;
+    end;
 end;
 
 function TwfBase.WriteWhere(const uSQL: string; aWhere: string;

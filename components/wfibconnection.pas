@@ -185,11 +185,11 @@ end;
 procedure TwfIBConnection.Disconnect;
 begin
    if not Assigned(self) then exit;
-  try
-    Connected:= false;
-    wfLog(rsMessageDisconnectSucefull);
-  except
-    raise;
-  end;
+    try
+      Connected:= false;
+      wfLog(rsMessageDisconnectSucefull);
+    except
+      raise;
+    end;
 end;
 end.
