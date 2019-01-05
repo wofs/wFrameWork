@@ -3,7 +3,7 @@ This file is part of wfFrameWork.
 
  -= Base =-
 
- wofs(c)2017-2018 [wofssirius@yandex.ru]
+ wofs(c)2017-2019 [wofssirius@yandex.ru]
  GNU LESSER GENERAL PUBLIC LICENSE v.2.1
 
  Git: https://github.com/wofs/wFrameWork.git
@@ -19,13 +19,13 @@ interface
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, LazUTF8,
   wfTypes, wfClasses, wfResourceStrings, wfFunc, wfSQLQuery, wfSQLTransaction,
-  wfIBConnection, wfSQLScript, db, sqldb;
+  wfIBConnection, wfSQLScript, wfODBCConnection, db, sqldb;
 
 type
 
   //If you change TwfSQLEngine to make changes in the same way
   //QuotedGUID() , GetEngine(), GetUseGUID, GetDomainOrProcedureString, GetBeforeInsertTrigger
-  TwfSQLEngine = (seFirebird, seUnknown);
+  TwfSQLEngine = (seFirebird, seODBC, seUnknown);
 
   { TwfData }
 
@@ -383,6 +383,9 @@ begin
 
  if fConnection is TwfIBConnection then
    Result:= seFirebird;
+
+ if fConnection is TwfODBCConnection then
+   Result:= seODBC;
 end;
 
 function TwfBase.GetNewBaseID: BaseID;
@@ -845,15 +848,19 @@ begin
 end;
 
 function TwfBase.GetTables: ArrayOfString;
-const
-  uSQL = 'SELECT DISTINCT RDB$RELATION_NAME'
-        +' FROM RDB$RELATION_FIELDS '
-        +' WHERE RDB$SYSTEM_FLAG=0;';
 var
   aData: TwfData;
   i: Integer;
+  aSQL: string;
 begin
-  GetData(uSQL, aData);
+
+case Engine of
+  seFirebird  : aSQL:= 'SELECT DISTINCT RDB$RELATION_NAME FROM RDB$RELATION_FIELDS WHERE RDB$SYSTEM_FLAG=0;';
+  seODBC      : aSQL:= 'SELECT name FROM sys.databases d WHERE d.database_id>4;';
+end;
+  aData:= nil;
+
+  GetData(aSQL, aData);
   try
     SetLength(Result, aData.RowCount);
 

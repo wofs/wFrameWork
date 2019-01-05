@@ -3,7 +3,7 @@ This file is part of wfFrameWork.
 
  -= Entity =-
 
- wofs(c)2017-2018 [wofssirius@yandex.ru]
+ wofs(c)2017-2019 [wofssirius@yandex.ru]
  GNU LESSER GENERAL PUBLIC LICENSE v.2.1
 
  Git: https://github.com/wofs/wFrameWork.git
@@ -48,11 +48,8 @@ type
     fSQLItemGet: TStrings;
     fSQLItemNew: TStrings;
     fSQLItemUpdate: TStrings;
-    fSQLSequenceName: string;
     fSQLTreeGetRoot: TStrings;
     fTableName: string;
-    function GetScript(aType: TwfEntityScriptType): TStrings;
-    function GetSQL(aType: TwfEntitySQLType): string;
     function GetTableName: string;
     procedure SetGridColumnsString(aValue: TStrings);
     procedure SetSQLPresets(aValue: TwfEntitySQLPresets);
@@ -69,6 +66,8 @@ type
     procedure SetSQLTreeGetRoot(aValue: TStrings);
 
   protected
+    function GetScript(aType: TwfEntityScriptType): TStrings; virtual;
+    function GetSQL(aType: TwfEntitySQLType): string; virtual;
 
   public
     constructor Create(AOwner: TComponent); override;

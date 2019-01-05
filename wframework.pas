@@ -9,10 +9,10 @@ interface
 
 uses
   wfResourceStrings, wfTypes, wfClasses, wfFunc, wfPlugins, wfVersions, 
-  wfIBConnection, wfBase, wfSQLQuery, wfSQLScript, wfSQLTransaction, 
-  wfTreeView, wfDBGrid, wfComboBox, wfStatusProgressBar, wfReport, wfSettings, 
-  wfEntity, TwfProgressU, wfReportViewer, wfDialogs, wfValueListEditor, 
-  LazarusPackageIntf;
+  wfIBConnection, wfODBCConnection, wfBase, wfSQLQuery, wfSQLScript, 
+  wfSQLTransaction, wfTreeView, wfDBGrid, wfComboBox, wfStatusProgressBar, 
+  wfReport, wfSettings, wfEntity, wfValueListEditor, TwfProgressU, 
+  wfReportViewer, wfDialogs, LazarusPackageIntf;
 
 implementation
 
@@ -21,6 +21,7 @@ begin
   RegisterUnit('wfPlugins', @wfPlugins.Register);
   RegisterUnit('wfVersions', @wfVersions.Register);
   RegisterUnit('wfIBConnection', @wfIBConnection.Register);
+  RegisterUnit('wfODBCConnection', @wfODBCConnection.Register);
   RegisterUnit('wfBase', @wfBase.Register);
   RegisterUnit('wfSQLQuery', @wfSQLQuery.Register);
   RegisterUnit('wfSQLScript', @wfSQLScript.Register);

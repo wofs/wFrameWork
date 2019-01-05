@@ -1,9 +1,9 @@
 {
 This file is part of wfFrameWork.
 
- -= Base =-
+ -= StatusProgressBar =-
 
- wofs(c)2017-2018 [wofssirius@yandex.ru]
+ wofs(c)2017-2019 [wofssirius@yandex.ru]
  GNU LESSER GENERAL PUBLIC LICENSE v.2.1
 
  Git: https://github.com/wofs/wFrameWork.git
