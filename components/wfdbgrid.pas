@@ -559,7 +559,9 @@ begin
         CurrentPos:= UTF8Pos(CharDisplayFormatStart, aText, 1);
         NextPos:= UTF8Pos(CharDisplayFormatEnd, aText, CurrentPos);
         if NextPos>0 then
-          aDisplayFormat:= Trim(UTF8Copy(aText,CurrentPos+1, NextPos-CurrentPos-1));
+          aDisplayFormat:= Trim(UTF8Copy(aText,CurrentPos+1, NextPos-CurrentPos-1))
+        else
+          NextPos:= 1;
 
         CurrentPos:= UTF8Pos(CharSizePriority, aText, NextPos);
         NextPos:= Length(aText);
