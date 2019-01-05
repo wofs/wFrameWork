@@ -397,7 +397,8 @@ end;
 
 function TwfBase.GetInitializedDefaultProc: boolean;
 begin
-  if not Assigned(self) or not Assigned(fConnection) then exit;
+  Result:= false;
+  if not Assigned(self) or not Assigned(fConnection) or not fConnection.Connected then exit;
   Result:= ProcIsExists('WF_GET_DEPARTMENTSALT');
 end;
 
@@ -456,7 +457,7 @@ procedure TwfBase.SetInitializedDefaultProc(aValue: boolean);
 var
   aStrings: TStringList;
 begin
- if not Assigned(self) or (csLoading in ComponentState) or not Assigned(fConnection) then exit;
+ if not Assigned(self) or (csLoading in ComponentState) or not Assigned(fConnection) or not fConnection.Connected then exit;
 
   aStrings:= TStringList.Create;
 
