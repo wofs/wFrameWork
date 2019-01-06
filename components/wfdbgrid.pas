@@ -135,6 +135,7 @@ end;
     fBase: TwfBase;
     fDataSource: TDataSource;
     fDataSet: TwfSQLQuery;
+    fFillFreez: boolean;
     fImageList: TImageList;
     fMultiSelect: boolean;
     fColumnsString: TStrings;
@@ -153,6 +154,7 @@ end;
 
     fWhereList: TwfCustomSQLItemList;
     fOrderByList: TwfCustomOrderByList;
+    fwOnDuringFill: TVarTextEvent;
     fwSearchComboBoxHistoryCount: integer;
 
     fGridImageList: TImageList;
@@ -232,6 +234,8 @@ end;
     property SelectedItems: ArrayOfBaseID read GetSelectedItems;
     property SelectedCount: Int64 read GetSelectedCount;
     property CurrentId: BaseID read GetCurrentId;
+    property FillFreez:boolean read fFillFreez write fFillFreez;
+
   published
     //Trees to automatically generate the Where the grid.
     //Setting method OnSelectionChanged TwfTreeView
@@ -281,6 +285,7 @@ end;
     {Events}
     property wOnLog: TTextEvent read fonLog write fonLog;
     property wOnFilled: TNotifyEvent read fonFilled write fonFilled;
+    property wOnDuringFill: TVarTextEvent read fwOnDuringFill write fwOnDuringFill;
 
     property wOnSelectionChanged: TNotifyEvent read fonSelectionChanged write fonSelectionChanged;
   end;
@@ -861,6 +866,8 @@ var
   i: Integer;
   aText: String;
 begin
+// ID{ID}<70>[###.##]|1; NAME{NAME}<840>|1
+
  if not Assigned(self) then exit;
   aText:= '';
   aColumns:= self.Columns;
@@ -869,7 +876,7 @@ begin
     begin
       if i>0 then
         aText:= aText+'; ';
-        aText:= aText+ Format('%s{%s}<%d>|%d',[aColumns[i].FieldName, aColumns[i].Title.Caption, aColumns[i].Width, aColumns[i].SizePriority]);
+        aText:= aText+ Format('%s{%s}<%d>[%s]|%d',[aColumns[i].FieldName, aColumns[i].Title.Caption, aColumns[i].Width, aColumns[i].DisplayFormat, aColumns[i].SizePriority]);
     end;
   fColumnsString.Clear;
   fColumnsString.Add(aText);
@@ -1217,6 +1224,7 @@ end;
 constructor TwfDBGrid.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  fFillFreez:= false;
 
   fSQLText:= TStringList.Create;
   fColumnsString:= TStringList.Create;
@@ -1290,12 +1298,13 @@ begin
   else
     aSQL:= Trim(fSQLText.Text);
 
-  if not Assigned(self) or not Assigned(fBase) or (Length(aSQL)=0) then exit; //=>
+  if fFillFreez or not Assigned(self) or not Assigned(fBase) or (Length(aSQL)=0) then exit; //=>
 
   aSQL:= fBase.WriteOrderBy(aSQL, fOrderByList.AsString);
   aSQL:= fBase.WriteWhere(aSQL, fWhereList.AsString, false);
   aParams:= fWhereList.Params;
 
+  if Assigned(fwOnDuringFill) then fwOnDuringFill(self, aSQL);
   try
     fBase.OpenSQL(aSQL, aParams, fDataSet);
     fDataSource.DataSet:= fDataSet;

@@ -41,6 +41,7 @@ type
   ArrayOfArrayInteger = array of array of integer;
 
   TErrorEvent = procedure(Sender: TObject; const E: Exception) of object;
+  TVarTextEvent = procedure(Sender: TObject; var aValue: string) of object;
   TTextEvent = procedure(Sender: TObject; const aValue: string) of object;
   TResultEvent = procedure(Sender: TObject; const aResult: boolean) of object;
   TResultsEvent = procedure(Sender: TObject; const aResults: ArrayOfInt64) of object;
