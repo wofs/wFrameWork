@@ -537,7 +537,12 @@ begin
     begin
       if i>0 then
        if TwfSQLItem(Items[i]).ItemType = stIn then
-          Result:= Result+' AND ' //AND?{ TODO : Сделать переключение OR/AND }
+       begin
+         if UTF8Length(Result)>0 then
+           Result:= '('+Result+')';
+
+         Result:= Result+' AND ' //AND?{ TODO : Сделать переключение OR/AND }
+       end
        else
           Result:= Result+' OR ';
       Result:= Result+' '+TwfSQLItem(Items[i]).Value+' ';
