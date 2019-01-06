@@ -531,22 +531,45 @@ end;
 function TwfCustomSQLItemList.GetAsString: string;
 var
   i: Integer;
+  aInText: String;
+  aIn: TStringList;
 begin
   Result:= '';
-  for i:=0 to Count-1 do
-    begin
-      if i>0 then
-       if TwfSQLItem(Items[i]).ItemType = stIn then
-       begin
-         if UTF8Length(Result)>0 then
-           Result:= '('+Result+')';
+  aInText:= '';
 
-         Result:= Result+' AND ' //AND?{ TODO : Сделать переключение OR/AND }
-       end
-       else
+  aIn:= TStringList.Create;
+  try
+    for i:=0 to Count-1 do
+    begin
+      if TwfSQLItem(Items[i]).ItemType = stIn then
+        aIn.Add(TwfSQLItem(Items[i]).Value)
+      else
+        begin
+        if (i>0) and (UTF8Length(Result)>0) then
           Result:= Result+' OR ';
-      Result:= Result+' '+TwfSQLItem(Items[i]).Value+' ';
+
+          Result:= Result+' '+TwfSQLItem(Items[i]).Value+' ';
+        end;
     end;
+
+    if aIn.Count>0 then
+    begin
+      for i:=0 to aIn.Count-1 do
+      begin
+        if (i>0) and (UTF8Length(Result)>0) then
+          aInText:= aInText+' AND ';
+
+          aInText:= aInText+' '+aIn.Strings[i]+' ';
+      end;
+
+      if UTF8Length(Result)>0 then
+        Result:= '('+Result+') AND ';
+
+      Result:= Result+aInText;
+    end;
+  finally
+    FreeAndNil(aIn);
+  end;
 end;
 
 function TwfCustomSQLItemList.GetParams: TwfParams;

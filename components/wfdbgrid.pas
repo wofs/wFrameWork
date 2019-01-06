@@ -1300,6 +1300,8 @@ begin
 
   if fFillFreez or not Assigned(self) or not Assigned(fBase) or (Length(aSQL)=0) then exit; //=>
 
+  Cursor:= crSQLWait;
+
   aSQL:= fBase.WriteOrderBy(aSQL, fOrderByList.AsString);
   aSQL:= fBase.WriteWhere(aSQL, fWhereList.AsString, false);
   aParams:= fWhereList.Params;
@@ -1311,6 +1313,7 @@ begin
 
     if Assigned(wOnFilled) then wOnFilled(self);
   finally
+    Cursor:= crDefault;
     FreeAndNil(aParams);
   end;
 end;
