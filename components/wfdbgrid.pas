@@ -1008,7 +1008,7 @@ end;
 procedure TwfDBGrid.MouseUp(Button: TMouseButton; Shift: TShiftState; X,
   Y: Integer);
 begin
-  if fstCtrl then SelectRow;
+  if fstCtrl and (Y>DefaultRowHeight) then SelectRow;
 
   inherited;
 end;
