@@ -18,7 +18,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, DBGrids,
-  ComCtrls, StdCtrls, Grids, LCLType, LazUTF8, PropEdits, wfBase,
+  ComCtrls, StdCtrls, Grids, LCLType, Buttons, LazUTF8, PropEdits, wfBase,
   wfSQLQuery, wfEntity, wfTreeView, wfComboBox, wfTypes, wfClasses,
   wfResourceStrings, wfFunc, db;
 
@@ -142,6 +142,8 @@ end;
     fonFilled: TNotifyEvent;
     fonLog: TTextEvent;
     fonSelectionChanged: TNotifyEvent;
+    fSearchComboBoxClearBtn: TSpeedButton;
+    fSearchPreventiveBtn: TSpeedButton;
     fSearchComboBox: TComboBox;
     fSelectedItems: TBaseIDList;
     fSelectGridId: BaseID;
@@ -171,6 +173,8 @@ end;
 
     function GetOrderBy: string;
     function GetSearchComboBox: TComboBox;
+    function GetSearchComboBoxClearBtn: TSpeedButton;
+    function GetSearchComboBoxGetSelPosition: byte;
     function GetSearchFieldsContaining: string;
     function GetSearchFieldsIn: string;
     function GetSearchFieldsLike: string;
@@ -178,6 +182,7 @@ end;
     function GetSelectedItems: ArrayOfBaseID;
     function GetSQLText: TStrings;
     function ExistsField(aFieldName: string): boolean;
+    function GetSearchPreventiveBtn: TSpeedButton;
     procedure Search(aText: string);
     procedure SetBase(aValue: TwfBase);
 
@@ -188,6 +193,8 @@ end;
     procedure SetfSQLText(aValue: TStrings);
     procedure SetMultiSelect(aValue: boolean);
     procedure SetSearchComboBox(aValue: TComboBox);
+    procedure SetSearchComboBoxClearBtn(aValue: TSpeedButton);
+    procedure SetSearchComboBoxGetSelPosition(aPosition: byte);
     procedure SetSearchComboBoxHistoryCount(aValue: integer);
     procedure SetSearchComboBoxStyle(aValue: integer);
     procedure SetSearchFieldsContaining(aValue: string);
@@ -195,6 +202,8 @@ end;
     procedure SetSearchFieldsLike(aValue: string);
     procedure SetSearchHistory(aText: string);
     procedure SetSelectAll(aValue: boolean);
+    procedure SetSearchPreventiveBtn(aValue: TSpeedButton);
+    function GetSearchPreventiveBtnState: boolean;
     procedure wfOnDragOver(Sender, Source: TObject; X, Y: Integer;
       State: TDragState; var Accept: Boolean);
     procedure wfOnEndDrag(Sender, Target: TObject; X, Y: Integer);
@@ -204,6 +213,8 @@ end;
 
     procedure Log(aText: string);
     procedure wfOnGridFiltering(Sender: TObject);
+    procedure wfSearchComboBoxClearBtn_OnClick(Sender: TObject);
+    procedure wfSearchPreventiveBtn_OnClick(Sender: TObject);
     procedure wfSearchComboBox_OnChange(Sender: TObject);
     procedure wfSearchComboBox_OnExit(Sender: TObject);
     procedure wfSearchComboBox_OnKeyDown(Sender: TObject; var Key: Word;
@@ -250,6 +261,11 @@ end;
     //ComboBox to automatically generate the Where clause.
     //Search fields to specify wSearchFieldsContaining and wSearchFieldsLike.
     property wSearchComboBox: TComboBox read GetSearchComboBox write SetSearchComboBox;
+
+    //TSpeedButton If you specify, depending on the status of the button, a search will be performed.
+    property wSearchPreventiveBtn: TSpeedButton read GetSearchPreventiveBtn write SetSearchPreventiveBtn;
+
+    property wSearchComboBoxClearBtn: TSpeedButton read GetSearchComboBoxClearBtn write SetSearchComboBoxClearBtn;
 
     //The maximum number of entries in the search history
     property wSearchComboBoxHistoryCount: integer read fwSearchComboBoxHistoryCount write SetSearchComboBoxHistoryCount default 0;
@@ -680,6 +696,23 @@ begin
     fSearchComboBox:=aValue;
 end;
 
+procedure TwfDBGrid.SetSearchComboBoxClearBtn(aValue: TSpeedButton);
+begin
+  if fSearchComboBoxClearBtn=aValue then exit; //=>
+  if Assigned(aValue) then
+    begin
+      aValue.OnClick:=@wfSearchComboBoxClearBtn_OnClick;
+    end else
+    begin
+      if Assigned(fSearchComboBoxClearBtn) then
+        begin
+          fSearchComboBoxClearBtn.OnClick:= nil;
+        end;
+    end;
+
+    fSearchComboBoxClearBtn:=aValue;
+end;
+
 procedure TwfDBGrid.SetSearchComboBoxStyle(aValue: integer);
 begin
   if Assigned(fSearchComboBox) then
@@ -742,6 +775,23 @@ begin
      fSelectedItems.Clear;
 
   if Assigned(wonSelectionChanged) then wonSelectionChanged(self);
+end;
+
+procedure TwfDBGrid.SetSearchPreventiveBtn(aValue: TSpeedButton);
+begin
+  if fSearchPreventiveBtn=aValue then exit; //=>
+  if Assigned(aValue) then
+    begin
+      aValue.OnClick:=@wfSearchPreventiveBtn_OnClick;
+    end else
+    begin
+      if Assigned(fSearchPreventiveBtn) then
+        begin
+          fSearchPreventiveBtn.OnClick:= nil;
+        end;
+    end;
+
+    fSearchPreventiveBtn:=aValue;
 end;
 
 procedure TwfDBGrid.wfOnDragOver(Sender, Source: TObject; X, Y: Integer;
@@ -846,6 +896,13 @@ begin
   if not Assigned(fSearchComboBox) then
     fSearchComboBox:= nil;
   Result:= fSearchComboBox;
+end;
+
+function TwfDBGrid.GetSearchComboBoxClearBtn: TSpeedButton;
+begin
+  if not Assigned(fSearchComboBoxClearBtn) then
+    fSearchComboBoxClearBtn:= nil;
+  Result:= fSearchComboBoxClearBtn;
 end;
 
 function TwfDBGrid.GetDataSet: TDataSet;
@@ -1074,6 +1131,13 @@ begin
     end;
 end;
 
+function TwfDBGrid.GetSearchPreventiveBtn: TSpeedButton;
+begin
+  if not Assigned(fSearchPreventiveBtn) then
+    fSearchPreventiveBtn:= nil;
+  Result:= fSearchPreventiveBtn;
+end;
+
 procedure TwfDBGrid.OrderByClearAll;
 var
   i: Integer;
@@ -1113,12 +1177,25 @@ begin
   Fill;
 end;
 
+function TwfDBGrid.GetSearchComboBoxGetSelPosition:byte;
+begin
+  fSearchComboBox.SelLength:= 0;
+  Result:= fSearchComboBox.SelStart;
+end;
+
+procedure TwfDBGrid.SetSearchComboBoxGetSelPosition(aPosition: byte);
+begin
+  fSearchComboBox.SelStart:= aPosition;
+  fSearchComboBox.SelLength:= 0;
+end;
+
 procedure TwfDBGrid.wfSearchComboBox_OnChange(Sender: TObject);
 var
   aEdit: TComboBox;
 begin
   aEdit:= (Sender as TComboBox);
-
+  if GetSearchPreventiveBtnState then
+   Search(aEdit.Text);
 end;
 
 procedure TwfDBGrid.wfSearchComboBox_OnExit(Sender: TObject);
@@ -1126,7 +1203,6 @@ var
   aEdit: TComboBox;
 begin
   aEdit:= (Sender as TComboBox);
-
 end;
 
 procedure TwfDBGrid.wfSearchComboBox_OnKeyDown(Sender: TObject;
@@ -1135,6 +1211,11 @@ var
   aEdit: TComboBox;
 begin
   aEdit:= (Sender as TComboBox);
+
+  if (Key = 114) then //F3
+    if aEdit.DroppedDown then
+       aEdit.DroppedDown:= false else
+       aEdit.DroppedDown:= true;
 end;
 
 procedure TwfDBGrid.SetSearchHistory(aText:string);
@@ -1167,6 +1248,25 @@ begin
   Fill;
 end;
 
+procedure TwfDBGrid.wfSearchComboBoxClearBtn_OnClick(Sender: TObject);
+begin
+  fSearchComboBox.Text:= EmptyStr;
+  Search(fSearchComboBox.Text);
+end;
+
+procedure TwfDBGrid.wfSearchPreventiveBtn_OnClick(Sender: TObject);
+begin
+  Search(fSearchComboBox.Text);
+end;
+
+function TwfDBGrid.GetSearchPreventiveBtnState:boolean;
+begin
+  if Assigned(fSearchPreventiveBtn) then
+   Result:= fSearchPreventiveBtn.Down
+  else
+   Result:= false;
+end;
+
 procedure TwfDBGrid.wfSearchComboBox_OnKeyPress(Sender: TObject;
   var Key: char);
 var
@@ -1175,7 +1275,7 @@ var
 begin
   aEdit:= (Sender as TComboBox);
   aText:= aEdit.Text;
-  if Key = #13 then
+  if (Key = #13) and not GetSearchPreventiveBtnState then
     begin
        Search(aText);
     end;
@@ -1292,6 +1392,7 @@ procedure TwfDBGrid.Fill;
 var
   aParams: TwfParams;
   aSQL: String;
+  aPosition: Byte;
 begin
   if Assigned(fEntity) and IsEmpty(fSQLText) then
     aSQL:= Trim(fEntity.SQLGetList.Text)
@@ -1310,8 +1411,12 @@ begin
   try
     Log(rsDBGridMessageDataSelection);
 
+    aPosition:= GetSearchComboBoxGetSelPosition;
+
     fDataSet:= fBase.OpenSQL(aSQL, aParams, true);
     fDataSource.DataSet:= fDataSet;
+
+    SetSearchComboBoxGetSelPosition(aPosition);
 
     Log('');
 
