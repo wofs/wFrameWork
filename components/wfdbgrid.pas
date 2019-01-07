@@ -1308,8 +1308,12 @@ begin
 
   if Assigned(fwOnDuringFill) then fwOnDuringFill(self, aSQL);
   try
-    fDataSet:= fBase.OpenSQL(aSQL, aParams);
+    Log(rsDBGridMessageDataSelection);
+
+    fDataSet:= fBase.OpenSQL(aSQL, aParams, true);
     fDataSource.DataSet:= fDataSet;
+
+    Log('');
 
     if Assigned(wOnFilled) then wOnFilled(self);
   finally

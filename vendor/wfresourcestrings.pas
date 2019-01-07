@@ -57,6 +57,7 @@ uses
 
     {-= DBGrid =-}
     rsDBGridErrorMultiselectOff                       = 'Multiselect state is off!';
+    rsDBGridMessageDataSelection                      = 'Data selection... Please wait';
 
     {-= Entity =-}
     rsEntityErrorNoFoundTreeOrGrid                    = 'Object % not assigned! Use Init!';

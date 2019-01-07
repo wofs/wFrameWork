@@ -17,15 +17,42 @@ unit wfBase;
 interface
 
 uses
+  {$ifdef unix}
+    cthreads,
+    cmem, // the c memory manager is on some systems much faster for multi-threading
+  {$endif}
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, LazUTF8,
   wfTypes, wfClasses, wfResourceStrings, wfFunc, wfSQLQuery, wfSQLTransaction,
-  wfIBConnection, wfSQLScript, wfODBCConnection, db, sqldb;
+  wfIBConnection, wfSQLScript, wfODBCConnection, db, sqldb, TwfProgressU;
 
 type
+
+  TwfBase = class;
 
   //If you change TwfSQLEngine to make changes in the same way
   //QuotedGUID() , GetEngine(), GetUseGUID, GetDomainOrProcedureString, GetBeforeInsertTrigger
   TwfSQLEngine = (seFirebird, seODBC, seUnknown);
+
+  { TQueryThread }
+
+  TQueryThread = class(TThread)
+  private
+    fonFinish: TNotifyEvent;
+    fonStart: TNotifyEvent;
+
+    fBase: TwfBase;
+    fSQL: string;
+    fParams: TwfParams;
+    fDataSet: TwfSQLQuery;
+
+  protected
+    procedure Execute; override;
+  public
+    constructor Create(CreateSuspended : boolean);
+
+    property onStart: TNotifyEvent read fonStart write fonStart;
+    property onFinish: TNotifyEvent read fonFinish write fonFinish;
+  end;
 
   { TwfData }
 
@@ -63,13 +90,16 @@ type
     fLongTransaction: TwfSQLTransaction;
     fonLog: TTextEvent;
     fonOverloadLimitLoadedRows: TNotifyEvent;
+    fProgress: TwfProgress;
     fQueryRead: TwfSQLQuery;
+    fQueryThread: TQueryThread;
     fQueryWrite: TwfSQLQuery;
     fTransactionRead: TwfSQLTransaction;
     fTransactionWrite: TwfSQLTransaction;
 
     procedure CreateNewDataBaseFireBird(const uHost, uPort, uBaseName,
       uUserName, uPassword: string);
+    procedure fOnFinish(Sender: TObject);
     function GetInitializedDefaultProc: boolean;
     function GetLongTransactionStatus: boolean;
 
@@ -78,6 +108,9 @@ type
     function GetNewBaseID: BaseID;
     function GetTransactionRead: TwfSQLTransaction;
     function GetTransactionWrite: TwfSQLTransaction;
+
+    function OpenSQLInternal(const uSQL: string; var aParams: TwfParams): TwfSQLQuery;
+
     procedure SetInitializedDefaultProc(aValue: boolean);
     procedure SetTransactionRead(aValue: TwfSQLTransaction);
     procedure TransactionReadInit(var aTransaction: TwfSQLTransaction;
@@ -100,7 +133,7 @@ type
 
       { -= Working with the database =-}
       {Read}
-      function OpenSQL(const uSQL: string; var aParams: TwfParams):TwfSQLQuery;
+      function OpenSQL(const uSQL: string; var aParams: TwfParams; const uUseThread:boolean = false): TwfSQLQuery;
       function OpenSQL(const uSQL: string):TwfSQLQuery;
       function OpenSQLFmt (const uSQL : string; const Args : array of const):TwfSQLQuery;
 
@@ -198,6 +231,21 @@ begin
   RegisterComponents('WF',[TwfBase]);
 end;
 
+{ TQueryThread }
+
+procedure TQueryThread.Execute;
+begin
+  if Assigned(fonStart) then fonStart(self);
+
+  fDataSet:= fBase.OpenSQLInternal(fSQL, fParams);
+
+  if Assigned(fonFinish) then fonFinish(self);
+end;
+
+constructor TQueryThread.Create(CreateSuspended: boolean);
+begin
+ inherited Create(CreateSuspended);
+end;
 { TwfData }
 
 {@@ ----------------------------------------------------------------------------
@@ -944,6 +992,11 @@ begin
  end;
 end;
 
+procedure TwfBase.fOnFinish(Sender: TObject);
+begin
+  fProgress.ForceClose;
+end;
+
 procedure TwfBase.CreateNewDataBase(const uHost, uPort, uBaseName, uUserName,
   uPassword: string);
 begin
@@ -1253,7 +1306,48 @@ end;
   @param  aDataSet      DataSet Object
   @result aDataSet      DataSet Object
 -------------------------------------------------------------------------------}
-function TwfBase.OpenSQL(const uSQL: string; var aParams: TwfParams
+function TwfBase.OpenSQL(const uSQL: string; var aParams: TwfParams;
+  const uUseThread: boolean): TwfSQLQuery;
+begin
+   if uUseThread then
+    begin
+      fProgress:= TwfProgress.Create(Application);
+      fProgress.Marquee:= true;
+      fProgress.BorderStyle:= bsNone;
+      fProgress.Position:= poScreenCenter;
+
+      fQueryThread:= TQueryThread.Create(true);
+      fQueryThread.onFinish:=@fOnFinish;
+      fQueryThread.fBase:= self;
+      fQueryThread.fSQL:= uSQL;
+      fQueryThread.fParams:= aParams;
+      fQueryThread.Start;
+
+      try
+        fProgress.ShowModal;
+      finally
+        FreeAndNil(fProgress);
+      end;
+
+      try
+        Result:= fQueryThread.fDataSet;
+      finally
+        fQueryThread.Free;
+      end;
+
+    end
+   else
+     Result:= OpenSQLInternal(uSQL, aParams);
+end;
+
+{@@ ----------------------------------------------------------------------------
+  // SQL query to retrieve data
+  @param  uSQL          SQL Text
+  @param  uParamValue   SQL Params
+  @param  aDataSet      DataSet Object
+  @result aDataSet      DataSet Object
+-------------------------------------------------------------------------------}
+function TwfBase.OpenSQLInternal(const uSQL: string; var aParams: TwfParams
   ): TwfSQLQuery;
 var
   aTransaction: TwfSQLTransaction;
@@ -1263,7 +1357,9 @@ begin
    aTransaction:= nil;
 
     if not Assigned(fQueryRead) then
-       Result:= TwfSQLQuery.Create(self);
+       Result:= TwfSQLQuery.Create(self)
+    else
+       Result:= fQueryRead;
 
    TransactionReadInit(aTransaction, Result);
 
