@@ -226,7 +226,7 @@ begin
   try
 
     fBase.CreateParam(aParams, aSQL, true);
-    fBase.GetData(aSQL, aParams, aData);
+    aData:= fBase.GetData(aSQL, aParams);
 
     Clear;
 

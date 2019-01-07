@@ -69,18 +69,16 @@ end;
 
 procedure TForm1.Button3Click(Sender: TObject);
 var
-  aParams: TwfParams;
-  aData: TwfData;
   aSQL: String;
   i: Integer;
-  aQuery, aDataSet: TwfSQLQuery;
+  aDataSet: TwfSQLQuery;
 begin
   aSQL:= 'SELECT * FROM WORKERS';
 
   wfDBGrid1.wSQLText.Text:= aSQL;
   wfDBGrid1.Fill;
 
-  wfBase1.OpenSQL(aSQL, aDataSet);
+  aDataSet:= wfBase1.OpenSQL(aSQL);
 
   try
     for i:= 0 to aDataSet.RecordCount-1 do

@@ -426,7 +426,7 @@ begin
 
   fBase.CreateParam(aParams,uSQLGet,true);
   aParams.ParamValues[fFieldId]:= uID;
-  fBase.GetData(uSQLGet, aParams, Result);
+  Result:= fBase.GetData(uSQLGet, aParams);
 end;
 
 function TwfTreeView.GetParrentId: BaseID;
@@ -456,7 +456,7 @@ var
 begin
   aData:= nil;
   Result:= EmptyBaseID;
-  fBase.GetData(Format(wSQLGetRoot.Text,[fTableName]), aData);
+  aData:= fBase.GetData(Format(wSQLGetRoot.Text,[fTableName]));
   try
     if aData.RowCount=0 then
        raise Exception.Create(rsDBTreeErrorRootTreeNotFound);
@@ -636,7 +636,7 @@ begin
 
   fBase.CreateParam(aParams, fSQLGetFillList, true);
   aParams.ParamValues[fFieldId]:= fRootId;
-  fBase.GetData(Format(fSQLGetFillList,[fTableName,fTableName]), aParams, aData);
+  aData:= fBase.GetData(Format(fSQLGetFillList,[fTableName,fTableName]), aParams);
 
   try
     aNewNode:= Items.AddObject(nil, fBase.AsString(aData.Data(0,fFieldName)), TwfTreeData.Create);

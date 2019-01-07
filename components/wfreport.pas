@@ -757,9 +757,9 @@ begin
 
   while iRows<aRowsCount do begin
     if aStepIt then
-      Base.OpenSQL(Format(aSQL,[aStep,iRows]), aDataSet)
+      aDataSet:= Base.OpenSQL(Format(aSQL,[aStep,iRows]))
     else
-      Base.OpenSQL(aSQL, aDataSet);
+      aDataSet:= Base.OpenSQL(aSQL);
 
     aDataSet.First;
 
@@ -905,9 +905,9 @@ begin
 
   while iRows<aRowsCount do begin
     if aStepIt then
-      Base.OpenSQL(Format(aSQL,[aStep,iRows]), aDataSet)
+      aDataSet:= Base.OpenSQL(Format(aSQL,[aStep,iRows]))
     else
-      Base.OpenSQL(aSQL, aDataSet);
+      aDataSet:= Base.OpenSQL(aSQL);
 
     aDataSet.First;
 

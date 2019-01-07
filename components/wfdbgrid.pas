@@ -1308,7 +1308,7 @@ begin
 
   if Assigned(fwOnDuringFill) then fwOnDuringFill(self, aSQL);
   try
-    fBase.OpenSQL(aSQL, aParams, fDataSet);
+    fDataSet:= fBase.OpenSQL(aSQL, aParams);
     fDataSource.DataSet:= fDataSet;
 
     if Assigned(wOnFilled) then wOnFilled(self);

@@ -7,7 +7,7 @@ object Form1: TForm1
   ClientHeight = 414
   ClientWidth = 651
   OnCreate = FormCreate
-  LCLVersion = '1.8.2.0'
+  LCLVersion = '1.8.4.0'
   object Panel1: TPanel
     Left = 0
     Height = 43
@@ -150,7 +150,7 @@ object Form1: TForm1
       wMultiSelect = True
       wBase = wfBase1
       wColumnsString.Strings = (
-        'ID{}<20>|0; NAME{NAME}<379>|1'
+        'ID{}<20>[]|0; NAME{NAME}<379>[]|1'
       )
       wFilled = False
       wEntity = WORKERS
@@ -166,16 +166,16 @@ object Form1: TForm1
     end
   end
   object wfIBConnection1: TwfIBConnection
-    Connected = True
+    Connected = False
     LoginPrompt = False
-    DatabaseName = 'D:\Projects\Lazarus\wFrameWork\demos\example\FDATABASE.FDB'
+    DatabaseName = 'D:\Projects\GItHub\wFrameWork\demos\example\FDATABASE.FDB'
     KeepConnection = False
     Password = 'masterkey'
     Transaction = wfSQLTransaction1
     UserName = 'SYSDBA'
     CheckTransactionParams = False
-    left = 32
-    top = 24
+    Left = 32
+    Top = 24
   end
   object WORKERS: TwfEntity
     TableName = 'WORKERS'
@@ -226,8 +226,8 @@ object Form1: TForm1
       'DROP TABLE WORKERS'
     )
     aSQLPresets = spList
-    left = 108
-    top = 64
+    Left = 108
+    Top = 64
   end
   object DEPARTMENTS: TwfEntity
     TableName = 'DEPARTMENTS'
@@ -279,8 +279,8 @@ object Form1: TForm1
       'DROP TABLE DEPARTMENTS'
     )
     aSQLPresets = spTree
-    left = 108
-    top = 128
+    Left = 108
+    Top = 128
   end
   object wfReport1: TwfReport
     Items = <    
@@ -312,8 +312,8 @@ object Form1: TForm1
         ReportType = rtCSV
       end>
     Base = wfBase1
-    left = 259
-    top = 116
+    Left = 259
+    Top = 116
   end
   object SETTINGS: TwfEntity
     TableName = 'SETTINGS'
@@ -352,18 +352,18 @@ object Form1: TForm1
       'DROP TABLE SETTINGS;'
     )
     aSQLPresets = spTree
-    left = 344
-    top = 79
+    Left = 344
+    Top = 79
   end
   object wfBase1: TwfBase
     Connection = wfIBConnection1
     TransactionRead = wfSQLTransaction1
     InitializedDefaultProc = False
-    left = 26
-    top = 112
+    Left = 26
+    Top = 112
   end
   object wfSQLTransaction1: TwfSQLTransaction
-    Active = True
+    Active = False
     Database = wfIBConnection1
     Params.Strings = (
       'read_committed'
@@ -372,7 +372,7 @@ object Form1: TForm1
       'read'
     )
     TransactionType = wtRead
-    left = 93
-    top = 210
+    Left = 93
+    Top = 210
   end
 end

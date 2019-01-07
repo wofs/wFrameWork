@@ -103,7 +103,7 @@ begin
   aData:= nil;
   aSQL:= Format(uSQLRead,[fTableName, QuotedStr(fPrefix+aName)]);
 
-  Base.GetData(aSQL, aData);
+  aData:= Base.GetData(aSQL);
   try
     Result:= aData.Data(0,'FVALUE');
   finally

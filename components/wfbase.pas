@@ -100,14 +100,12 @@ type
 
       { -= Working with the database =-}
       {Read}
-      procedure OpenSQL(const uSQL: string; var aParams: TwfParams;
-        var aDataSet: TwfSQLQuery);
-      procedure OpenSQL(const uSQL: string; var aDataSet: TwfSQLQuery);
-      procedure OpenSQLFmt (const uSQL : string; const Args : array of const; var aDataSet: TwfSQLQuery);
+      function OpenSQL(const uSQL: string; var aParams: TwfParams):TwfSQLQuery;
+      function OpenSQL(const uSQL: string):TwfSQLQuery;
+      function OpenSQLFmt (const uSQL : string; const Args : array of const):TwfSQLQuery;
 
-      procedure GetData(const uSQL: string; var aParams: TwfParams;
-        var aData: TwfData);
-      procedure GetData(const uSQL: string; var aData: TwfData);
+      function GetData(const uSQL: string; var aParams: TwfParams):TwfData;
+      function GetData(const uSQL: string):TwfData;
 
       {Write}
       function Insert(const uTable: string; const uFields: array of string; const uValues: array of variant; const aResultField: string = 'ID'; aMatchingFields:string = ''): variant;
@@ -550,8 +548,7 @@ end;
   @param   uParamValue   SQL Params
   @result  TwfData       BaseRows Object
 -------------------------------------------------------------------------------}
-procedure TwfBase.GetData(const uSQL: string; var aParams: TwfParams;
-  var aData: TwfData);
+function TwfBase.GetData(const uSQL: string; var aParams: TwfParams): TwfData;
 var
   aDataSet: TwfSQLQuery;
   i, iField, aFieldCount: integer;
@@ -561,10 +558,9 @@ begin
   aDataSet:= nil;
   aRows:= nil;
   aFields:= nil;
-  aData:= nil;
   i:= 0;
 
-  OpenSQL(uSQL, aParams, aDataSet);
+  aDataSet:= OpenSQL(uSQL, aParams);
   try
     SetLength(aRows, LimitLoadedRows);
 
@@ -600,7 +596,7 @@ begin
 
     SetLength(aRows, i);
 
-    aData:= TwfData.Create(aFields, aRows);
+    Result:= TwfData.Create(aFields, aRows);
 
   finally
     FreeAndNil(aDataSet);
@@ -612,13 +608,13 @@ end;
 @param   uSQL          SQL Text
 @result  TwfData       BaseRows Object
 -------------------------------------------------------------------------------}
-procedure TwfBase.GetData(const uSQL: string; var aData: TwfData);
+function TwfBase.GetData(const uSQL: string): TwfData;
 var
   aParams: TwfParams;
 begin
   aParams:= TwfParams.Create(self);
   try
-    GetData(uSQL, aParams, aData);
+    Result:= GetData(uSQL, aParams);
   finally
     aParams.Free;
   end;
@@ -797,7 +793,7 @@ var
   aDataSet: TwfSQLQuery;
 begin
    aDataSet:= nil;
-   OpenSQLFmt(uSQL, [QuotedStr(uTable), QuotedStr(uFieldName)], aDataSet);
+   aDataSet:= OpenSQLFmt(uSQL, [QuotedStr(uTable), QuotedStr(uFieldName)]);
    try
      Result:= aDataSet.RecordCount>0;
    finally
@@ -819,7 +815,7 @@ var
   aDataSet: TwfSQLQuery;
 begin
    aDataSet:= nil;
-   OpenSQLFmt(uSQL, [QuotedStr(uProcName)], aDataSet);
+   aDataSet:= OpenSQLFmt(uSQL, [QuotedStr(uProcName)]);
    try
      Result:= aDataSet.RecordCount>0;
    finally
@@ -841,7 +837,7 @@ var
   aDataSet: TwfSQLQuery;
 begin
    aDataSet:= nil;
-   OpenSQLFmt(uSQL, [QuotedStr(uTriggerName)], aDataSet);
+   aDataSet:= OpenSQLFmt(uSQL, [QuotedStr(uTriggerName)]);
    try
      Result:= aDataSet.RecordCount>0;
    finally
@@ -864,7 +860,7 @@ var
   aDataSet: TwfSQLQuery;
 begin
    aDataSet:= nil;
-   OpenSQLFmt(uSQL, [QuotedStr(uTable)], aDataSet);
+   aDataSet:= OpenSQLFmt(uSQL, [QuotedStr(uTable)]);
    try
      Result:= aDataSet.RecordCount>0;
    finally
@@ -885,7 +881,7 @@ case Engine of
 end;
   aData:= nil;
 
-  GetData(aSQL, aData);
+  aData:= GetData(aSQL);
   try
     SetLength(Result, aData.RowCount);
 
@@ -1044,7 +1040,7 @@ begin
 
    UTF8Delete(aSQL,aPosOrderBy,Length(aSQL)-aPosOrderBy+1);
 
-   GetData(aSQL, aData);
+   aData:= GetData(aSQL);
    try
      Result:= aData.Data(0,'COUNT');
    finally
@@ -1257,21 +1253,21 @@ end;
   @param  aDataSet      DataSet Object
   @result aDataSet      DataSet Object
 -------------------------------------------------------------------------------}
-procedure TwfBase.OpenSQL(const uSQL: string; var aParams: TwfParams;
-  var aDataSet: TwfSQLQuery);
+function TwfBase.OpenSQL(const uSQL: string; var aParams: TwfParams
+  ): TwfSQLQuery;
 var
   aTransaction: TwfSQLTransaction;
   i: Integer;
 begin
-   aDataSet:= nil;
+   Result:= nil;
    aTransaction:= nil;
 
     if not Assigned(fQueryRead) then
-       aDataSet:= TwfSQLQuery.Create(self);
+       Result:= TwfSQLQuery.Create(self);
 
-   TransactionReadInit(aTransaction, aDataSet);
+   TransactionReadInit(aTransaction, Result);
 
-   with aDataSet do begin
+   with Result do begin
      Close;
      Database:= fConnection;
      Transaction:= aTransaction;
@@ -1299,13 +1295,13 @@ end;
   @param  aDataSet      DataSet Object
   @result aDataSet      DataSet Object
 -------------------------------------------------------------------------------}
-procedure TwfBase.OpenSQL(const uSQL: string; var aDataSet: TwfSQLQuery);
+function TwfBase.OpenSQL(const uSQL: string): TwfSQLQuery;
 var
   aParams: TwfParams;
 begin
   aParams:= TwfParams.Create(self);
   try
-    OpenSQL(uSQL, aParams, aDataSet);
+    Result:= OpenSQL(uSQL, aParams);
   finally
     aParams.Free;
   end;
@@ -1318,10 +1314,10 @@ end;
   @param  aDataSet      DataSet Object
   @result aDataSet      DataSet Object
 -------------------------------------------------------------------------------}
-procedure TwfBase.OpenSQLFmt(const uSQL: string; const Args: array of const;
-  var aDataSet: TwfSQLQuery);
+function TwfBase.OpenSQLFmt(const uSQL: string;
+  const Args: array of const): TwfSQLQuery;
 begin
-  OpenSQL(Format(uSQL, Args),aDataSet);
+  Result:= OpenSQL(Format(uSQL, Args));
 end;
 
 
