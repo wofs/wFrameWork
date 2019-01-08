@@ -1246,7 +1246,7 @@ begin
   with aCombobox do begin
     Items.Append(aText);
     if Items.Count>fwSearchComboBoxHistoryCount then
-       for i:= Items.Count downto fwSearchComboBoxHistoryCount do
+       for i:= 0 to Items.Count-fwSearchComboBoxHistoryCount do
          Items.Delete(i);
   end;
 end;

@@ -37,6 +37,7 @@ type
 
   TQueryThread = class(TThread)
   private
+    fonException: TErrorEvent;
     fonFinish: TNotifyEvent;
     fonStart: TNotifyEvent;
 
@@ -52,6 +53,7 @@ type
 
     property onStart: TNotifyEvent read fonStart write fonStart;
     property onFinish: TNotifyEvent read fonFinish write fonFinish;
+    property onException: TErrorEvent read fonException write fonException;
   end;
 
   { TwfData }
@@ -99,6 +101,7 @@ type
 
     procedure CreateNewDataBaseFireBird(const uHost, uPort, uBaseName,
       uUserName, uPassword: string);
+    procedure fOnException(Sender: TObject; const E: Exception);
     procedure fOnFinish(Sender: TObject);
     function GetInitializedDefaultProc: boolean;
     function GetLongTransactionStatus: boolean;
@@ -117,7 +120,7 @@ type
       var aDataSet: TwfSQLQuery);
 
     {Services functions}
-    procedure wfLog(aValue: string);
+    procedure Log(aValue: string);
 
     public
       constructor Create(AOwner: TComponent); override;
@@ -166,7 +169,7 @@ type
       function DataToStr(aField: TField; aCSVComma: boolean= false; aBr: boolean = false): string;
 
       {Aggregate}
-      function WriteWhere(const uSQL: string; aWhere: string; const aClearOldWhere: boolean = true): string;
+      function WriteWhere(const uSQL: string; aWhere: string; const aClearOldWhere: boolean = true; const aAND: boolean = true): string;
       function WriteOrderBy(const uSQL: string; aOrderBy: string): string;
 
       {Connect / Disconnect}
@@ -237,7 +240,12 @@ procedure TQueryThread.Execute;
 begin
   if Assigned(fonStart) then fonStart(self);
 
-  fDataSet:= fBase.OpenSQLInternal(fSQL, fParams);
+  try
+    fDataSet:= fBase.OpenSQLInternal(fSQL, fParams);
+  except
+    on E: Exception do
+      if Assigned(fonException) then fonException(self, E);
+  end;
 
   if Assigned(fonFinish) then fonFinish(self);
 end;
@@ -534,7 +542,7 @@ end;
   // Log write
   @param    aValue     Text for write to Log
 -------------------------------------------------------------------------------}
-procedure TwfBase.wfLog(aValue: string);
+procedure TwfBase.Log(aValue: string);
 begin
   if Assigned(onLog) then onLog(self, aValue);
 end;
@@ -627,7 +635,7 @@ begin
       if i> LimitLoadedRows-1 then
        begin
          {Signal about exceeding the limit}
-         if Assigned(fonLog) then fonLog(self,Format(rsWarningNumberOfEntriesWasLimited,[LimitLoadedRows]));
+         Log(Format(rsWarningNumberOfEntriesWasLimited,[LimitLoadedRows]));
          if Assigned(fonOverloadLimitLoadedRows) then fonOverloadLimitLoadedRows(self);
        end;
 
@@ -706,15 +714,15 @@ begin
        Database:= fConnection;
        Transaction:= aTransaction;
        SQL.Text:= uSQL;
-       wfLog(SQL.Text);
+       Log(SQL.Text);
 
        if Params.Count>0 then
-           wfLog('-= Params =-');
+           Log('-= Params =-');
 
        for i:=0 to Params.Count-1 do
        begin
          Params.ParamByName(aParams[i].Name).Value:= ParamToVar(aParams[i]);
-         wfLog(':'+Params[i].Name+' = '+Params[i].AsString);
+         Log(':'+Params[i].Name+' = '+Params[i].AsString);
        end;
 
        try
@@ -770,7 +778,7 @@ begin
        Database:= fConnection;
        Transaction:= aTransaction;
        SQL.Text:= uSQL;
-       wfLog(SQL.Text);
+       Log(SQL.Text);
 
        try
          ExecSQL;
@@ -809,7 +817,7 @@ begin
        Database:= fConnection;
        Transaction:= aTransaction;
        Script.Assign(uSQLScript);
-       wfLog(Script.Text);
+       Log(Script.Text);
 
        try
          ExecuteScript;
@@ -978,18 +986,24 @@ begin
      Params.Add('page_size 4096');
      Params.Add('default character set UTF8');
 
-     wfLog('Host: '+uHost);
-     wfLog('Port: '+uPort);
-     wfLog('BaseName: '+uBaseName);
+     Log('Host: '+uHost);
+     Log('Port: '+uPort);
+     Log('BaseName: '+uBaseName);
 
      CreateDB;
      Connected := false;
    end;
 
-   wfLog(rsMessageCreatedDataBaseSucefull);
+   Log(rsMessageCreatedDataBaseSucefull);
  except
    raise;
  end;
+end;
+
+procedure TwfBase.fOnException(Sender: TObject; const E: Exception);
+begin
+  Log(E.Message);
+  fOnFinish(Sender);
 end;
 
 procedure TwfBase.fOnFinish(Sender: TObject);
@@ -1005,16 +1019,16 @@ begin
       else
         begin
           ShowMessage(Format(rsMessageCreatedDataBaseInterrupted+'%s',['This database engine is not available.']));
-          wfLog(Format(rsMessageCreatedDataBaseInterrupted+'%s',['This database engine is not available.']));
+          Log(Format(rsMessageCreatedDataBaseInterrupted+'%s',['This database engine is not available.']));
         end;
     end;
 end;
 
 function TwfBase.WriteWhere(const uSQL: string; aWhere: string;
-  const aClearOldWhere: boolean): string;
+  const aClearOldWhere: boolean; const aAND: boolean): string;
 var
   aPosWhere, aPosWhereRes, aPosWhereEnd, aLengthWhere: Integer;
-  aWhereOld: String;
+  aWhereOld, aUnion: String;
 begin
   Result:= UTF8UpperCase(uSQL);
   aPosWhere:= 1;
@@ -1038,7 +1052,7 @@ begin
 
   if aPosWhereEnd = 0 then aPosWhereEnd:= UTF8Length(Result)+1;
 
-  //wfLog(Format('aPosWhereRes %d | aLengthWhere %d | aPosWhereEnd %d',[aPosWhereRes,aLengthWhere,aPosWhereEnd]));
+  //Log(Format('aPosWhereRes %d | aLengthWhere %d | aPosWhereEnd %d',[aPosWhereRes,aLengthWhere,aPosWhereEnd]));
 
   if aPosWhereRes>0 then
    begin
@@ -1050,8 +1064,10 @@ begin
   else
     aPosWhereRes:= aPosWhereEnd;
 
+  if aAND then aUnion:= 'AND' else aUnion:= 'OR';
+
   if (Length(aWhereOld)>0) and (Length(aWhere)>0) then
-     aWhere:= '('+aWhereOld+') AND ('+aWhere+')'
+     aWhere:= '('+aWhereOld+') '+aUnion+' ('+aWhere+')'
    else
      if (Length(aWhereOld)>0) and (Length(aWhere)=0) then
        aWhere:= aWhereOld;
@@ -1318,6 +1334,7 @@ begin
 
       fQueryThread:= TQueryThread.Create(true);
       fQueryThread.onFinish:=@fOnFinish;
+      fQueryThread.onException:=@fOnException;
       fQueryThread.fBase:= self;
       fQueryThread.fSQL:= uSQL;
       fQueryThread.fParams:= aParams;
@@ -1368,13 +1385,13 @@ begin
      Database:= fConnection;
      Transaction:= aTransaction;
      SQL.Text:= uSQL;
-     wfLog(SQL.Text);
+     Log(SQL.Text);
      if aParams.Count>0 then
-       wfLog('-= Params =-');
+       Log('-= Params =-');
      for i:=0 to aParams.Count-1 do
      begin
        Params.ParamByName(aParams[i].Name).Value:= ParamToVar(aParams[i]);
-       wfLog(':'+Params[i].Name+' = '+Params[i].AsString);
+       Log(':'+Params[i].Name+' = '+Params[i].AsString);
      end;
 
      try
