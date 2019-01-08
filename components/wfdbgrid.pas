@@ -160,6 +160,7 @@ end;
     fwSearchComboBoxHistoryCount: integer;
 
     fGridImageList: TImageList;
+    fSearchSplitIntoSubstringsBtn: TSpeedButton;
 
     function GetBase: TwfBase;
     function GetColumnIndexByName(aFieldName: string): integer;
@@ -178,6 +179,7 @@ end;
     function GetSearchFieldsContaining: string;
     function GetSearchFieldsIn: string;
     function GetSearchFieldsLike: string;
+    function GetSearchSplitIntoSubstringsBtn: TSpeedButton;
     function GetSelectedCount: Int64;
     function GetSelectedItems: ArrayOfBaseID;
     function GetSQLText: TStrings;
@@ -201,9 +203,11 @@ end;
     procedure SetSearchFieldsIn(aValue: string);
     procedure SetSearchFieldsLike(aValue: string);
     procedure SetSearchHistory(aText: string);
+    procedure SetSearchSplitIntoSubstringsBtn(aValue: TSpeedButton);
     procedure SetSelectAll(aValue: boolean);
     procedure SetSearchPreventiveBtn(aValue: TSpeedButton);
     function GetSearchPreventiveBtnState: boolean;
+    function GetSearchSplitIntoSubstringsBtnState : boolean;
     procedure wfOnDragOver(Sender, Source: TObject; X, Y: Integer;
       State: TDragState; var Accept: Boolean);
     procedure wfOnEndDrag(Sender, Target: TObject; X, Y: Integer);
@@ -265,7 +269,13 @@ end;
     //TSpeedButton If you specify, depending on the status of the button, a search will be performed.
     property wSearchPreventiveBtn: TSpeedButton read GetSearchPreventiveBtn write SetSearchPreventiveBtn;
 
+    //TSpeedButton
     property wSearchComboBoxClearBtn: TSpeedButton read GetSearchComboBoxClearBtn write SetSearchComboBoxClearBtn;
+
+    //TSpeedButton Specifies whether to split strings into substrings (space delimiter)
+    //Only for stContaining, stLike
+    //(wSearchFieldsContaining, wSearchFieldsLike)
+    property wSearchSplitIntoSubstringsBtn: TSpeedButton read GetSearchSplitIntoSubstringsBtn write SetSearchSplitIntoSubstringsBtn;
 
     //The maximum number of entries in the search history
     property wSearchComboBoxHistoryCount: integer read fwSearchComboBoxHistoryCount write SetSearchComboBoxHistoryCount default 0;
@@ -852,6 +862,13 @@ begin
   Result:= fWhereList.SearchFieldsLike;
 end;
 
+function TwfDBGrid.GetSearchSplitIntoSubstringsBtn: TSpeedButton;
+begin
+  if not Assigned(fSearchSplitIntoSubstringsBtn) then
+    fSearchSplitIntoSubstringsBtn:= nil;
+  Result:= fSearchSplitIntoSubstringsBtn;
+end;
+
 function TwfDBGrid.GetSelectedCount: Int64;
 begin
   Result:= fSelectedItems.Count;
@@ -1234,6 +1251,23 @@ begin
   end;
 end;
 
+procedure TwfDBGrid.SetSearchSplitIntoSubstringsBtn(aValue: TSpeedButton);
+begin
+  if fSearchSplitIntoSubstringsBtn=aValue then exit; //=>
+  if Assigned(aValue) then
+    begin
+      aValue.OnClick:=@wfSearchPreventiveBtn_OnClick;
+    end else
+    begin
+      if Assigned(fSearchSplitIntoSubstringsBtn) then
+        begin
+          fSearchSplitIntoSubstringsBtn.OnClick:= nil;
+        end;
+    end;
+
+    fSearchSplitIntoSubstringsBtn:=aValue;
+end;
+
 procedure TwfDBGrid.Search(aText: string);
 begin
   if (Length(aText)>0) and Assigned(fSearchComboBox) then
@@ -1263,6 +1297,14 @@ function TwfDBGrid.GetSearchPreventiveBtnState:boolean;
 begin
   if Assigned(fSearchPreventiveBtn) then
    Result:= fSearchPreventiveBtn.Down
+  else
+   Result:= false;
+end;
+
+function TwfDBGrid.GetSearchSplitIntoSubstringsBtnState: boolean;
+begin
+  if Assigned(fSearchSplitIntoSubstringsBtn) then
+   Result:= fSearchSplitIntoSubstringsBtn.Down
   else
    Result:= false;
 end;
@@ -1318,7 +1360,7 @@ procedure TwfDBGrid.GenerateSearchList(aSearchText: string;
   aSearchType: TSQLItemType; const uNameSearch: string;
   const uFieldList: string);
 begin
-  fWhereList.GenerateSearchList(aSearchText, aSearchType, uNameSearch, uFieldList);
+  fWhereList.GenerateSearchList(GetSearchSplitIntoSubstringsBtnState, aSearchText, aSearchType, uNameSearch, uFieldList);
 end;
 
 constructor TwfDBGrid.Create(AOwner: TComponent);

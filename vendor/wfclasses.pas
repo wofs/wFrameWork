@@ -139,7 +139,7 @@ type
      procedure DelItem(const aIndex: integer);
      function IndexOf(aName: string): int64;
 
-     procedure GenerateSearchList(aSearchText: string; aSearchType: TSQLItemType; const uNameSearch: string = ''; const uFieldList: string = '');
+     procedure GenerateSearchList(doSplitIntoSubstrings:boolean; aSearchText: string; aSearchType: TSQLItemType; const uNameSearch: string = ''; const uFieldList: string = '');
 
      property AsString: string read GetAsString;
      property AsParams: TwfParams read GetAsParams;
@@ -329,9 +329,10 @@ begin
 
 end;
 
-procedure TwfCustomSQLItemList.GenerateSearchList(aSearchText: string;
-  aSearchType: TSQLItemType; const uNameSearch: string;
-  const uFieldList: string);
+procedure TwfCustomSQLItemList.GenerateSearchList(
+  doSplitIntoSubstrings: boolean; aSearchText: string;
+  aSearchType: TSQLItemType; const uNameSearch: string; const uFieldList: string
+  );
 var
   aSearchStrings, aFieldsList: TStringList;
   i, iField: Integer;
@@ -363,7 +364,7 @@ begin
     aNameSearch:= uNameSearch;
 
   try
-
+      { TODO : Добавить опциональную вохможность не разделять строки на подстроки }
     aFieldsList.Delimiter:=',';
     case aSearchType of
       stContaining  :
@@ -372,7 +373,11 @@ begin
                       aFieldsList.DelimitedText:= uFieldList
                     else
                       aFieldsList.DelimitedText:= fSearchFieldsContaining;
-                    aSearchStrings.CommaText:= aSearchText;
+
+                    if doSplitIntoSubstrings then
+                      aSearchStrings.CommaText:= aSearchText
+                    else
+                      aSearchStrings.Text:= aSearchText;
                   end;
       stLike        :
                   begin
@@ -380,7 +385,11 @@ begin
                       aFieldsList.DelimitedText:= uFieldList
                     else
                       aFieldsList.DelimitedText:= fSearchFieldsLike;
-                    aSearchStrings.CommaText:= aSearchText;
+
+                    if doSplitIntoSubstrings then
+                      aSearchStrings.CommaText:= aSearchText
+                    else
+                      aSearchStrings.Text:= aSearchText;
                   end;
       stIn          :
                   begin
