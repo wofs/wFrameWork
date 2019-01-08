@@ -538,7 +538,7 @@ begin
 
   fShowFormInTaskBar:= true;
 
-  fPluginList := TStringList.Create(); // создали общий список плагинов
+  fPluginList := TStringList.Create(); // created a common list of plugins
   fPluginsLoaded:= TwfPluginLoadedList.Create();
 
   fPluginIcons:= TImageList.Create(self);
@@ -727,7 +727,7 @@ begin
   for i := 0 to Length(TFormsName) - 1 do
   begin
     aPluginName:= 'Plugin'+IntToStr(i);
-    RegisterClassAlias(TFormsName[i],aPluginName); // регистрируем классы из массива
+    RegisterClassAlias(TFormsName[i],aPluginName); // register classes from array
     fPluginList.Add(aPluginName);
   end;
 

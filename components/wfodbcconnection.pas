@@ -35,6 +35,13 @@ type
 
     function Connect(aHost, aUserName, aPassword, aDataBase: string;
       const aReadOnly:boolean = true; const aDriver: string = 'ODBC Driver 11 for SQL Server'): boolean;
+
+    function SQLFieldIsExists(const uTable, uFieldName: string): string; virtual; abstract;
+    function SQLProcIsExists(const uProcName: string): string; virtual; abstract;
+    function SQLTriggerIsExists(const uTriggerName: string): string; virtual; abstract;
+    function SQLTableIsExists(const uTable: string): string; virtual; abstract;
+    function SQLGetTables: string; virtual; abstract;
+
     procedure Disconnect;
 
   published

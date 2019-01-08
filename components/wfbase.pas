@@ -101,8 +101,10 @@ type
 
     procedure CreateNewDataBaseFireBird(const uHost, uPort, uBaseName,
       uUserName, uPassword: string);
+    function EntityIsExists(const uSQL: string): boolean;
     procedure fOnException(Sender: TObject; const E: Exception);
     procedure fOnFinish(Sender: TObject);
+    function GetArrayOfString(const uSQL: string): ArrayOfString;
     function GetInitializedDefaultProc: boolean;
     function GetLongTransactionStatus: boolean;
 
@@ -835,26 +837,46 @@ begin
 end;
 
 {@@ ----------------------------------------------------------------------------
+  // Entity Is Exists  result
+  @param  uSQL
+  @result boolean
+-------------------------------------------------------------------------------}
+function TwfBase.EntityIsExists(const uSQL: string): boolean;
+var
+  aDataSet: TwfSQLQuery;
+begin
+   aDataSet:= nil;
+   try
+     aDataSet:= OpenSQL(uSQL);
+   except
+     raise;
+   end;
+   try
+     Result:= aDataSet.RecordCount>0;
+   finally
+     FreeAndNil(aDataSet);
+   end;
+end;
+
+{@@ ----------------------------------------------------------------------------
   // Check Field Is Exists
   @param  uTable
   @param  uFieldName
   @result boolean
 -------------------------------------------------------------------------------}
 function TwfBase.FieldIsExists(const uTable, uFieldName: string): boolean;
-const
-  uSQL = 'SELECT RDB$FIELD_NAME '
-        +' FROM RDB$RELATION_FIELDS '
-        +' WHERE RDB$RELATION_NAME=%s AND RDB$FIELD_NAME=%s';
-var
-  aDataSet: TwfSQLQuery;
 begin
-   aDataSet:= nil;
-   aDataSet:= OpenSQLFmt(uSQL, [QuotedStr(uTable), QuotedStr(uFieldName)]);
-   try
-     Result:= aDataSet.RecordCount>0;
-   finally
-     FreeAndNil(aDataSet);
-   end;
+ Result:= false;
+
+ case Engine of
+   seFirebird  : Result:= EntityIsExists(TwfIBConnection(Connection).SQLFieldIsExists(uTable, uFieldName));
+   seODBC      : Result:= EntityIsExists(TwfODBCConnection(Connection).SQLFieldIsExists(uTable, uFieldName));
+   else
+     begin
+       Log(Format(rsMessageCreatedDataBaseInterrupted+'%s',[rsExceptErrorDatabaseEngineIsNotAvailable]));
+       raise Exception.CreateFmt(rsMessageCreatedDataBaseInterrupted,[rsExceptErrorDatabaseEngineIsNotAvailable]);
+     end;
+ end;
 end;
 
 {@@ ----------------------------------------------------------------------------
@@ -863,20 +885,18 @@ end;
   @result boolean
 -------------------------------------------------------------------------------}
 function TwfBase.ProcIsExists(const uProcName: string): boolean;
-const
-  uSQL = 'SELECT rdb$procedure_source '
-          +' FROM rdb$procedures '
-          +' WHERE rdb$procedure_name = %s';
-var
-  aDataSet: TwfSQLQuery;
 begin
-   aDataSet:= nil;
-   aDataSet:= OpenSQLFmt(uSQL, [QuotedStr(uProcName)]);
-   try
-     Result:= aDataSet.RecordCount>0;
-   finally
-     FreeAndNil(aDataSet);
-   end;
+ Result:= false;
+
+ case Engine of
+   seFirebird  : Result:= EntityIsExists(TwfIBConnection(Connection).SQLProcIsExists(uProcName));
+   seODBC      : Result:= EntityIsExists(TwfODBCConnection(Connection).SQLProcIsExists(uProcName));
+   else
+     begin
+       Log(Format(rsMessageCreatedDataBaseInterrupted+'%s',[rsExceptErrorDatabaseEngineIsNotAvailable]));
+       raise Exception.CreateFmt(rsMessageCreatedDataBaseInterrupted,[rsExceptErrorDatabaseEngineIsNotAvailable]);
+     end;
+ end;
 end;
 
 {@@ ----------------------------------------------------------------------------
@@ -885,20 +905,18 @@ end;
   @result boolean
 -------------------------------------------------------------------------------}
 function TwfBase.TriggerIsExists(const uTriggerName: string): boolean;
-const
-  uSQL = 'SELECT * FROM RDB$TRIGGERS '
-      +' WHERE RDB$SYSTEM_FLAG = 0 '
-      +' AND RDB$TRIGGER_NAME=%s';
-var
-  aDataSet: TwfSQLQuery;
 begin
-   aDataSet:= nil;
-   aDataSet:= OpenSQLFmt(uSQL, [QuotedStr(uTriggerName)]);
-   try
-     Result:= aDataSet.RecordCount>0;
-   finally
-     FreeAndNil(aDataSet);
-   end;
+ Result:= false;
+
+ case Engine of
+   seFirebird  : Result:= EntityIsExists(TwfIBConnection(Connection).SQLTriggerIsExists(uTriggerName));
+   seODBC      : Result:= EntityIsExists(TwfODBCConnection(Connection).SQLTriggerIsExists(uTriggerName));
+   else
+     begin
+       Log(Format(rsMessageCreatedDataBaseInterrupted+'%s',[rsExceptErrorDatabaseEngineIsNotAvailable]));
+       raise Exception.CreateFmt(rsMessageCreatedDataBaseInterrupted,[rsExceptErrorDatabaseEngineIsNotAvailable]);
+     end;
+ end;
 end;
 
 {@@ ----------------------------------------------------------------------------
@@ -907,44 +925,45 @@ end;
   @result boolean
 -------------------------------------------------------------------------------}
 function TwfBase.TableIsExists(const uTable: string): boolean;
-const
-  uSQL = 'SELECT DISTINCT RDB$RELATION_NAME '
-        +' FROM RDB$RELATION_FIELDS '
-        +' WHERE RDB$SYSTEM_FLAG=0 '
-        +' AND RDB$RELATION_NAME=%s';
-var
-  aDataSet: TwfSQLQuery;
 begin
-   aDataSet:= nil;
-   aDataSet:= OpenSQLFmt(uSQL, [QuotedStr(uTable)]);
-   try
-     Result:= aDataSet.RecordCount>0;
-   finally
-     FreeAndNil(aDataSet);
-   end;
+ Result:= false;
+
+ case Engine of
+   seFirebird  : Result:= EntityIsExists(TwfIBConnection(Connection).SQLTableIsExists(uTable));
+   seODBC      : Result:= EntityIsExists(TwfODBCConnection(Connection).SQLTableIsExists(uTable));
+   else
+     begin
+       Log(Format(rsMessageCreatedDataBaseInterrupted+'%s',[rsExceptErrorDatabaseEngineIsNotAvailable]));
+       raise Exception.CreateFmt(rsMessageCreatedDataBaseInterrupted,[rsExceptErrorDatabaseEngineIsNotAvailable]);
+     end;
+ end;
 end;
 
-function TwfBase.GetTables: ArrayOfString;
+function TwfBase.GetArrayOfString(const uSQL:string): ArrayOfString;
 var
   aData: TwfData;
   i: Integer;
-  aSQL: string;
 begin
+ aData:= nil;
 
-case Engine of
-  seFirebird  : aSQL:= 'SELECT DISTINCT RDB$RELATION_NAME FROM RDB$RELATION_FIELDS WHERE RDB$SYSTEM_FLAG=0;';
-  seODBC      : aSQL:= 'SELECT name FROM sys.databases d WHERE d.database_id>4;';
+ aData:= GetData(uSQL);
+ try
+   SetLength(Result, aData.RowCount);
+
+   for i:= 0 to aData.RowCount-1 do
+     Result[i]:= aData.Data(i,0);
+ finally
+   FreeAndNil(aData);
+ end;
 end;
-  aData:= nil;
 
-  aData:= GetData(aSQL);
-  try
-    SetLength(Result, aData.RowCount);
+function TwfBase.GetTables: ArrayOfString;
+begin
+  Result:= nil;
 
-    for i:= 0 to aData.RowCount-1 do
-      Result[i]:= aData.Data(i,0);
-  finally
-    FreeAndNil(aData);
+  case Engine of
+    seFirebird  : Result:= GetArrayOfString(TwfIBConnection(Connection).SQLGetTables);
+    seODBC      : Result:= GetArrayOfString(TwfODBCConnection(Connection).SQLGetTables);
   end;
 end;
 
@@ -1018,8 +1037,8 @@ begin
       seFirebird: CreateNewDataBaseFireBird(uHost, uPort, uBaseName, uUserName, uPassword)
       else
         begin
-          ShowMessage(Format(rsMessageCreatedDataBaseInterrupted+'%s',['This database engine is not available.']));
-          Log(Format(rsMessageCreatedDataBaseInterrupted+'%s',['This database engine is not available.']));
+          Log(Format(rsMessageCreatedDataBaseInterrupted+'%s',[rsExceptErrorDatabaseEngineIsNotAvailable]));
+          raise Exception.CreateFmt(rsMessageCreatedDataBaseInterrupted,[rsExceptErrorDatabaseEngineIsNotAvailable]);
         end;
     end;
 end;

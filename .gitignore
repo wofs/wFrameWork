@@ -1,0 +1,14 @@
+*.bak
+*.FDB
+*.lpi
+*.lps
+*.lfm
+*.pas
+*.compiled
+*.o
+*.obj
+*.res
+*.ppu
+*.dbg
+*.exe
+*.rsj

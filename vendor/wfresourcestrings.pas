@@ -27,6 +27,7 @@ uses
     rsExceptErrorSQLParams                            = 'Error SQL Params!';
     rsExceptErrorFindFieldName                        = 'Error find field Name %s !';
     rsExceptErrorLongTransactionIsActive              = 'Long Transaction is active!';
+    rsExceptErrorDatabaseEngineIsNotAvailable         = 'This database engine is not available!';
     rsMessageCreatedDataBaseSucefull                  = 'Created DataBase Sucefull';
     rsMessageCreatedDataBaseInterrupted               = 'Database creation was interrupted!';
     rsMessageConectedSucefull                         = 'Conected Sucefull';

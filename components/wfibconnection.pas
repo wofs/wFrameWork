@@ -39,7 +39,15 @@ type
 
     function Connect(const uHost, uPort, uBaseName, uUserName, uPassword: string
       ): boolean;
+
+    function SQLFieldIsExists(const uTable, uFieldName: string): string; virtual;
+    function SQLProcIsExists(const uProcName: string): string; virtual;
+    function SQLTriggerIsExists(const uTriggerName: string): string; virtual;
+    function SQLTableIsExists(const uTable: string): string; virtual;
+    function SQLGetTables: string; virtual;
+
     procedure Disconnect;
+
   published
 
     property onLog:TTextEvent read fonLog write fonLog;
@@ -177,6 +185,49 @@ begin
   except
     raise;
   end;
+end;
+
+function TwfIBConnection.SQLFieldIsExists(const uTable, uFieldName: string
+  ): string;
+const
+  uSQL = 'SELECT RDB$FIELD_NAME '
+        +' FROM RDB$RELATION_FIELDS '
+        +' WHERE RDB$RELATION_NAME=%s AND RDB$FIELD_NAME=%s';
+begin
+  Result:= Format(uSQL, [QuotedStr(uTable), QuotedStr(uFieldName)])
+end;
+
+function TwfIBConnection.SQLProcIsExists(const uProcName: string): string;
+const
+  uSQL = 'SELECT rdb$procedure_source '
+          +' FROM rdb$procedures '
+          +' WHERE rdb$procedure_name = %s';
+begin
+  Result:= Format(uSQL, [QuotedStr(uProcName)])
+end;
+
+function TwfIBConnection.SQLTriggerIsExists(const uTriggerName: string): string;
+const
+  uSQL = 'SELECT * FROM RDB$TRIGGERS '
+      +' WHERE RDB$SYSTEM_FLAG = 0 '
+      +' AND RDB$TRIGGER_NAME=%s';
+begin
+  Result:= Format(uSQL, [QuotedStr(uTriggerName)])
+end;
+
+function TwfIBConnection.SQLTableIsExists(const uTable: string): string;
+const
+  uSQL = 'SELECT DISTINCT RDB$RELATION_NAME '
+        +' FROM RDB$RELATION_FIELDS '
+        +' WHERE RDB$SYSTEM_FLAG=0 '
+        +' AND RDB$RELATION_NAME=%s';
+begin
+  Result:= Format(uSQL, [QuotedStr(uTable)])
+end;
+
+function TwfIBConnection.SQLGetTables: string;
+begin
+  Result:= 'SELECT DISTINCT RDB$RELATION_NAME FROM RDB$RELATION_FIELDS WHERE RDB$SYSTEM_FLAG=0;';
 end;
 
 {@@ ----------------------------------------------------------------------------
