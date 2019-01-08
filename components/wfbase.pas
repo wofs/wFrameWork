@@ -144,6 +144,7 @@ type
 
       function GetData(const uSQL: string; var aParams: TwfParams):TwfData;
       function GetData(const uSQL: string):TwfData;
+      function GetDataFmt (const uSQL : string; const Args : array of const):TwfData;
 
       {Write}
       function Insert(const uTable: string; const uFields: array of string; const uValues: array of variant; const aResultField: string = 'ID'; aMatchingFields:string = ''): variant;
@@ -676,6 +677,18 @@ begin
   finally
     aParams.Free;
   end;
+end;
+
+{@@ ----------------------------------------------------------------------------
+  // SQL query Wripper for Format
+  @param  uSQL          SQL Text
+  @param  Args          array of const
+  @result TwfData       Data Object
+-------------------------------------------------------------------------------}
+function TwfBase.GetDataFmt(const uSQL: string;
+  const Args: array of const): TwfData;
+begin
+  Result:= GetData(Format(uSQL, Args));
 end;
 
 {@@ ----------------------------------------------------------------------------
@@ -1443,7 +1456,6 @@ end;
   // SQL query Wripper for Format
   @param  uSQL          SQL Text
   @param  Args          array of const
-  @param  aDataSet      DataSet Object
   @result aDataSet      DataSet Object
 -------------------------------------------------------------------------------}
 function TwfBase.OpenSQLFmt(const uSQL: string;
