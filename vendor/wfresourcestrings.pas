@@ -32,6 +32,7 @@ uses
     rsMessageCreatedDataBaseInterrupted               = 'Database creation was interrupted!';
     rsMessageConectedSucefull                         = 'Conected Sucefull';
     rsMessageDisconnectSucefull                       = 'Disconnect Sucefull';
+    rsMessageNoData                              = 'No data!';
     rsWarningNumberOfEntriesWasLimited                = 'Error! The number of entries exceeded the maximum (%d)';
 
     {-= DBTree =-}

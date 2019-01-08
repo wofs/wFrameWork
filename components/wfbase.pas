@@ -328,6 +328,12 @@ end;
 -------------------------------------------------------------------------------}
 function TwfData.Data(const uRowIndex, uColIndex: integer): variant;
 begin
+  if not Assigned(fRows) then
+   begin
+     Result:= rsMessageNoData;
+     exit;
+   end;
+
   Result:= fRows[uRowIndex].Fields[uColIndex].Value;
   if Result = null then
      Result:= ConvertNullFieldToVar(Fields[uColIndex]);

@@ -878,19 +878,19 @@ function TwfDBGrid.GetSelectedItems: ArrayOfBaseID;
 var
   i: Integer;
 begin
-  if fSelectedItems.Count = 0 then
-    begin
-      SetLength(Result, 1);
-      Result[0]:= VarToBaseID(self.DataSource.DataSet.FieldByName('ID').AsVariant);
-    end
-  else
-    begin
+  //if fSelectedItems.Count = 0 then
+  //  begin
+  //    SetLength(Result, 1);
+  //    Result[0]:= VarToBaseID(self.DataSource.DataSet.FieldByName('ID').AsVariant);
+  //  end
+  //else
+  //  begin
       SetLength(Result, fSelectedItems.Count);
         for i:=0 to fSelectedItems.Count-1 do
           begin
             Result[i]:= fSelectedItems.Items[i];
           end;
-    end;
+    //end;
 end;
 
 function TwfDBGrid.GetSQLText: TStrings;
