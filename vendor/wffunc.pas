@@ -17,7 +17,7 @@ unit wfFunc;
 interface
 
 uses
-  Classes, windows, SysUtils, db, LazUTF8, Graphics, Dialogs, StdCtrls, wfTypes,
+  Classes, SysUtils, db, LazUTF8, Graphics, Dialogs, StdCtrls, wfTypes,
   md5, fpspreadsheet, fpsTypes, fpspreadsheetctrls;
 
 function VarToStr(Value: variant): string;

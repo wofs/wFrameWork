@@ -15,7 +15,7 @@ unit wfValueListEditor;
 interface
 
 uses
-  Classes, windows, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
+  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
   Grids, StdCtrls, Buttons, Spin, wfFunc, wfTypes, wfBase, wfComboBox;
 
 type
