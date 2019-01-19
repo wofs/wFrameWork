@@ -7,7 +7,7 @@ interface
 uses
   Forms, Controls, StdCtrls, ExtCtrls, wfIBConnection, wfBase, wfDBGrid,
   wfEntity, wfTreeView, wfReport, wfSQLQuery, wfComboBox, wfstatusprogressbar,
-  wfVersions, wfSQLTransaction, wfFunc, wfClasses, sqldb, db, wcthread, Classes,
+  wfVersions, wfSQLTransaction, wfFunc, wfClasses, sqldb, db, Classes,
   sysutils, Grids, DBGrids, ComCtrls, Menus, Dialogs;
 
 type
@@ -39,6 +39,9 @@ type
     procedure Button3Click(Sender: TObject);
     procedure mExportClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure wfReport1Items0Finish(aReport: TwfReportItem; const Msg: Word;
+      const Param: Variant);
+    procedure wfReport1Items0ForceFinish(const Sender: TwfReportThread);
   private
     procedure Log(aText:string);
     procedure onLog(Sender: TObject; const aValue: string);
@@ -105,6 +108,17 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   wfBase1.onLog:=@onLog;
+end;
+
+procedure TForm1.wfReport1Items0Finish(aReport: TwfReportItem; const Msg: Word;
+  const Param: Variant);
+begin
+  ShowMessage('Finish!');
+end;
+
+procedure TForm1.wfReport1Items0ForceFinish(const Sender: TwfReportThread);
+begin
+  ShowMessage('Force Finish!');
 end;
 
 procedure TForm1.Log(aText: string);

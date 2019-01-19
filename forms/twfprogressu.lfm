@@ -8,9 +8,10 @@ object wfProgress: TwfProgress
   ClientHeight = 27
   ClientWidth = 422
   FormStyle = fsStayOnTop
+  OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   Position = poScreenCenter
-  LCLVersion = '1.8.2.0'
+  LCLVersion = '1.8.4.0'
   object Bar: TProgressBar
     Left = 0
     Height = 20

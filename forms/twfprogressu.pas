@@ -24,15 +24,18 @@ type
 
   TwfProgress = class(TForm)
     Bar: TProgressBar;
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
   private
     fonStopForce: TNotifyEvent;
     fNoClose: boolean;
 
+    procedure AsyncFree(Data: PtrInt);
     function GetMarquee: boolean;
     procedure SetMarquee(aValue: boolean);
   public
     constructor Create(TheOwner: TComponent); override;
+    destructor Destroy; override;
 
     procedure ForceClose;
 
@@ -64,9 +67,19 @@ begin
     CanClose:= false;
 end;
 
+procedure TwfProgress.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  CloseAction:= caFree;
+end;
+
 function TwfProgress.GetMarquee: boolean;
 begin
   Result:= (Bar.Style = pbstMarquee);
+end;
+
+procedure TwfProgress.AsyncFree(Data: PtrInt);
+begin
+  FreeAndNil(self);
 end;
 
 procedure TwfProgress.SetMarquee(aValue: boolean);
@@ -84,10 +97,16 @@ begin
   Height:= Bar.Height;
 end;
 
+destructor TwfProgress.Destroy;
+begin
+  inherited Destroy;
+end;
+
 procedure TwfProgress.ForceClose;
 begin
   fNoClose:= false;
   Close();
+  //Application.QueueAsyncCall(@AsyncFree,0);
 end;
 
 procedure TwfProgress.InitBar(aMax: integer; const aStep: integer);

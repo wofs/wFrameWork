@@ -510,7 +510,7 @@ convey the exclusion of warranty; and each file should have at least the
 
 Degtyarev Alexander A. 
 E-mail: degtyarev.alexander.code@yandex.ru"/>
-    <Version Minor="1" Release="2" Build="10"/>
+    <Version Minor="1" Release="2" Build="11"/>
     <Files Count="24">
       <Item1>
         <Filename Value="vendor\wfresourcestrings.pas"/>
@@ -638,22 +638,19 @@ E-mail: degtyarev.alexander.code@yandex.ru"/>
         <UnitName Value="def"/>
       </Item24>
     </Files>
-    <RequiredPkgs Count="5">
+    <RequiredPkgs Count="4">
       <Item1>
-        <PackageName Value="Threading"/>
+        <PackageName Value="laz_fpspreadsheet_visual"/>
       </Item1>
       <Item2>
-        <PackageName Value="laz_fpspreadsheet_visual"/>
+        <PackageName Value="IDEIntf"/>
       </Item2>
       <Item3>
-        <PackageName Value="IDEIntf"/>
+        <PackageName Value="LCL"/>
       </Item3>
       <Item4>
-        <PackageName Value="LCL"/>
-      </Item4>
-      <Item5>
         <PackageName Value="FCL"/>
-      </Item5>
+      </Item4>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>
