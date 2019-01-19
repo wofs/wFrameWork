@@ -16,10 +16,10 @@ unit wfReport;
 interface
 
 uses
-    {$ifdef unix}
+    {$IFDEF UNIX}{$IFDEF UseCThreads}
       cthreads,
-      cmem, // the c memory manager is on some systems much faster for multi-threading
-    {$endif}
+      cmem,
+    {$ENDIF}{$ENDIF}
     Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ComCtrls,
     LazUTF8, wfTypes, wfResourceStrings, wfFunc, wfDialogs,
     TwfProgressU, wfreportviewer, wfBase, wfSQLQuery, db, fpspreadsheetctrls,

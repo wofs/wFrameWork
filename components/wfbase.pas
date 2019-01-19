@@ -17,10 +17,10 @@ unit wfBase;
 interface
 
 uses
-  {$ifdef unix}
+  {$IFDEF UNIX}{$IFDEF UseCThreads}
     cthreads,
-    cmem, // the c memory manager is on some systems much faster for multi-threading
-  {$endif}
+    cmem,
+  {$ENDIF}{$ENDIF}
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, LazUTF8,
   wfTypes, wfClasses, wfResourceStrings, wfFunc, wfSQLQuery, wfSQLTransaction,
   wfIBConnection, wfSQLScript, wfODBCConnection, db, sqldb, TwfProgressU;
