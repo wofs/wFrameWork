@@ -23,7 +23,8 @@ uses
   {$ENDIF}{$ENDIF}
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, LazUTF8,
   wfTypes, wfClasses, wfResourceStrings, wfFunc, wfSQLQuery, wfSQLTransaction,
-  wfIBConnection, wfSQLScript, wfODBCConnection, db, sqldb, TwfProgressU;
+  wfIBConnection, wfSQLScript, wfODBCConnection, wfPQConnection, db, sqldb,
+  TwfProgressU;
 
 type
 
@@ -31,7 +32,7 @@ type
 
   //If you change TwfSQLEngine to make changes in the same way
   //QuotedGUID() , GetEngine(), GetUseGUID, GetDomainOrProcedureString, GetBeforeInsertTrigger
-  TwfSQLEngine = (seFirebird, seODBC, seUnknown);
+  TwfSQLEngine = (seFirebird, seODBC, sePostgreSQL, seUnknown);
 
   { TQueryThread }
 
@@ -111,6 +112,8 @@ type
     // Кeturns the type of engine used. It is necessary to use specific functions.
     function GetEngine: TwfSQLEngine;
     function GetNewBaseID: BaseID;
+    function GetQueryRead: TwfSQLQuery;
+    function GetQueryWrite: TwfSQLQuery;
     function GetTransactionRead: TwfSQLTransaction;
     function GetTransactionWrite: TwfSQLTransaction;
 
@@ -204,13 +207,13 @@ type
       function AsString(aArr: ArrayOfString): string;
       function AsString(aArr: ArrayOfBaseID): string;
       function AsString(aArr: ArrayOfInt64): string;
-
+      function AsString(aStrings: TStrings): string;
       {-= Properties =-}
       property LongTransaction: boolean read GetLongTransactionStatus;
   published
     property Connection: TSQLConnection read fConnection write fConnection default nil;
-    property QueryRead: TwfSQLQuery read fQueryRead write fQueryRead default nil;
-    property QueryWrite: TwfSQLQuery read fQueryWrite write fQueryWrite default nil;
+    property QueryRead: TwfSQLQuery read GetQueryRead write fQueryRead default nil;
+    property QueryWrite: TwfSQLQuery read GetQueryWrite write fQueryWrite default nil;
     property TransactionRead: TwfSQLTransaction read GetTransactionRead write SetTransactionRead default nil;
     property TransactionWrite: TwfSQLTransaction read GetTransactionWrite write fTransactionWrite default nil;
     //The maximum number of rows that can be loaded into TwfData.
@@ -417,6 +420,7 @@ begin
   Result:='';
   case GetEngine of
     seFirebird: Result:= TwfIBConnection(fConnection).GetDomainOrProcedureString;
+    sePostgreSQL: Result:= TwfPQConnection(fConnection).GetDomainOrProcedureString;
   end;
 end;
 
@@ -453,16 +457,41 @@ begin
  end;
 end;
 
+function TwfBase.AsString(aStrings: TStrings): string;
+var
+  i: Integer;
+begin
+  Result:= EmptyStr;
+  for i:=0 to aStrings.Count-1 do begin
+      if not IsEmpty(Result) then
+         Result += wfLE;
+
+      Result += aStrings.Strings[i];
+  end;
+end;
+
 function TwfBase.GetLongTransactionStatus: boolean;
 begin
   Result:= Assigned(fLongTransaction);
 end;
 
 function TwfBase.GetInitializedDefaultProc: boolean;
+var
+  fEngine: TwfSQLEngine;
 begin
   Result:= false;
   if not Assigned(self) or not Assigned(fConnection) or not fConnection.Connected then exit;
-  Result:= ProcIsExists('WF_GET_DEPARTMENTSALT');
+
+  case GetEngine of
+    seFirebird: Result:= ProcIsExists('WF_GET_DEPARTMENTSALT');
+    seODBC: Result:= false;
+    {$IFDEF USEGUID}
+      sePostgreSQL: Result:= ProcIsExists('uuid_generate_v4');
+    {$ELSE}
+      sePostgreSQL: Result:= false;
+    {$ENDIF}
+    seUnknown: Result:= false;
+  end;
 end;
 
 function TwfBase.GetEngine: TwfSQLEngine;
@@ -474,6 +503,9 @@ begin
 
  if fConnection is TwfODBCConnection then
    Result:= seODBC;
+
+ if fConnection is TwfPQConnection then
+  Result:= sePostgreSQL;
 end;
 
 function TwfBase.GetNewBaseID: BaseID;
@@ -504,6 +536,18 @@ begin
  {$ENDIF}
 end;
 
+function TwfBase.GetQueryRead: TwfSQLQuery;
+begin
+  if IsEmpty(fQueryRead) then fQueryRead:= nil;
+  Result:= fQueryRead;
+end;
+
+function TwfBase.GetQueryWrite: TwfSQLQuery;
+begin
+  if IsEmpty(fQueryWrite) then fQueryWrite:= nil;
+  Result:= fQueryWrite;
+end;
+
 function TwfBase.GetTransactionRead: TwfSQLTransaction;
 begin
   if not Assigned(fTransactionRead) then fTransactionRead:= nil;
@@ -527,7 +571,7 @@ begin
   try
     aStrings.Text:= GetDomainOrProcedureString;
 
-    if aValue then
+    if aValue and (not IsEmpty(aStrings)) then
       ExecSQLScript(aStrings);
   finally
     FreeAndNil(aStrings);
@@ -889,6 +933,7 @@ begin
 
  case Engine of
    seFirebird  : Result:= EntityIsExists(TwfIBConnection(Connection).SQLFieldIsExists(uTable, uFieldName));
+   sePostgreSQL  : Result:= EntityIsExists(TwfPQConnection(Connection).SQLFieldIsExists(uTable, uFieldName));
    seODBC      : Result:= EntityIsExists(TwfODBCConnection(Connection).SQLFieldIsExists(uTable, uFieldName));
    else
      begin
@@ -909,6 +954,7 @@ begin
 
  case Engine of
    seFirebird  : Result:= EntityIsExists(TwfIBConnection(Connection).SQLProcIsExists(uProcName));
+   sePostgreSQL  : Result:= EntityIsExists(TwfPQConnection(Connection).SQLProcIsExists(uProcName));
    seODBC      : Result:= EntityIsExists(TwfODBCConnection(Connection).SQLProcIsExists(uProcName));
    else
      begin
@@ -929,6 +975,7 @@ begin
 
  case Engine of
    seFirebird  : Result:= EntityIsExists(TwfIBConnection(Connection).SQLTriggerIsExists(uTriggerName));
+   sePostgreSQL  : Result:= EntityIsExists(TwfPQConnection(Connection).SQLTriggerIsExists(uTriggerName));
    seODBC      : Result:= EntityIsExists(TwfODBCConnection(Connection).SQLTriggerIsExists(uTriggerName));
    else
      begin
@@ -949,6 +996,7 @@ begin
 
  case Engine of
    seFirebird  : Result:= EntityIsExists(TwfIBConnection(Connection).SQLTableIsExists(uTable));
+   sePostgreSQL : Result:= EntityIsExists(TwfPQConnection(Connection).SQLTableIsExists(uTable));
    seODBC      : Result:= EntityIsExists(TwfODBCConnection(Connection).SQLTableIsExists(uTable));
    else
      begin
@@ -982,6 +1030,7 @@ begin
 
   case Engine of
     seFirebird  : Result:= GetArrayOfString(TwfIBConnection(Connection).SQLGetTables);
+    sePostgreSQL  : Result:= GetArrayOfString(TwfPQConnection(Connection).SQLGetTables);
     seODBC      : Result:= GetArrayOfString(TwfODBCConnection(Connection).SQLGetTables);
   end;
 end;

@@ -8,6 +8,7 @@ This file is part of wfFrameWork.
 
  Git: https://github.com/wofs/wFrameWork.git
 }
+
 unit wfIBConnection;
 
 {$mode objfpc}{$H+}
