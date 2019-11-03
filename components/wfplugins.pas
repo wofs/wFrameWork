@@ -128,6 +128,7 @@ type
     function GetTabSheet(Index: Integer): TwfTabSheet;
     procedure mPluginPageHeadClick(Sender: TObject);
     procedure SetCurrentStatus(aValue: TwfCurrentStatus);
+    procedure SetCurrentStatus();
     procedure SetProgress(aValue: integer);
     procedure SetStatus(aValue: string);
     procedure UpdatePageIndex(aDelIndex: integer);
@@ -348,11 +349,11 @@ end;
 
 procedure TwfPlugins.mPluginPageHeadClick(Sender: TObject);
 begin
-  if fPageIndexFromMouseDown=-1 then exit;
+  if PageIndex=-1 then exit;
 
   case TMenuItem(Sender).Name of
-    'mPluginUnpin': ClosePage(fPageIndexFromMouseDown, false);
-    'mPluginClose': ClosePage(fPageIndexFromMouseDown, true);
+    'mPluginUnpin': ClosePage(PageIndex, false);
+    'mPluginClose': ClosePage(PageIndex, true);
   end;
 end;
 
@@ -365,6 +366,16 @@ begin
   StatusBar.ProgressBar.Max:= aValue.Max;
   StatusBar.ProgressBar.Step:= aValue.Step;
   StatusBar.ProgressBarMarquee:= aValue.Marquee;
+end;
+
+procedure TwfPlugins.SetCurrentStatus();
+var
+  aPlugin: TwfPlugin;
+begin
+  aPlugin:= GetPlugin(PageIndex);
+
+  if Assigned(aPlugin) then
+     CurrentStatus:= aPlugin.CurrentStatus;
 end;
 
 procedure TwfPlugins.SetProgress(aValue: integer);
@@ -448,10 +459,12 @@ begin
 
   PageIndex:=fPageIndexFromMouseDown;
 
+  SetCurrentStatus();
+
   case Button of
     mbMiddle:
         begin
-          ClosePage(fPageIndexFromMouseDown, false);
+          ClosePage(PageIndex, false);
         end;
     mbRight:
         begin
@@ -521,11 +534,7 @@ begin
       CurrentStatus:= aCurrentStatus;
     end
     else
-    begin
-      aPlugin:= GetPlugin(PageIndex);
-      if Assigned(aPlugin) then
-        CurrentStatus:= aPlugin.CurrentStatus;
-    end;
+      SetCurrentStatus();
 
   inherited DoChange;
 end;
