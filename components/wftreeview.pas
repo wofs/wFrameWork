@@ -53,6 +53,7 @@ type
     procedure GetSelectedIndex(Node: TTreeNode); override;
   private
     fEntity: TwfEntity;
+    fOrderByFields: string;
     fReceiverNodeId: BaseID;
     fSQLGetFillList: String;
     fSQLGetParentsAll: String;
@@ -159,6 +160,9 @@ type
     property wFilled: boolean read GetFilled write SetFilled;
     // Flag allows editing and drag and drop of tree branches
     property wAllowEditing: boolean read fAllowEditing write fAllowEditing;
+    // Fields to sort the selection
+    property wOrderByFields: string read fOrderByFields write fOrderByFields;
+
     {Events}
     property wOnLog: TTextEvent read fonLog write fonLog;
     property wOnWriteNodeData: TwfWriteNodeData read fonWriteNodeData write fonWriteNodeData;
@@ -625,6 +629,7 @@ var
   aNewNode: TTreeNode;
   aData: TwfData;
   aParams: TwfParams;
+  aSQL: String;
 begin
   aNewNode:= nil;
   aData:= nil;
@@ -634,9 +639,11 @@ begin
   if uRootId = nil then
     fRootId:= GetRootId;
 
-  fBase.CreateParam(aParams, fSQLGetFillList, true);
-  aParams.ParamValues[fFieldId]:= fRootId;
-  aData:= fBase.GetData(Format(fSQLGetFillList,[fTableName,fTableName]), aParams);
+   aSQL:= fBase.WriteOrderBy(fSQLGetFillList, fOrderByFields);
+
+   fBase.CreateParam(aParams, aSQL, true);
+   aParams.ParamValues[fFieldId]:= fRootId;
+   aData:= fBase.GetData(Format(aSQL,[fTableName,fTableName]), aParams);
 
   try
     aNewNode:= Items.AddObject(nil, fBase.AsString(aData.Data(0,fFieldName)), TwfTreeData.Create);
@@ -661,11 +668,16 @@ begin
 end;
 
 function TwfTreeView.GetChildrens(uID: BaseID; const uAll: boolean): TwfData;
+var
+  aSQL: String;
 begin
   if uAll then
-    Result:= GetNodesFromDB(Format(fSQLGetChildrensAll,[fTableName,fTableName]), uID)
+    aSQL:= fSQLGetChildrensAll
   else
-    Result:= GetNodesFromDB(Format(fSQLGetChildrens,[fTableName, fTableName]), uID);
+    aSQL:= fSQLGetChildrens;
+
+    aSQL:= fBase.WriteOrderBy(aSQL, fOrderByFields);
+    Result:= GetNodesFromDB(Format(aSQL,[fTableName, fTableName]), uID);
 end;
 
 function TwfTreeView.NewNode: BaseID;

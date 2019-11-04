@@ -35,10 +35,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FmPlugin1U"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="12"/>
-        <CursorPos X="32" Y="43"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="11"/>
+        <TopLine Value="18"/>
+        <CursorPos X="33" Y="53"/>
         <UsageCount Value="109"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="plugins\fmplugin2u.pas"/>
@@ -55,7 +58,6 @@
       <Unit4>
         <Filename Value="..\..\components\wfplugins.pas"/>
         <UnitName Value="wfPlugins"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <TopLine Value="330"/>
         <CursorPos X="15" Y="352"/>
@@ -492,123 +494,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="446" Column="10" TopLine="424"/>
+        <Caret Line="509" Column="30" TopLine="486"/>
       </Position1>
       <Position2>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="509" Column="30" TopLine="486"/>
+        <Caret Line="144" Column="15" TopLine="122"/>
       </Position2>
       <Position3>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="144" Column="15" TopLine="122"/>
+        <Caret Line="533" TopLine="493"/>
       </Position3>
       <Position4>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="533" TopLine="493"/>
+        <Caret Line="446" Column="10" TopLine="423"/>
       </Position4>
       <Position5>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="446" Column="10" TopLine="423"/>
+        <Caret Line="533" TopLine="492"/>
       </Position5>
       <Position6>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="533" TopLine="492"/>
+        <Caret Line="446" Column="10" TopLine="423"/>
       </Position6>
       <Position7>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="446" Column="10" TopLine="423"/>
+        <Caret Line="533" TopLine="510"/>
       </Position7>
       <Position8>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="533" TopLine="510"/>
+        <Caret Line="446" Column="10" TopLine="423"/>
       </Position8>
       <Position9>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="446" Column="10" TopLine="423"/>
+        <Caret Line="533" TopLine="510"/>
       </Position9>
       <Position10>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="533" TopLine="510"/>
+        <Caret Line="446" Column="10" TopLine="423"/>
       </Position10>
       <Position11>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="446" Column="10" TopLine="423"/>
+        <Caret Line="525" Column="36" TopLine="501"/>
       </Position11>
       <Position12>
-        <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="525" Column="36" TopLine="501"/>
-      </Position12>
-      <Position13>
         <Filename Value="C:\lazarus\2.0.2\lcl\comctrls.pp"/>
         <Caret Line="503" Column="14" TopLine="487"/>
+      </Position12>
+      <Position13>
+        <Filename Value="..\..\components\wfplugins.pas"/>
+        <Caret Line="446" Column="10" TopLine="423"/>
       </Position13>
       <Position14>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="446" Column="10" TopLine="423"/>
+        <Caret Line="533" TopLine="510"/>
       </Position14>
       <Position15>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="533" TopLine="510"/>
+        <Caret Line="262" TopLine="233"/>
       </Position15>
       <Position16>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="262" TopLine="233"/>
+        <Caret Line="375" TopLine="337"/>
       </Position16>
       <Position17>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="375" TopLine="337"/>
+        <Caret Line="534" Column="28" TopLine="518"/>
       </Position17>
       <Position18>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="534" Column="28" TopLine="518"/>
+        <Caret Line="171" Column="14" TopLine="150"/>
       </Position18>
       <Position19>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="171" Column="14" TopLine="150"/>
+        <Caret Line="370" TopLine="356"/>
       </Position19>
       <Position20>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="370" TopLine="356"/>
+        <Caret Line="533" TopLine="510"/>
       </Position20>
       <Position21>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="533" TopLine="510"/>
+        <Caret Line="170" Column="14" TopLine="149"/>
       </Position21>
       <Position22>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="170" Column="14" TopLine="149"/>
+        <Caret Line="372" Column="3" TopLine="357"/>
       </Position22>
       <Position23>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="372" Column="3" TopLine="357"/>
+        <Caret Line="536" Column="24" TopLine="512"/>
       </Position23>
       <Position24>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="536" Column="24" TopLine="512"/>
+        <Caret Line="371" Column="38" TopLine="359"/>
       </Position24>
       <Position25>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="371" Column="38" TopLine="359"/>
+        <Caret Line="535" TopLine="525"/>
       </Position25>
       <Position26>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="535" TopLine="525"/>
+        <Caret Line="467" Column="20" TopLine="437"/>
       </Position26>
       <Position27>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="467" Column="20" TopLine="437"/>
+        <Caret Line="424" Column="3" TopLine="419"/>
       </Position27>
       <Position28>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="424" Column="3" TopLine="419"/>
+        <Caret Line="471" Column="29" TopLine="434"/>
       </Position28>
       <Position29>
         <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="471" Column="29" TopLine="434"/>
+        <Caret Line="119" Column="36" TopLine="95"/>
       </Position29>
       <Position30>
-        <Filename Value="..\..\components\wfplugins.pas"/>
-        <Caret Line="119" Column="36" TopLine="95"/>
+        <Filename Value="plugins\fmplugin1u.pas"/>
+        <Caret Line="43" Column="32" TopLine="12"/>
       </Position30>
     </JumpHistory>
     <RunParams>
