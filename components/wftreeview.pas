@@ -30,7 +30,7 @@ type
   TwfNewNodeWriteParams =  procedure(Sender: TObject; var aParams: TwfParams; aParentId: BaseID; aName: string) of object;
 
   TwfTreeData = class(TObject)
-    private
+    public
       Id: BaseID;
       IdParent: BaseID;
       CCount: Int64;
@@ -553,7 +553,7 @@ end;
 
 procedure TwfTreeView.GetSelectedIndex(Node: TTreeNode);
 begin
-  if not Assigned(OnGetImageIndex) then
+  if not Assigned(OnGetSelectedIndex) then
     if Node.Expanded then
     Node.SelectedIndex:=1 else
     Node.SelectedIndex:=0;
