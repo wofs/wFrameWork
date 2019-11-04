@@ -699,7 +699,8 @@ begin
   aPlugin.onStatus:=@wfOnPluginStatus;
   aPlugin.onProgress:=@wfOnPluginProgress;
 
-  fPluginIcons.AddIcon(aPlugin.Form.Icon);
+  if aPlugin.Form.Icon.Count>0 then
+     fPluginIcons.AddIcon(aPlugin.Form.Icon);
 
   PluginToPage(aPlugin);
 end;
