@@ -140,7 +140,7 @@ function TwfPQConnection.SQLFieldIsExists(const uTable, uFieldName: string
 const
   uSQL = 'SELECT column_name '
           +' FROM information_schema.columns '
-          +' WHERE table_name=%s and column_name=%s';
+          +' WHERE LOWER(table_name)=LOWER(%s) and LOWER(column_name)=LOWER(%s)';
 begin
   Result:= Format(uSQL, [QuotedStr(uTable), QuotedStr(uFieldName)]);
 end;
@@ -149,7 +149,7 @@ function TwfPQConnection.SQLProcIsExists(const uProcName: string): string;
 const
   uSQL = 'SELECT * '
           +' FROM pg_proc '
-          +' WHERE proname = %s';
+          +' WHERE LOWER(proname) = LOWER(%s)';
 begin
   Result:= Format(uSQL, [QuotedStr(uProcName)]);
 end;
@@ -158,7 +158,7 @@ function TwfPQConnection.SQLTriggerIsExists(const uTriggerName: string): string;
 const
   uSQL = 'SELECT tgname '
           +' FROM pg_trigger '
-          +' WHERE tgname = %s';
+          +' WHERE LOWER(tgname) = LOWER(%s)';
 begin
   Result:= Format(uSQL, [QuotedStr(uTriggerName)]);
 end;
@@ -167,7 +167,7 @@ function TwfPQConnection.SQLTableIsExists(const uTable: string): string;
 const
   uSQL = 'SELECT * '
           +' FROM INFORMATION_SCHEMA.TABLES '
-          +' WHERE TABLE_NAME = %s';
+          +' WHERE LOWER(TABLE_NAME) = LOWER(%s)';
 begin
   Result:= Format(uSQL, [QuotedStr(uTable)]);
 end;
@@ -176,7 +176,7 @@ function TwfPQConnection.SQLGetTables: string;
 const
   uSQL = 'SELECT table_name '
           +' FROM INFORMATION_SCHEMA.TABLES '
-          +' WHERE table_schema NOT IN (''information_schema'',''pg_catalog'')';
+          +' WHERE LOWER(table_schem)a NOT IN (LOWER(''information_schema''),LOWER(''pg_catalog''))';
 begin
   Result:= uSQL;
 end;
