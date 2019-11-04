@@ -34,6 +34,12 @@ type
       Id: BaseID;
       IdParent: BaseID;
       CCount: Int64;
+      fSmallInt: SmallInt;
+      fInt: integer;
+      fInt64: Int64;
+      fBaseID: BaseID;
+      fString: string;
+      Tag: Int64;
   end;
 
   TOnBuildNodeProc = procedure(Sender: TObject;
