@@ -72,6 +72,11 @@ uses
     rsPluginsNoFindedPanel                            = 'Not found TPanel on %s';
     rsPluginPopupMenuToForm                           = 'Unpin';
     rsPluginPopupMenuClose                            = 'Close';
+    rsPluginRegistered                                = 'Registered plug-in: %s';
+    rsPluginLoaded                                    = '%s: Loaded plug-in %s';
+    rsPluginUnLoaded                                  = '%s: Unloaded plug-in: %s';
+    rsPluginToForm                                    = '%s: Plug-in %s moved to form';
+    rsPluginToPage                                    = '%s: Plug-in %s moved to page';
 
 implementation
 

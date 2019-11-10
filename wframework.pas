@@ -8,17 +8,17 @@ unit wFrameWork;
 interface
 
 uses
-  wfResourceStrings, wfTypes, wfClasses, wfFunc, wfDialogs, wfPlugins, 
-  wfVersions, wfIBConnection, wfPQConnection, wfODBCConnection, wfBase, 
-  wfSQLQuery, wfSQLScript, wfSQLTransaction, wfTreeView, wfDBGrid, wfComboBox, 
-  wfStatusProgressBar, wfReport, wfSettings, wfEntity, wfValueListEditor, 
-  TwfProgressU, wfReportViewer, LazarusPackageIntf;
+  wfResourceStrings, wfTypes, wfClasses, wfFunc, wfDialogs, wfThreadU, wfPlugins, wfLog, wfVersions, wfIBConnection, 
+  wfPQConnection, wfODBCConnection, wfBase, wfSQLQuery, wfSQLScript, wfSQLTransaction, wfTreeView, wfDBGrid, 
+  wfComboBox, wfStatusProgressBar, wfReport, wfSettings, wfEntity, wfValueListEditor, TwfProgressU, wfReportViewer, 
+  LazarusPackageIntf;
 
 implementation
 
 procedure Register;
 begin
   RegisterUnit('wfPlugins', @wfPlugins.Register);
+  RegisterUnit('wfLog', @wfLog.Register);
   RegisterUnit('wfVersions', @wfVersions.Register);
   RegisterUnit('wfIBConnection', @wfIBConnection.Register);
   RegisterUnit('wfPQConnection', @wfPQConnection.Register);

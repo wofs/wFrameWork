@@ -48,25 +48,31 @@ type
     fPageIndex: integer;
 
     function GetProgress: integer;
+    function GetProgressMarquee: boolean;
     function GetStatus: string;
     procedure SetCurrentStatus(aValue: TwfCurrentStatus);
     procedure SetProgress(aValue: integer);
+    procedure SetProgressMarquee(aValue: boolean);
     procedure SetStatus(aValue: string);
     procedure SetStatusBar(aValue: TwfStatusProgressBar);
     procedure wfOnFormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure wfOnProgressInit(Sender: TObject);
+
+    property StatusBar: TwfStatusProgressBar read fStatusBar write SetStatusBar;
+
   public
     constructor Create(Sender:TwfPlugins; aPlugIndex: integer);
     destructor Destroy; override;
 
     procedure StatusBarFree;
+    procedure ProgressInit(aMax, aStep: integer);
 
     property Form: TForm read fForm;
     property Name:string read fName;
     property FormClass: TFormClass read fFormClass;
 
-    property StatusBar: TwfStatusProgressBar read fStatusBar write SetStatusBar;
     property Progress: integer read GetProgress write SetProgress;
+    property ProgressMarquee:boolean read GetProgressMarquee write SetProgressMarquee;
     property Status:string read GetStatus write SetStatus;
     property CurrentStatus: TwfCurrentStatus read fCurrentStatus write SetCurrentStatus;
 
@@ -128,7 +134,7 @@ type
     function GetTabSheet(Index: Integer): TwfTabSheet;
     procedure mPluginPageHeadClick(Sender: TObject);
     procedure SetCurrentStatus(aValue: TwfCurrentStatus);
-    procedure SetCurrentStatus();
+    procedure SetCurrentStatus2();
     procedure SetProgress(aValue: integer);
     procedure SetStatus(aValue: string);
     procedure UpdatePageIndex(aDelIndex: integer);
@@ -141,6 +147,7 @@ type
     procedure wfOnPluginStatus(Sender: TObject; const aValue: string);
     procedure wfOnProgressInit(Sender: TObject);
     procedure wfOnToolButtolClick(Sender: TObject);
+    procedure Log(const aValue: string);
   protected
     procedure DoChange; override;
   public
@@ -246,6 +253,11 @@ begin
     Result:= StatusBar.Progress;
 end;
 
+function TwfPlugin.GetProgressMarquee: boolean;
+begin
+  Result:= StatusBar.ProgressBarMarquee;
+end;
+
 function TwfPlugin.GetStatus: string;
 begin
   Result:= EmptyStr;
@@ -271,6 +283,14 @@ begin
     StatusBar.Progress:= aValue;
 
   if Assigned(fonProgress) then fonProgress(self, aValue);
+end;
+
+procedure TwfPlugin.SetProgressMarquee(aValue: boolean);
+begin
+  fCurrentStatus.Marquee:= aValue;
+
+  if Assigned(StatusBar) then
+    StatusBar.ProgressBarMarquee:= aValue;
 end;
 
 procedure TwfPlugin.SetStatus(aValue: string);
@@ -325,6 +345,15 @@ begin
     FreeAndNil(fStatusBar);
 end;
 
+procedure TwfPlugin.ProgressInit(aMax, aStep: integer);
+begin
+  fCurrentStatus.Max:= aMax;
+  fCurrentStatus.Step:= aStep;
+
+  if Assigned(StatusBar) then
+    StatusBar.ProgressBarInit(aMax, aStep)
+end;
+
 { TwfPlugins }
 
 procedure TwfPlugins.AsyncInit(Data: PtrInt);
@@ -368,7 +397,7 @@ begin
   StatusBar.ProgressBarMarquee:= aValue.Marquee;
 end;
 
-procedure TwfPlugins.SetCurrentStatus();
+procedure TwfPlugins.SetCurrentStatus2();
 var
   aPlugin: TwfPlugin;
 begin
@@ -459,7 +488,7 @@ begin
 
   PageIndex:=fPageIndexFromMouseDown;
 
-  SetCurrentStatus();
+  SetCurrentStatus2();
 
   case Button of
     mbMiddle:
@@ -519,6 +548,11 @@ begin
   LoadPlugin(trunc(aPluginIndex));
 end;
 
+procedure TwfPlugins.Log(const aValue: string);
+begin
+  if Assigned(onLog) then onLog(self, aValue);
+end;
+
 procedure TwfPlugins.DoChange;
 var
   aPlugin: TwfPlugin;
@@ -534,7 +568,7 @@ begin
       CurrentStatus:= aCurrentStatus;
     end
     else
-      SetCurrentStatus();
+      SetCurrentStatus2();
 
   inherited DoChange;
 end;
@@ -643,6 +677,7 @@ begin
   aTabSheet.Enabled := True;
   aTabSheet.ImageIndex:= aPlugin.IndexToPluginList;
 
+  Log(Format(rsPluginToPage,[aPlugin.Form.ClassName, aPlugin.Form.Name]));
   //Event
   DoChange;
 end;
@@ -679,6 +714,8 @@ begin
   end;
 
   aPlugin.Form.Visible:= true;
+
+  Log(Format(rsPluginToForm,[aPlugin.Form.ClassName, aPlugin.Form.Name]));
 end;
 
 procedure TwfPlugins.LoadPlugin(aIndex: Integer);
@@ -703,6 +740,8 @@ begin
      fPluginIcons.AddIcon(aPlugin.Form.Icon);
 
   PluginToPage(aPlugin);
+
+  Log(Format(rsPluginLoaded,[aPlugin.Form.ClassName, aPlugin.Form.Name]));
 end;
 
 procedure TwfPlugins.UnLoadPlugin(aPageIndex: Integer);
@@ -715,6 +754,7 @@ begin
     aPlugin:= TwfPlugin(fPluginsLoaded.Items[i]);
     if aPlugin.PageIndex = aPageIndex then
       begin
+        Log(Format(rsPluginUnLoaded,[aPlugin.Form.ClassName, aPlugin.Form.Name]));
         fPluginsLoaded.Delete(i);
         Break;
       end;
@@ -736,6 +776,8 @@ var
 begin
   for i := 0 to Length(TFormsName) - 1 do
   begin
+    Log(Format(rsPluginRegistered,[TFormsName[i].ClassName]));
+
     aPluginName:= 'Plugin'+IntToStr(i);
     RegisterClassAlias(TFormsName[i],aPluginName); // register classes from array
     fPluginList.Add(aPluginName);

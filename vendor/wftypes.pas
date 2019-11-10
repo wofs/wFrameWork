@@ -17,7 +17,7 @@ unit wfTypes;
 interface
 
 uses
-  Classes, SysUtils, fgl, LazUTF8, ComCtrls, db, gvector;
+  Classes, SysUtils, fgl, LazUTF8, ComCtrls, MultiLog, db, gvector;
 
 type
   {$IFDEF USEGUID}
@@ -25,6 +25,7 @@ type
   {$ELSE}
     BaseID = Int64;
   {$ENDIF}
+  img = integer;
 
   ArrayOfInteger  = array of integer;
   ArrayOfInt64    = array of int64;
@@ -54,6 +55,7 @@ type
 
   TProgressEvent = procedure(Sender: TObject; const aPosition: integer) of object;
   TProgressInitEvent = procedure(Sender: TObject; const aMax, aStep: integer) of object;
+  TProgressMarqueeEvent = procedure(Sender: TObject; const aMarquee: Boolean) of object;
 
   TInt64List = specialize TFPGList<Int64>;
   TBaseIDList = specialize TFPGList<BaseID>;
@@ -66,6 +68,9 @@ type
   TwfEntitySQLPresets = (spNone, spTree, spList);
   TwfEntitySQLType = (estList, estListFull, estListShort, estItemDel, estItemGet, estItemNew, estItemUpdate, estTreeGetRoot);
   TwfEntityScriptType = (esctCreate, esctDrop);
+
+  TwfLogClass =(lcDebug, lcError, lcInfo, lcWarning, lcEvent);
+  TwfLogClasses = set of TwfLogClass;
 
 const
   wfLE = #10;

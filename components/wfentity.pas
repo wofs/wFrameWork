@@ -39,6 +39,11 @@ type
     faSQLPresets: TwfEntitySQLPresets;
     fDescription: TStrings;
     fGridColumnsString: TStrings;
+    fonLog: TTextEvent;
+    fonProgress: TProgressEvent;
+    fonProgressInit: TProgressInitEvent;
+    fonProgressMarquee: TProgressMarqueeEvent;
+    fonStatus: TTextEvent;
     fSQLCreate: TStrings;
     fSQLDrop: TStrings;
     fSQLGetList: TStrings;
@@ -55,6 +60,9 @@ type
     function GetTableName: string;
     procedure SetBase(aValue: TwfBase);
     procedure SetGridColumnsString(aValue: TStrings);
+    procedure SetLog(aValue: string);
+    procedure SetProgress(aValue: integer);
+    procedure SetProgressMarquee(aValue: boolean);
     procedure SetSQL(aType: TwfEntitySQLType; AValue: string);
     procedure SetSQLListPresets();
     procedure SetSQLPresets(aValue: TwfEntitySQLPresets);
@@ -71,11 +79,23 @@ type
     procedure SetSQLCreateTable();
     procedure SetSQLTreeGetRoot(aValue: TStrings);
     procedure SetSQLTreePresets();
+    procedure SetStatus(aValue: string);
+    procedure SetStatusLog(aValue: string);
 
   protected
     function GetScript(aType: TwfEntityScriptType): TStrings; virtual;
     function GetSQL(aType: TwfEntitySQLType): string; virtual;
     function GetEngine():TwfSQLEngine; virtual;
+
+    procedure ProgressInit(const aMax, aStep: integer);
+    procedure ProgressStep;
+
+    property Progress: integer write SetProgress;
+    property ProgressMarquee:boolean write SetProgressMarquee;
+    property Status:string write SetStatus;
+    property Log:string write SetLog;
+    property StatusLog:string write SetStatusLog;
+
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -115,6 +135,12 @@ type
     {$IFDEF NOT USEGUID}
     property SQLSequenceName: string read fSQLSequenceName write fSQLSequenceName;
     {$ENDIF}
+
+      property onLog: TTextEvent read fonLog write fonLog;
+      property onStatus: TTextEvent read fonStatus write fonStatus;
+      property onProgress: TProgressEvent read fonProgress write fonProgress;
+      property onProgressInit: TProgressInitEvent read fonProgressInit write fonProgressInit;
+      property onProgressMarquee: TProgressMarqueeEvent read fonProgressMarquee write fonProgressMarquee;
   end;
 
 procedure Register;
@@ -207,6 +233,24 @@ end;
 procedure TwfEntity.SetGridColumnsString(aValue: TStrings);
 begin
   fGridColumnsString.Assign(aValue);
+end;
+
+procedure TwfEntity.SetLog(aValue: string);
+begin
+  if Assigned(onLog) then
+    onLog(self, aValue);
+end;
+
+procedure TwfEntity.SetProgress(aValue: integer);
+begin
+  if Assigned(onProgress) then
+     onProgress(self, aValue);
+end;
+
+procedure TwfEntity.SetProgressMarquee(aValue: boolean);
+begin
+  if Assigned(onProgressMarquee) then
+     onProgressMarquee(self, aValue);
 end;
 
 procedure TwfEntity.SetSQL(aType: TwfEntitySQLType; AValue: string);
@@ -360,6 +404,30 @@ begin
    {$IFDEF NOT USEGUID}
    fSQLSequenceName:= Format('GEN_%s_ID',[TableName]);
    {$ENDIF}
+end;
+
+procedure TwfEntity.SetStatus(aValue: string);
+begin
+   if Assigned(onStatus) then
+      onStatus(self, aValue);
+end;
+
+procedure TwfEntity.SetStatusLog(aValue: string);
+begin
+  Status:= aValue;
+  Log:= aValue;
+end;
+
+
+procedure TwfEntity.ProgressInit(const aMax, aStep: integer);
+begin
+   if Assigned(onProgressInit) then
+      onProgressInit(self, aMax, aStep);
+end;
+
+procedure TwfEntity.ProgressStep;
+begin
+  Progress:= -1;
 end;
 
 procedure TwfEntity.SetSQLListPresets();

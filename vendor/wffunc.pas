@@ -18,7 +18,7 @@ interface
 
 uses
   Classes, SysUtils, db, LazUTF8, Graphics, Dialogs, StdCtrls, wfTypes,
-  md5, fpspreadsheet, fpsTypes, fpspreadsheetctrls;
+  md5, fileinfo, fpspreadsheet, fpsTypes, fpspreadsheetctrls;
 
 function VarToStr(Value: variant): string;
 function VarToBool(Value: variant): boolean;
@@ -31,6 +31,7 @@ function GetVarType(aValue: variant):tvartype;
 function GetOnlyCorrectChars(aValue: string): string;
 function GetOnlyChars(aValue: string): string;
 function GetOnlyNumbers(aValue: string): Double;
+procedure GetExcelFilesList(aPath: string; aList: TStrings );
 
 procedure DeleteEmplyItems(aStringList: TStringList);
 
@@ -71,6 +72,8 @@ function GetApplicationPathUnsafe:string;
 function GetSpreadSheetFormat(aFileName:string):TsSpreadsheetFormat;
 function GetMD5Hash(aStr: string): string;
 function GetUID:string;
+
+function GetVersion: string;
 implementation
 
 procedure WriteValue(aWorksheet: TsWorksheet; aRow, aCol: integer; aField: TField; const aFontStyles: TsFontStyles; aCellColor: TsColor; aFontColor: TsColor;
@@ -247,6 +250,24 @@ begin
   Result:=GetOnlyCorrectChars(GUIDToString(aGuid))+'1';
 end;
 
+function GetVersion: string;
+var
+  aVersion: string;
+  aInfo: TVersionInfo;
+begin
+  aInfo := TVersionInfo.Create;
+  try
+    aInfo.Load(HINSTANCE);
+    //[0] = Major aVersion, [1] = Minor ver, [2] = Revision, [3] = Build Number
+    aVersion := IntToStr(aInfo.FixedInfo.FileVersion[0]) + '.' + IntToStr(
+      aInfo.FixedInfo.FileVersion[1]) + '.' + IntToStr(aInfo.FixedInfo.FileVersion[2]) +
+      '.' + IntToStr(aInfo.FixedInfo.FileVersion[3]);
+    Result := aVersion;
+  finally
+    aInfo.Free;
+  end;
+end;
+
 function VarToStr(Value: variant): string;
 begin
   Result := '';
@@ -340,6 +361,31 @@ begin
   for N:= Length(aValue) downto 1 do
         if not (aValue[N] in [DefaultFormatSettings.DecimalSeparator, '0'..'9']) then Delete(aValue, N, 1);
   TryStrToFloat(aValue, Result);
+end;
+
+procedure GetExcelFilesList(aPath: string; aList: TStrings );
+var
+sRec: TSearchRec;
+isFound: boolean;
+begin
+  isFound := FindFirst( aPath + '\*.*', faAnyFile, sRec ) = 0;
+
+  while isFound do
+  begin
+    if ( sRec.Name <> '.' ) and ( sRec.Name <> '..' ) then
+    begin
+      if ( sRec.Attr and faDirectory ) = faDirectory then
+        GetExcelFilesList( aPath + '\' + sRec.Name, aList )
+      else
+        if (UTF8LowerCase(ExtractFileExt(sRec.Name)) = '.xls')
+        or (UTF8LowerCase(ExtractFileExt(sRec.Name)) = '.xlsx') then
+          aList.Add( aPath + '\' + sRec.Name );
+    end;
+
+    isFound := FindNext( sRec ) = 0;
+  end;
+
+  FindClose( sRec );
 end;
 
 procedure DeleteEmplyItems(aStringList: TStringList);
