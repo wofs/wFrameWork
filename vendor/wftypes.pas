@@ -44,6 +44,7 @@ type
   TErrorEvent = procedure(Sender: TObject; const E: Exception) of object;
   TVarTextEvent = procedure(Sender: TObject; var aValue: string) of object;
   TTextEvent = procedure(Sender: TObject; const aValue: string) of object;
+  TStringsEvent = procedure(Sender: TObject; const aText: string; const aStrings: TStrings) of object;
   TResultEvent = procedure(Sender: TObject; const aResult: boolean) of object;
   TResultsEvent = procedure(Sender: TObject; const aResults: ArrayOfInt64) of object;
   TResultCountEvent = procedure(Sender: TObject; const aCount: Integer) of object;
@@ -74,6 +75,11 @@ type
 
 const
   wfLE = #10;
+  wfEmptyStr = '';
+  wfEmptyDouble = 0.0;
+  wfEmptyInt = 0;
+  wfEmptyDateTime = wfEmptyDouble;
+
   {$IFDEF USEGUID}
     wfEmptyBaseID = '';
   {$ELSE}

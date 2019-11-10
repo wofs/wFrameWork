@@ -31,8 +31,30 @@ type
 
     procedure InitLogger;
     procedure Log(Sender: TObject; const aValue: string);
+
     procedure Send(aClasses: TwfLogClasses; const aText: String);
+
+
+
     procedure SendDebug(const aText: String);
+    procedure SendDebug(const aText: String; aStrings: TStrings);
+
+    procedure SendDebug(const aText: String; aArgs: array of const);
+    procedure SendDebug(const aText, aValue: String);
+    procedure SendDebug(const aText: String; aValue: Integer);
+    {$ifdef fpc}
+    procedure SendDebug(const aText: String; AValue: Cardinal);
+    {$endif}
+    procedure SendDebug(const aText: String; AValue: Double);
+    procedure SendDebug(const aText: String; aValue: Int64);
+    procedure SendDebug(const aText: String; aValue: QWord);
+    procedure SendDebug(const aText: String; aValue: Boolean);
+    procedure SendDebug(const aText: String; const aRect: TRect);
+    procedure SendDebug(const aText: String; const aPoint: TPoint);
+    procedure SendDebug(const aText: String; aObject: TObject);
+
+
+    procedure SendInfo(const aText: String; aStrings: TStrings);
     procedure SendInfo(const aText: String);
     procedure SendEvent(const aText: String);
     procedure SendWarning(const aText: String);
@@ -172,6 +194,102 @@ begin
   Logger.Send(TDebugClasses(aClasses), aText);
 end;
 
+procedure TwfLog.SendDebug(const aText: String; aStrings: TStrings);
+var
+  aClasses: TwfLogClasses;
+begin
+  aClasses:= [lcDebug];
+  Logger.Send(TDebugClasses(aClasses), aText, aStrings);
+end;
+
+procedure TwfLog.SendDebug(const aText: String; aArgs: array of const);
+var
+  aClasses: TwfLogClasses;
+begin
+  aClasses:= [lcDebug];
+  Logger.Send(TDebugClasses(aClasses), aText, aArgs);
+end;
+
+procedure TwfLog.SendDebug(const aText, aValue: String);
+var
+  aClasses: TwfLogClasses;
+begin
+  aClasses:= [lcDebug];
+  Logger.Send(TDebugClasses(aClasses), aText, aValue);
+end;
+
+procedure TwfLog.SendDebug(const aText: String; aValue: Integer);
+var
+  aClasses: TwfLogClasses;
+begin
+  aClasses:= [lcDebug];
+  Logger.Send(TDebugClasses(aClasses), aText, aValue);
+end;
+
+procedure TwfLog.SendDebug(const aText: String; AValue: Cardinal);
+var
+  aClasses: TwfLogClasses;
+begin
+  aClasses:= [lcDebug];
+  Logger.Send(TDebugClasses(aClasses), aText, aValue);
+end;
+
+procedure TwfLog.SendDebug(const aText: String; AValue: Double);
+var
+  aClasses: TwfLogClasses;
+begin
+  aClasses:= [lcDebug];
+  Logger.Send(TDebugClasses(aClasses), aText, aValue);
+end;
+
+procedure TwfLog.SendDebug(const aText: String; aValue: Int64);
+var
+  aClasses: TwfLogClasses;
+begin
+  aClasses:= [lcDebug];
+  Logger.Send(TDebugClasses(aClasses), aText, aValue);
+end;
+
+procedure TwfLog.SendDebug(const aText: String; aValue: QWord);
+var
+  aClasses: TwfLogClasses;
+begin
+  aClasses:= [lcDebug];
+  Logger.Send(TDebugClasses(aClasses), aText, aValue);
+end;
+
+procedure TwfLog.SendDebug(const aText: String; aValue: Boolean);
+var
+  aClasses: TwfLogClasses;
+begin
+  aClasses:= [lcDebug];
+  Logger.Send(TDebugClasses(aClasses), aText, aValue);
+end;
+
+procedure TwfLog.SendDebug(const aText: String; const aRect: TRect);
+var
+  aClasses: TwfLogClasses;
+begin
+  aClasses:= [lcDebug];
+  Logger.Send(TDebugClasses(aClasses), aText, aRect);
+end;
+
+procedure TwfLog.SendDebug(const aText: String; const aPoint: TPoint);
+var
+  aClasses: TwfLogClasses;
+begin
+  aClasses:= [lcDebug];
+  Logger.Send(TDebugClasses(aClasses), aText, aPoint);
+end;
+
+procedure TwfLog.SendDebug(const aText: String; aObject: TObject);
+var
+  aClasses: TwfLogClasses;
+begin
+  aClasses:= [lcDebug];
+  Logger.Send(TDebugClasses(aClasses), aText, aObject);
+end;
+
 procedure TwfLog.SendDebug(const aText: String);
 var
   aClasses: TwfLogClasses;
@@ -186,6 +304,14 @@ var
 begin
   aClasses:= [lcInfo];
   Logger.Send(TDebugClasses(aClasses), aText);
+end;
+
+procedure TwfLog.SendInfo(const aText: String; aStrings: TStrings);
+var
+  aClasses: TwfLogClasses;
+begin
+  aClasses:= [lcInfo];
+  Logger.Send(TDebugClasses(aClasses), aText, aStrings);
 end;
 
 procedure TwfLog.SendEvent(const aText: String);

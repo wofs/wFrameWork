@@ -31,6 +31,8 @@ function GetVarType(aValue: variant):tvartype;
 function GetOnlyCorrectChars(aValue: string): string;
 function GetOnlyChars(aValue: string): string;
 function GetOnlyNumbers(aValue: string): Double;
+function GetOnlyDateTime(aValue: string): TDateTime;
+
 procedure GetExcelFilesList(aPath: string; aList: TStrings );
 
 procedure DeleteEmplyItems(aStringList: TStringList);
@@ -74,6 +76,7 @@ function GetMD5Hash(aStr: string): string;
 function GetUID:string;
 
 function GetVersion: string;
+function CalcMD5File(aFileName: string): string;
 implementation
 
 procedure WriteValue(aWorksheet: TsWorksheet; aRow, aCol: integer; aField: TField; const aFontStyles: TsFontStyles; aCellColor: TsColor; aFontColor: TsColor;
@@ -268,6 +271,29 @@ begin
   end;
 end;
 
+function CalcMD5File(aFileName: string): string;
+var
+  aMD5Stream: TMD5Digest;
+  aFileMD5: TMemoryStream;
+begin
+  Result := '';
+  if FileExists(aFileName) then
+  begin
+    aFileMD5 := TMemoryStream.Create;
+
+    try
+      aFileMD5.LoadFromFile(aFileName);
+      aFileMD5.Position := 0;
+      aMD5Stream := MD5Buffer(aFileMD5.Memory^, aFileMD5.Size);
+      Result := MD5Print(aMD5Stream);
+      aFileMD5.Free;
+    except
+      aFileMD5.Free;
+    end;
+  end;
+
+end;
+
 function VarToStr(Value: variant): string;
 begin
   Result := '';
@@ -361,6 +387,16 @@ begin
   for N:= Length(aValue) downto 1 do
         if not (aValue[N] in [DefaultFormatSettings.DecimalSeparator, '0'..'9']) then Delete(aValue, N, 1);
   TryStrToFloat(aValue, Result);
+end;
+
+function GetOnlyDateTime(aValue: string): TDateTime;
+var
+  N: Integer;
+begin
+  for N:= Length(aValue) downto 1 do
+        if not (aValue[N] in ['.',':',' ', '0'..'9']) then Delete(aValue, N, 1);
+
+  TryStrToDate(UTF8Trim(aValue),Result);
 end;
 
 procedure GetExcelFilesList(aPath: string; aList: TStrings );
