@@ -123,6 +123,7 @@ type
      fSearchFieldsContaining: string;
      fSearchFieldsIn: string;
      fSearchFieldsLike: string;
+     fSQLEngine: TwfSQLEngine;
      procedure ClearData;
      function ConvertCommaStringToQuotedStr(aCommaString: string): string;
      function GetAsParams: TwfParams;
@@ -131,6 +132,7 @@ type
      procedure Log(aText: string);
 
    public
+     constructor Create;
      destructor Destroy; override;
 
      procedure SetItem(const uName: string; const aValue: string;
@@ -148,6 +150,7 @@ type
      property SearchFieldsContaining: string read fSearchFieldsContaining write fSearchFieldsContaining;
      property SearchFieldsLike: string read fSearchFieldsLike write fSearchFieldsLike;
      property SearchFieldsIn: string read fSearchFieldsIn write fSearchFieldsIn;
+     property SQLEngine: TwfSQLEngine read fSQLEngine write fSQLEngine;
 
      property onLog: TTextEvent read fonLog write fonLog;
    end;
@@ -345,7 +348,11 @@ var
   begin
     aParam:= TParam.Create(aParams, ptInput);
     aParam.Name:=aParamName+IntToStr(i);
-    aParam.Value:= aSearchStrings.Strings[i];
+    case SQLEngine of
+        seFirebird: aParam.Value:= aSearchStrings.Strings[i];
+      else
+        aParam.Value:= '%'+aSearchStrings.Strings[i]+'%';
+    end;
   end;
 
 begin
@@ -427,7 +434,11 @@ begin
             case aSearchType of
               stContaining  :
                           begin
-                            aSearchTemp:= aSearchTemp+aField+' CONTAINING :'+aParamName+IntToStr(i);
+                              case SQLEngine of
+                                  seFirebird: aSearchTemp:= aSearchTemp+aField+' CONTAINING :'+aParamName+IntToStr(i);
+                                else
+                                  aSearchTemp:= aSearchTemp+ ' LOWER('+aField+') LIKE LOWER(:'+aParamName+IntToStr(i)+')';
+                              end;
                             WriteParam;
                           end;
               stLike        :
@@ -613,6 +624,12 @@ end;
 procedure TwfCustomSQLItemList.Log(aText: string);
 begin
   if Assigned(fonLog) then fonLog(self, aText);
+end;
+
+constructor TwfCustomSQLItemList.Create;
+begin
+  fSQLEngine:= seFirebird;
+  inherited;
 end;
 
 procedure TwfCustomSQLItemList.DelItem(const aIndex: integer);

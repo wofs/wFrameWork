@@ -148,6 +148,7 @@ end;
     fSelectedItems: TBaseIDList;
     fSelectGridId: BaseID;
     fShiftState: TShiftState;
+    fSQLCurrent: TStrings;
     fSQLText: TStrings;
     fstCtrl: boolean;
     fEntity: TwfEntity;
@@ -185,7 +186,7 @@ end;
     function GetSQLText: TStrings;
     function ExistsField(aFieldName: string): boolean;
     function GetSearchPreventiveBtn: TSpeedButton;
-    procedure Search(aText: string);
+
     procedure SetBase(aValue: TwfBase);
 
     procedure SetColumns(aValue: TStrings);
@@ -232,6 +233,7 @@ end;
     destructor Destroy; override;
 
     procedure Fill;
+    procedure Search(aText: string);
     property DataSet: TDataSet read GetDataSet;
 
     procedure GetWhereList(const aName: string; out aValue: string; out aParams: TwfParams);
@@ -250,6 +252,7 @@ end;
     property SelectedCount: Int64 read GetSelectedCount;
     property CurrentId: BaseID read GetCurrentId;
     property FillFreez:boolean read fFillFreez write fFillFreez;
+    property SQLCurrent: TStrings read fSQLCurrent;
 
   published
     //Trees to automatically generate the Where the grid.
@@ -1196,12 +1199,14 @@ end;
 
 function TwfDBGrid.GetSearchComboBoxGetSelPosition:byte;
 begin
+  if not Assigned(fSearchComboBox) then exit;
   fSearchComboBox.SelLength:= 0;
   Result:= fSearchComboBox.SelStart;
 end;
 
 procedure TwfDBGrid.SetSearchComboBoxGetSelPosition(aPosition: byte);
 begin
+  if not Assigned(fSearchComboBox) then exit;
   fSearchComboBox.SelStart:= aPosition;
   fSearchComboBox.SelLength:= 0;
 end;
@@ -1360,6 +1365,7 @@ procedure TwfDBGrid.GenerateSearchList(aSearchText: string;
   aSearchType: TSQLItemType; const uNameSearch: string;
   const uFieldList: string);
 begin
+  fWhereList.SQLEngine:= wBase.Engine;
   fWhereList.GenerateSearchList(GetSearchSplitIntoSubstringsBtnState, aSearchText, aSearchType, uNameSearch, uFieldList);
 end;
 
@@ -1369,6 +1375,8 @@ begin
   fFillFreez:= false;
 
   fSQLText:= TStringList.Create;
+  fSQLCurrent:= TStringList.Create;
+
   fColumnsString:= TStringList.Create;
   fColumnsString.Clear;
 
@@ -1407,6 +1415,7 @@ begin
   fSelectedItems:= TBaseIDList.Create;
 
   fWhereList:= TwfCustomSQLItemList.Create;
+
   fWhereList.onLog:=@wfonLog;
 
   fOrderByList:= TwfCustomOrderByList.Create;
@@ -1419,6 +1428,7 @@ begin
     FreeAndNil(fGroupComboBoxes);
     FreeAndNil(fGroupTrees);
     FreeAndNil(fSQLText);
+    FreeAndNil(fSQLCurrent);
     FreeAndNil(fColumnsString);
     FreeAndNil(fSelectedItems);
     FreeAndNil(fWhereList);
@@ -1433,8 +1443,8 @@ end;
 procedure TwfDBGrid.Fill;
 var
   aParams: TwfParams;
-  aSQL: String;
   aPosition: Byte;
+  aSQL: String;
 begin
   if Assigned(fEntity) and IsEmpty(fSQLText) then
     aSQL:= Trim(fEntity.SQLGetList.Text)
@@ -1455,10 +1465,14 @@ begin
 
     aPosition:= GetSearchComboBoxGetSelPosition;
 
+
     fDataSet:= fBase.OpenSQL(aSQL, aParams, true);
     fDataSource.DataSet:= fDataSet;
 
     SetSearchComboBoxGetSelPosition(aPosition);
+{ TODO : ДОДЕЛАТЬ!!!!
+fSQLCurrent }
+    fSQLCurrent.Assign(fDataSet.SQL);
 
     Log('');
 

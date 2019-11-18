@@ -278,6 +278,31 @@ begin
     aMenuItem.ImageIndex:= 4;
     PopupMenu.Items.Add(aMenuItem);
   end;
+
+  case fBase.Engine of
+    seFirebird: begin
+      fSQLGetChildrensAll:= 'with recursive tree '
+              +' as (select t.id '
+              +'     from %s t '
+              +'     where IDPARENT = :ID '
+              +'     union all '
+              +'     select t.id '
+              +'     from %s t '
+              +'     inner join tree prior on prior.id = t.IDPARENT) '
+              +' select * from tree';
+    end;
+    sePostgreSQL: begin
+      fSQLGetChildrensAll:= 'with recursive tree '
+              +' as (select t.id, t.name '
+              +'     from %s t '
+              +'     where IDPARENT = :ID '
+              +'     union all '
+              +'     select t.id, t.name '
+              +'     from %s t '
+              +'     inner join tree prior on prior.id = t.IDPARENT) '
+              +' select * from tree';
+    end;
+  end;
 end;
 
 function TwfTreeView.GetBase: TwfBase;
@@ -602,15 +627,15 @@ begin
        +'  select IDPARENT AS ID from tree WHERE IDPARENT>0';
      {$ENDIF}
   fSQLGetChildrens:= 'SELECT T1.*, (SELECT COUNT(*) FROM %s T WHERE T.IDPARENT=T1.ID) CCOUNT FROM %s T1 WHERE T1.IDPARENT=:ID';
-  fSQLGetChildrensAll:= 'with recursive tree '
-          +' as (select t.id '
-          +'     from %s t '
-          +'     where IDPARENT = :ID '
-          +'     union all '
-          +'     select t.id '
-          +'     from %s t '
-          +'     inner join tree prior on prior.id = t.IDPARENT) '
-          +' select * from tree';
+  //fSQLGetChildrensAll:= 'with recursive tree '
+  //        +' as (select t.id '
+  //        +'     from %s t '
+  //        +'     where IDPARENT = :ID '
+  //        +'     union all '
+  //        +'     select t.id '
+  //        +'     from %s t '
+  //        +'     inner join tree prior on prior.id = t.IDPARENT) '
+  //        +' select * from tree';
 
   fSQLNewNode:= 'INSERT INTO %s (IDPARENT, NAME) VALUES(:IDPARENT, :NAME) RETURNING ID';
   fSQLDeleteNode:= 'DELETE FROM %s WHERE ID=:ID';

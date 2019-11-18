@@ -16,7 +16,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ComCtrls,
-  LCLType, LCLProc;
+  LCLType, LCLProc, wfTypes, wfResourceStrings;
 
 type
   TwfStatusProgressBar = class;
@@ -37,6 +37,7 @@ type
   TwfStatusProgressBar = class(TStatusBar)
   private
     fCurrentStatus: TwfCurrentStatus;
+    fonLog: TTextEvent;
     fonProgressInit: TNotifyEvent;
     fProgressBar: TProgressBar;
     function GetProgress: integer;
@@ -62,8 +63,11 @@ type
     property Progress: integer read GetProgress write SetProgress;
     property Status:string read GetStatus write SetStatus;
     property CurrentStatus: TwfCurrentStatus read fCurrentStatus write fCurrentStatus;
+
   published
     property ProgressBar: TProgressBar read fProgressBar;
+
+    {Events}
     property onProgressInit: TNotifyEvent read fonProgressInit write fonProgressInit;
   end;
 

@@ -78,6 +78,9 @@ uses
     rsPluginToForm                                    = '%s: Plug-in %s moved to form';
     rsPluginToPage                                    = '%s: Plug-in %s moved to page';
 
+    {-= ProgressBar =-}
+    rsProgressBarLogPosition                          = 'Progress: %d from %d';
+
 implementation
 
 end.

@@ -1061,8 +1061,9 @@ begin
   inherited Create(ACollection);
   fReportThread:= nil;
   fTerminated:= true;
-
+                       { TODO : Группировка в отчете }
   fSQLQuery:= TStringList.Create;
+  fSQLQueryGroup:= TStringList.Create;
   fColumnsString:= TStringList.Create;
   fHeaderColor:= clWhite;
   fReportType:= rtSpreadSheet;
@@ -1075,6 +1076,7 @@ end;
 destructor TwfReportItem.Destroy;
 begin
   FreeAndNil(fSQLQuery);
+  FreeAndNil(fSQLQueryGroup);
   FreeAndNil(fColumnsString);
   inherited Destroy;
 end;

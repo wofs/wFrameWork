@@ -32,7 +32,7 @@ type
 
   //If you change TwfSQLEngine to make changes in the same way
   //QuotedGUID() , GetEngine(), GetUseGUID, GetDomainOrProcedureString, GetBeforeInsertTrigger
-  TwfSQLEngine = (seFirebird, seODBC, sePostgreSQL, seUnknown);
+
 
   { TQueryThread }
 
@@ -102,7 +102,7 @@ type
 
     procedure CreateNewDataBaseFireBird(const uHost, uPort, uBaseName,
       uUserName, uPassword: string);
-    function EntityIsExists(const uSQL: string): boolean;
+
     procedure fOnException(Sender: TObject; const E: Exception);
     procedure fOnFinish(Sender: TObject);
     function GetArrayOfString(const uSQL: string): ArrayOfString;
@@ -164,6 +164,7 @@ type
       function ProcIsExists(const uProcName:string):boolean;
       function TriggerIsExists(const uTriggerName:string):boolean;
       function TableIsExists(const uTable: string): boolean;
+      function EntityIsExists(const uSQL: string): boolean;
 
       {Lists}
       function GetTables: ArrayOfString;
@@ -498,7 +499,7 @@ function TwfBase.GetEngine: TwfSQLEngine;
 begin
  Result:= seUnknown;
 
- if fConnection is TwfIBConnection then
+  if fConnection is TwfIBConnection then
    Result:= seFirebird;
 
  if fConnection is TwfODBCConnection then

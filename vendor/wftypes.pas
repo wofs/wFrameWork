@@ -65,6 +65,7 @@ type
   TBaseTaskType = (bttArray, bttDataSource, bttDataSet);
   TDirection = (dNone, dASC, dDESC);
   TSQLItemType = (stLike, stContaining, stIn, stUnknown);
+  TwfSQLEngine = (seFirebird, seODBC, sePostgreSQL, seUnknown);
 
   TwfEntitySQLPresets = (spNone, spTree, spList);
   TwfEntitySQLType = (estList, estListFull, estListShort, estItemDel, estItemGet, estItemNew, estItemUpdate, estTreeGetRoot);

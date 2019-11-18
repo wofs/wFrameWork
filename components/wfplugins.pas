@@ -38,6 +38,7 @@ type
     fForm: TForm;
     fFormClass: TFormClass;
     fName: string;
+    fonLog: TTextEvent;
     fonProgress: TProgressEvent;
     fonStatus: TTextEvent;
     fOwner: TwfPlugins;
@@ -56,7 +57,9 @@ type
     procedure SetStatus(aValue: string);
     procedure SetStatusBar(aValue: TwfStatusProgressBar);
     procedure wfOnFormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure wfOnLog(Sender: TObject; const aValue: string);
     procedure wfOnProgressInit(Sender: TObject);
+    procedure Log(const aValue: string);
 
     property StatusBar: TwfStatusProgressBar read fStatusBar write SetStatusBar;
 
@@ -86,6 +89,7 @@ type
     property onFormClose:TNotifyEvent read fonFormClose write fonFormClose;
     property onStatus: TTextEvent read fonStatus write fonStatus;
     property onProgress: TProgressEvent read fonProgress write fonProgress;
+    property onLog: TTextEvent read fonLog write fonLog;
 
   end;
 
@@ -138,6 +142,7 @@ type
     procedure SetProgress(aValue: integer);
     procedure SetStatus(aValue: string);
     procedure UpdatePageIndex(aDelIndex: integer);
+    procedure wfOnLog(Sender: TObject; const aValue: string);
     procedure wfOnMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure wfOnMouseUp(Sender: TObject; Button: TMouseButton;
@@ -236,6 +241,11 @@ begin
   if Assigned(fonFormClose) then fonFormClose(self);
 end;
 
+procedure TwfPlugin.wfOnLog(Sender: TObject; const aValue: string);
+begin
+  Log(aValue);
+end;
+
 procedure TwfPlugin.wfOnProgressInit(Sender: TObject);
 var
   aProgressBar: TwfStatusProgressBar;
@@ -244,6 +254,12 @@ begin
   fCurrentStatus.Max:= aProgressBar.ProgressBar.Max;
   fCurrentStatus.Step:= aProgressBar.ProgressBar.Step;
   fCurrentStatus.Marquee:= aProgressBar.ProgressBarMarquee;
+end;
+
+procedure TwfPlugin.Log(const aValue: string);
+begin
+  if Assigned(fonLog) then
+    fonLog(self, aValue);
 end;
 
 function TwfPlugin.GetProgress: integer;
@@ -308,7 +324,9 @@ begin
   fStatusBar:=aValue;
 
   if Assigned(fStatusBar) then
-    fStatusBar.onProgressInit:=@wfOnProgressInit;
+    begin
+      fStatusBar.onProgressInit:=@wfOnProgressInit;
+    end;
 end;
 
 constructor TwfPlugin.Create(Sender: TwfPlugins; aPlugIndex: integer);
@@ -412,7 +430,10 @@ begin
   fCurrentStatus.Progress:= aValue;
 
   if Assigned(StatusBar) then
-    StatusBar.Progress:= aValue;
+    begin
+      StatusBar.Progress:= aValue;
+      Log(Format(rsProgressBarLogPosition,[aValue,StatusBar.Progress.MaxValue]));
+    end;
 end;
 
 procedure TwfPlugins.SetStatus(aValue: string);
@@ -420,7 +441,10 @@ begin
   fCurrentStatus.Status:= aValue;
 
   if Assigned(StatusBar) then
-    StatusBar.Status:= aValue;
+    begin
+      StatusBar.Status:= aValue;
+      Log(aValue);
+    end;
 end;
 
 procedure TwfPlugins.wfOnMouseDown(Sender: TObject; Button: TMouseButton;
@@ -446,6 +470,11 @@ begin
           aPlugin.PageIndex:= aPlugin.PageIndex-1;
       end;
   end;
+end;
+
+procedure TwfPlugins.wfOnLog(Sender: TObject; const aValue: string);
+begin
+  Log(Format('%s: %s',[TwfPlugin(Sender).Name, aValue]));
 end;
 
 procedure TwfPlugins.ClosePage(aPageIndex: integer; aUnloadPlugin: boolean);
@@ -735,6 +764,7 @@ begin
   aPlugin.onFormClose:=@wfOnPluginFormClose;
   aPlugin.onStatus:=@wfOnPluginStatus;
   aPlugin.onProgress:=@wfOnPluginProgress;
+  aPlugin.onLog:= @wfOnLog;
 
   if aPlugin.Form.Icon.Count>0 then
      fPluginIcons.AddIcon(aPlugin.Form.Icon);
