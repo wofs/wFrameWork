@@ -61,6 +61,7 @@ type
     fEntity: TwfEntity;
     fOrderByFields: string;
     fReceiverNodeId: BaseID;
+    fShowChildrenItems: boolean;
     fSQLGetFillList: String;
     fSQLGetParentsAll: String;
     fTableName: String;
@@ -140,7 +141,7 @@ type
 
     function FindNode(const uID: BaseID): TTreeNode;
 
-    function SelectedEtems(const uAll: boolean = true): ArrayOfBaseID;
+    function SelectedItems(const uAll: boolean = true): ArrayOfBaseID;
 
     property RootId: BaseID read fRootId;
     property ParentId: BaseID read fParentId;
@@ -150,9 +151,11 @@ type
     property Expanded: boolean read fExpanded write SetExpanded default false;
 
     //Used only in conjunction with DBGrid. Automatically installed.
+    property ShowChildrenItems: boolean read fShowChildrenItems write fShowChildrenItems;
     property GridGroupField: string read fGridGroupField write fGridGroupField;
     property wOnGridFiltering: TNotifyEvent read fOnGridFiltering write fOnGridFiltering;
     property ReceiverNodeId: BaseID read fReceiverNodeId write fReceiverNodeId;
+
   published
 
     {Properties}
@@ -843,8 +846,8 @@ begin
 
   aNode:= FindNode(CurrentId);
 
-  aSelectedItems:= SelectedEtems();
-  aSelectedMouseNodes:= SelectedEtems(false);
+  aSelectedItems:= SelectedItems();
+  aSelectedMouseNodes:= SelectedItems(false);
 
   if Length(aSelectedMouseNodes)>1 then
     aDialogText:= Format(rsDBTreeTextDeleteNodePromt,['('+IntToStr(Length(aSelectedMouseNodes))+')'])
@@ -910,7 +913,7 @@ begin
 
 end;
 
-function TwfTreeView.SelectedEtems(const uAll: boolean): ArrayOfBaseID;
+function TwfTreeView.SelectedItems(const uAll: boolean): ArrayOfBaseID;
 var
   aData: TwfData;
   i: Integer;

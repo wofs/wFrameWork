@@ -37,6 +37,7 @@ type
     fDirectFind: Boolean;
     fGridGroupField: string;
     fOnGridFiltering: TNotifyEvent;
+    fShowChildrenItems: boolean;
     fTree: TwfTreeView;
     procedure SetGridGroupField(aValue: string);
     procedure SetTree(aValue: TwfTreeView);
@@ -57,6 +58,8 @@ type
       //TRUE-the search occurs immediately when the selection in the component is changed.
       //FALSE - you have to organize the search yourself
       property DirectFind: boolean read fDirectFind write fDirectFind default true;
+      // Tells you to choose if you have children.
+      property ShowChildrenItems: boolean read fShowChildrenItems write fShowChildrenItems;
   end;
 
   { TwfGroupTrees }
@@ -154,6 +157,7 @@ end;
     fEntity: TwfEntity;
     fGroupComboBoxes: TwfGroupComboBoxes;
     fGroupTrees: TwfGroupTrees;
+    fUseThreadToSelect: boolean;
 
     fWhereList: TwfCustomSQLItemList;
     fOrderByList: TwfCustomOrderByList;
@@ -163,6 +167,7 @@ end;
     fGridImageList: TImageList;
     fSearchSplitIntoSubstringsBtn: TSpeedButton;
 
+    procedure AsyncInit(Data: PtrInt);
     function GetBase: TwfBase;
     function GetColumnIndexByName(aFieldName: string): integer;
     function GetColumns: TStrings;
@@ -227,7 +232,8 @@ end;
     procedure wfSearchComboBox_OnKeyPress(Sender: TObject; var Key: char);
   protected
     procedure SelectRow;
-    procedure wfDrawColumnCell(const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure wfDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -310,7 +316,8 @@ end;
     //Specify the related entity. From the entity, in particular,
     //a field will be taken to fetch data to the grid (provided the field is empty wSQLText).
     property wEntity: TwfEntity read GetEntity write SetEntity;
-
+    // Use the thread to sample data
+    property wUseThreadToSelect: boolean read fUseThreadToSelect write fUseThreadToSelect;
     {Events}
     property wOnLog: TTextEvent read fonLog write fonLog;
     property wOnFilled: TNotifyEvent read fonFilled write fonFilled;
@@ -486,6 +493,7 @@ begin
         aValue.wOnGridFiltering:=nil;
 
       aValue.GridGroupField:=fGridGroupField;
+      aValue.ShowChildrenItems:= fShowChildrenItems;
     end
   else
     if Assigned(fTree) then
@@ -506,6 +514,7 @@ constructor TwfGroupTree.Create(ACollection: TCollection);
 begin
   inherited Create(ACollection);
   DirectFind:= true;
+  ShowChildrenItems:= true;
 end;
 
 destructor TwfGroupTree.Destroy;
@@ -660,7 +669,7 @@ var
 begin
   Result:= -1;
   for i:=0 to Columns.Count-1 do
-    if Columns.Items[i].FieldName = aFieldName then
+    if UTF8UpperCase(Columns.Items[i].FieldName) = UTF8UpperCase(aFieldName) then
       begin
         Result:= i;
         break;
@@ -671,6 +680,24 @@ function TwfDBGrid.GetBase: TwfBase;
 begin
   if not Assigned(fBase) then fBase:= nil;
   Result:= fBase;
+end;
+
+procedure TwfDBGrid.AsyncInit(Data: PtrInt);
+begin
+  if not Assigned(TitleImageList) then
+    TitleImageList:= wfGrid_Images;
+
+  if not Assigned(OnTitleClick) then
+    self.OnTitleClick:=@wfOnTitleClick;
+
+  if not Assigned(OnDrawColumnCell) then
+    self.OnDrawColumnCell:=@wfDrawColumnCell;
+
+  if not Assigned(onDragOver) then
+    self.onDragOver:=@wfOnDragOver;
+
+  if not Assigned(OnEndDrag) then
+    self.OnEndDrag:=@wfOnEndDrag;
 end;
 
 procedure TwfDBGrid.SetMultiSelect(aValue: boolean);
@@ -1009,7 +1036,7 @@ begin
   DataCol := ColumnIndexFromGridColumn(aCol);
 
   if (ARow>=FixedRows) and (DataCol>=0) and not (csDesigning in ComponentState) then
-    wfDrawColumnCell(aRect, DataCol, TColumn(Columns[DataCol]), aState);
+    OnDrawColumnCell(self, aRect, DataCol, TColumn(Columns[DataCol]), aState);
 
   if (ARow>=FixedRows) and Assigned(OnDrawColumnCell) and
     not (csDesigning in ComponentState) then begin
@@ -1022,7 +1049,8 @@ begin
   DrawCellGrid(aCol, aRow, aRect, aState);
 end;
 
-procedure TwfDBGrid.wfDrawColumnCell(const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+procedure TwfDBGrid.wfDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
+  State: TGridDrawState);
 var
   aColumnText: Char;
 begin
@@ -1034,7 +1062,7 @@ begin
         DefaultDrawColumnCell(Rect,DataCol,Column,State);
       end;
 
-    if (Column.FieldName = 'ID') and wMultiSelect then
+    if (UTF8UpperCase(Column.FieldName) = 'ID') and wMultiSelect then
     begin
       Canvas.FillRect(Rect);
 
@@ -1113,8 +1141,8 @@ begin
      aTree:= TwfTreeView(aGroupObject);
      if not Assigned(aTree.Items) and (aTree.Items.Count=0) then exit;
 
-     if aTree.CurrentId <> aTree.RootId then
-       GenerateSearchList(fBase.AsString(aTree.SelectedEtems()), stIn, aTree.Name, aTree.GridGroupField)
+     if (aTree.CurrentId <> aTree.RootId) or not aTree.ShowChildrenItems then
+       GenerateSearchList(fBase.AsString(aTree.SelectedItems(aTree.ShowChildrenItems)), stIn, aTree.Name, aTree.GridGroupField)
      else
        GenerateSearchList('',stIn, aTree.Name);
    end;
@@ -1145,7 +1173,7 @@ begin
   Result:= false;
   for i:= 0 to DataSet.FieldCount-1 do
     begin
-       Result:= DataSet.Fields[i].FieldName = aFieldName;
+       Result:= UTF8UpperCase(DataSet.Fields[i].FieldName) = UTF8UpperCase(aFieldName);
        if Result then
          Break;
     end;
@@ -1172,7 +1200,7 @@ procedure TwfDBGrid.wfOnTitleClick(Column: TColumn);
 var
   aDirection: TDirection;
 begin
-  if (not ExistsField('ID') or (Column.FieldName = 'ID')) and wMultiSelect then exit; //=>
+  if (not ExistsField('ID') or (UTF8UpperCase(Column.FieldName) = 'ID')) and wMultiSelect then exit; //=>
 
   aDirection:= fOrderByList.GetItem(Column.FieldName);
 
@@ -1386,29 +1414,16 @@ begin
   fGroupComboBoxes:= TwfGroupComboBoxes.Create(self, TwfGroupComboBox);
   fGroupComboBoxes.OnGridFiltering:= @wfOnGridFiltering;
 
-  if not Assigned(TitleImageList) then
-    TitleImageList:= wfGrid_Images;
 
   fMultiSelect:= false;
   fstCtrl:= false;
+  fUseThreadToSelect:= true;
 
   self.SelectedColor:= self.FixedHotColor;
   self.Options:=self.Options-[dgMultiselect, dgEditing]+[dgRowHighlight, dgAlwaysShowSelection, dgTruncCellHints];
 
   fDataSource:= TDataSource.Create(self);
   self.DataSource:= fDataSource;
-
-  if not Assigned(OnTitleClick) then
-    self.OnTitleClick:=@wfOnTitleClick;
-
-  //if not Assigned(OnDrawColumnCell) then
-  //  self.OnDrawColumnCell:=@wfDrawColumnCell;
-
-  if not Assigned(onDragOver) then
-    self.onDragOver:=@wfOnDragOver;
-
-  if not Assigned(OnEndDrag) then
-    self.OnEndDrag:=@wfOnEndDrag;
 
   fDataSet:= TwfSQLQuery.Create(self);
 
@@ -1421,6 +1436,8 @@ begin
   fOrderByList:= TwfCustomOrderByList.Create;
 
   wSearchComboBoxHistoryCount:= 0;
+
+  Application.QueueAsyncCall(@AsyncInit,0);
 end;
 
 destructor TwfDBGrid.Destroy;
@@ -1466,7 +1483,7 @@ begin
     aPosition:= GetSearchComboBoxGetSelPosition;
 
 
-    fDataSet:= fBase.OpenSQL(aSQL, aParams, true);
+    fDataSet:= fBase.OpenSQL(aSQL, aParams, fUseThreadToSelect);
     fDataSource.DataSet:= fDataSet;
 
     SetSearchComboBoxGetSelPosition(aPosition);
@@ -1479,6 +1496,7 @@ fSQLCurrent }
     if Assigned(wOnFilled) then wOnFilled(self);
   finally
     Cursor:= crDefault;
+
     FreeAndNil(aParams);
   end;
 end;
