@@ -1,13 +1,13 @@
 object Form1: TForm1
-  Left = 416
+  Left = 541
   Height = 414
-  Top = 312
+  Top = 359
   Width = 651
   Caption = 'Form1'
   ClientHeight = 414
   ClientWidth = 651
   OnCreate = FormCreate
-  LCLVersion = '1.8.4.0'
+  LCLVersion = '2.0.2.0'
   object Panel1: TPanel
     Left = 0
     Height = 43
@@ -112,13 +112,13 @@ object Form1: TForm1
     Width = 435
     Align = alClient
     Caption = 'GroupBox1'
-    ClientHeight = 290
+    ClientHeight = 288
     ClientWidth = 431
     TabOrder = 5
     object wfDBGrid1: TwfDBGrid
       Left = 0
-      Height = 269
-      Top = 21
+      Height = 265
+      Top = 23
       Width = 431
       Align = alClient
       AutoFillColumns = True
@@ -132,7 +132,7 @@ object Form1: TForm1
         end      
         item
           Title.Caption = 'NAME'
-          Width = 379
+          Width = 378
           FieldName = 'NAME'
         end>
       DragMode = dmAutomatic
@@ -142,6 +142,7 @@ object Form1: TForm1
         item
           Tree = wfTreeView1
           GridGroupField = 'IDPARENT'
+          ShowChildrenItems = True
         end>
       wGroupComboBoxes = <>
       wSearchComboBox = ComboBox1
@@ -150,18 +151,19 @@ object Form1: TForm1
       wMultiSelect = True
       wBase = wfBase1
       wColumnsString.Strings = (
-        'ID{}<20>[]|0; NAME{NAME}<379>[]|1'
+        'ID{}<20>[]|0; NAME{NAME}<378>[]|1'
       )
       wFilled = False
       wEntity = WORKERS
+      wUseThreadToSelect = True
     end
     object ComboBox1: TComboBox
       Left = 0
-      Height = 21
+      Height = 23
       Top = 0
       Width = 431
       Align = alTop
-      ItemHeight = 13
+      ItemHeight = 15
       TabOrder = 1
     end
   end

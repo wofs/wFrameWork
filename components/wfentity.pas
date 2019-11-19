@@ -53,6 +53,7 @@ type
     fSQLItemGet: TStrings;
     fSQLItemNew: TStrings;
     fSQLItemUpdate: TStrings;
+    fSQLTreeDragNode: TStrings;
     fSQLTreeGetRoot: TStrings;
     fTableName: string;
     fBase: TwfBase;
@@ -77,6 +78,7 @@ type
     procedure SetSQLItemNew(aValue: TStrings);
     procedure SetSQLItemUpdate(aValue: TStrings);
     procedure SetSQLCreateTable();
+    procedure SetSQLTreeDragNode(aValue: TStrings);
     procedure SetSQLTreeGetRoot(aValue: TStrings);
     procedure SetSQLTreePresets();
     procedure SetStatus(aValue: string);
@@ -114,6 +116,7 @@ type
     property SQLCreate: TStrings read fSQLCreate write SetSQLCreate;
 
     property SQLTreeGetRoot: TStrings read fSQLTreeGetRoot write SetSQLTreeGetRoot;
+    property SQLTreeDragNode: TStrings read fSQLTreeDragNode write SetSQLTreeDragNode;
 
     property SQLGetList: TStrings read fSQLGetList write SetSQLGetList;
     property SQLGetListShort: TStrings read fSQLGetListShort write SetSQLGetListShort;
@@ -264,6 +267,7 @@ begin
     estItemNew: SQLItemNew.Text:= AValue;
     estItemUpdate: SQLItemUpdate.Text:= AValue;
     estTreeGetRoot: SQLTreeGetRoot.Text:= AValue;
+    estTreeDragNode: SQLTreeDragNode.Text:= AValue;
   end;
 end;
 
@@ -279,6 +283,7 @@ begin
     estItemNew: Result:= SQLItemNew.Text;
     estItemUpdate: Result:= SQLItemUpdate.Text;
     estTreeGetRoot: Result:= SQLTreeGetRoot.Text;
+    estTreeDragNode: Result:= SQLTreeDragNode.Text;
   end;
 end;
 
@@ -365,6 +370,11 @@ begin
   end;
 end;
 
+procedure TwfEntity.SetSQLTreeDragNode(aValue: TStrings);
+begin
+  fSQLTreeDragNode.Assign(aValue);
+end;
+
 procedure TwfEntity.SetSQLTreePresets();
 begin
   if fSQLCreate.Count = 0 then
@@ -397,6 +407,9 @@ begin
    {$ELSE}
       fSQLTreeGetRoot.Text:= Format('SELECT T1.ID, T1.IDPARENT, T1.NAME, (SELECT COUNT(*) FROM %s T WHERE T.IDPARENT=T1.ID) CCOUNT FROM %s T1 WHERE T1.IDPARENT=0',[TableName,TableName]);
    {$ENDIF}
+
+   if fSQLTreeDragNode.Count = 0 then
+     fSQLTreeDragNode.Text:= Format('UPDATE %s SET %s=:%s WHERE ID=:ID RETURNING ID',[fTableName,'%s','%s']);
 
    if fSQLDrop.Count = 0 then
       fSQLDrop.Text:= Format('DROP TABLE %s;',[TableName]);
@@ -503,6 +516,7 @@ begin
   fSQLItemNew:= TStringList.Create;
   fSQLItemUpdate:= TStringList.Create;
   fSQLTreeGetRoot:= TStringList.Create;
+  fSQLTreeDragNode:= TStringList.Create;
   fSQLDrop:= TStringList.Create;
   fGridColumnsString:= TStringList.Create;
 end;
@@ -519,6 +533,7 @@ begin
   FreeAndNil(fSQLItemNew);
   FreeAndNil(fSQLItemUpdate);
   FreeAndNil(fSQLTreeGetRoot);
+  FreeAndNil(fSQLTreeDragNode);
   FreeAndNil(fSQLDrop);
   FreeAndNil(fGridColumnsString);
   inherited Destroy;

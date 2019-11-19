@@ -68,7 +68,7 @@ type
   TwfSQLEngine = (seFirebird, seODBC, sePostgreSQL, seUnknown);
 
   TwfEntitySQLPresets = (spNone, spTree, spList);
-  TwfEntitySQLType = (estList, estListFull, estListShort, estItemDel, estItemGet, estItemNew, estItemUpdate, estTreeGetRoot);
+  TwfEntitySQLType = (estList, estListFull, estListShort, estItemDel, estItemGet, estItemNew, estItemUpdate, estTreeGetRoot, estTreeDragNode);
   TwfEntityScriptType = (esctCreate, esctDrop);
 
   TwfLogClass =(lcDebug, lcError, lcInfo, lcWarning, lcEvent);

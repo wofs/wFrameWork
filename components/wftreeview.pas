@@ -171,7 +171,8 @@ type
     property wAllowEditing: boolean read fAllowEditing write fAllowEditing;
     // Fields to sort the selection
     property wOrderByFields: string read fOrderByFields write fOrderByFields;
-
+    // Field by PARENT
+    property wFieldIdParent: string read fFieldIdParent write fFieldIdParent;
     {Events}
     property wOnLog: TTextEvent read fonLog write fonLog;
     property wOnWriteNodeData: TwfWriteNodeData read fonWriteNodeData write fonWriteNodeData;
@@ -287,22 +288,22 @@ begin
       fSQLGetChildrensAll:= 'with recursive tree '
               +' as (select t.id '
               +'     from %s t '
-              +'     where IDPARENT = :ID '
+              +'     where t.%s = :ID '
               +'     union all '
               +'     select t.id '
               +'     from %s t '
-              +'     inner join tree prior on prior.id = t.IDPARENT) '
+              +'     inner join tree prior on prior.id = t.%s) '
               +' select * from tree';
     end;
     sePostgreSQL: begin
       fSQLGetChildrensAll:= 'with recursive tree '
               +' as (select t.id, t.name '
               +'     from %s t '
-              +'     where IDPARENT = :ID '
+              +'     where %s = :ID '
               +'     union all '
               +'     select t.id, t.name '
               +'     from %s t '
-              +'     inner join tree prior on prior.id = t.IDPARENT) '
+              +'     inner join tree prior on prior.id = t.%s) '
               +' select * from tree';
     end;
   end;
@@ -392,7 +393,10 @@ begin
 
        if (aSourceId = fReceiverNodeId) or (fParentId = aSourceId) then exit; //=>
 
-       aSQL:= Format(fSQLDragNode,[fTableName]);
+       if Assigned(fEntity) then
+         aSQL:= Format(fEntity.SQL[estTreeDragNode],[fFieldIdParent,fFieldIdParent])
+       else
+         aSQL:= Format(fSQLDragNode,[fTableName,fFieldIdParent,fFieldIdParent]);
 
        aParams:= nil;
        fBase.CreateParam(aParams, aSQL, true);
@@ -617,19 +621,20 @@ begin
   fSQLGetFillList:= 'SELECT T1.*, (SELECT COUNT(*) FROM %s T WHERE T.IDPARENT=T1.ID) CCOUNT FROM %s T1 WHERE T1.ID=:ID';
 
   fSQLGetParentsAll:='with recursive tree '
-     +'  as (select t.IDPARENT '
+     +'  as (select t.%s '
      +' from %s t '
      +'      where ID = :ID '
      +'      union all '
-     +'      select t.IDPARENT '
+     +'      select t.%s '
      +'      from %s t '
-     +'      inner join tree prior on prior.IDPARENT = t.ID) '
+     +'      inner join tree prior on prior.%s = t.ID) '
      {$IFDEF USEGUID}
-       +'  select IDPARENT AS ID from tree WHERE IDPARENT<>''''';
+       +'  select %s AS ID from tree WHERE %s<>''''';
      {$ELSE}
-       +'  select IDPARENT AS ID from tree WHERE IDPARENT>0';
+       +'  select %s AS ID from tree WHERE %s>0';
      {$ENDIF}
-  fSQLGetChildrens:= 'SELECT T1.*, (SELECT COUNT(*) FROM %s T WHERE T.IDPARENT=T1.ID) CCOUNT FROM %s T1 WHERE T1.IDPARENT=:ID';
+
+  fSQLGetChildrens:= 'SELECT T1.*, (SELECT COUNT(*) FROM %s T WHERE T.%s=T1.ID) CCOUNT FROM %s T1 WHERE T1.%s=:ID';
   //fSQLGetChildrensAll:= 'with recursive tree '
   //        +' as (select t.id '
   //        +'     from %s t '
@@ -640,10 +645,10 @@ begin
   //        +'     inner join tree prior on prior.id = t.IDPARENT) '
   //        +' select * from tree';
 
-  fSQLNewNode:= 'INSERT INTO %s (IDPARENT, NAME) VALUES(:IDPARENT, :NAME) RETURNING ID';
+  fSQLNewNode:= 'INSERT INTO %s (%s, %s) VALUES(:%s, :%s) RETURNING ID';
   fSQLDeleteNode:= 'DELETE FROM %s WHERE ID=:ID';
   fSQLEditNode:= 'UPDATE %s SET NAME=:NAME WHERE ID=:ID RETURNING ID';
-  fSQLDragNode:= 'UPDATE %s SET IDPARENT=:IDPARENT WHERE ID=:ID RETURNING ID';
+  fSQLDragNode:= 'UPDATE %s SET %s=:%s WHERE ID=:ID RETURNING ID';
 
   onDragDrop:=@wfOnDragDrop;
   OnDragOver:=@wfOnDragOver;
@@ -698,7 +703,7 @@ end;
 
 function TwfTreeView.GetParents(uID: BaseID): TwfData;
 begin
-  Result:= GetNodesFromDB(Format(fSQLGetParentsAll,[fTableName, fTableName]), uID);
+  Result:= GetNodesFromDB(Format(fSQLGetParentsAll,[fFieldIdParent,fTableName,fFieldIdParent, fTableName, fFieldIdParent, fFieldIdParent, fFieldIdParent]), uID);
 end;
 
 function TwfTreeView.GetChildrens(uID: BaseID; const uAll: boolean): TwfData;
@@ -706,12 +711,12 @@ var
   aSQL: String;
 begin
   if uAll then
-    aSQL:= fSQLGetChildrensAll
+    aSQL:= Format(fSQLGetChildrensAll,[fTableName, fFieldIdParent, fTableName, fFieldIdParent])
   else
-    aSQL:= fSQLGetChildrens;
+    aSQL:= Format(fSQLGetChildrens,[fTableName, fFieldIdParent, fTableName, fFieldIdParent]);
 
     aSQL:= fBase.WriteOrderBy(aSQL, fOrderByFields);
-    Result:= GetNodesFromDB(Format(aSQL,[fTableName, fTableName]), uID);
+    Result:= GetNodesFromDB(aSQL, uID);
 end;
 
 function TwfTreeView.NewNode: BaseID;
@@ -741,7 +746,11 @@ begin
 
   Result:= EmptyBaseID;
   aParams:= nil;
-  aSQL:= Format(fSQLNewNode,[fTableName]);
+
+  if Assigned(wEntity) then
+    aSQL:= wEntity.SQL[estItemNew]
+  else
+    aSQL:= Format(fSQLNewNode,[fTableName, fFieldIdParent, fFieldName, fFieldIdParent, fFieldName]);
 
   aParentId:= CurrentId;
 
@@ -801,7 +810,11 @@ begin
 
     Result:= EmptyBaseID;
     aParams:= nil;
-    aSQL:= Format(fSQLEditNode,[fTableName]);
+
+    if Assigned(wEntity) then
+      aSQL:= wEntity.SQL[estItemUpdate]
+    else
+      aSQL:= Format(fSQLEditNode,[fTableName]);
 
     fBase.CreateParam(aParams, aSQL, true);
 
@@ -868,7 +881,11 @@ begin
 
 
       aParams:= nil;
-      aSQL:= Format(fSQLDeleteNode,[fTableName]);
+
+      if Assigned(wEntity) then
+        aSQL:= wEntity.SQL[estItemDel]
+      else
+        aSQL:= Format(fSQLDeleteNode,[fTableName]);
 
       fBase.CreateParam(aParams, aSQL);
 
@@ -975,7 +992,10 @@ begin
 
     aNode:= FindNode(uId);
     if Assigned(aNode) then
+    begin
       Select(aNode);
+      aNode.Expanded:= true;
+    end;
     SetFocus;
   finally
     FreeAndNil(aData);
