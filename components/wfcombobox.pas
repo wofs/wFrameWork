@@ -174,14 +174,16 @@ end;
 
 procedure TwfComboBox.SetSQLGetList(aValue: TStrings);
 begin
-  if fSQLGetList=aValue then Exit;
-  fSQLGetList:=aValue;
+  fSQLGetList.Assign(aValue);
 end;
 
 procedure TwfComboBox.SetwEntity(aValue: TwfEntity);
 begin
   if Assigned(aValue) then
-    fSQLGetList.Assign(aValue.SQLGetListShort)
+    begin
+      if fSQLGetList.Count = 0 then
+        fSQLGetList.Assign(aValue.SQLGetListShort)
+    end
   else
     fSQLGetList.Clear;
 

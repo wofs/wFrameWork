@@ -189,6 +189,7 @@ end;
     function GetSearchSplitIntoSubstringsBtn: TSpeedButton;
     function GetSelectedCount: Int64;
     function GetSelectedItems: ArrayOfBaseID;
+    function GetSelectedItemsList: TBaseIDList;
     function GetSQLText: TStrings;
     function ExistsField(aFieldName: string): boolean;
     function GetSearchPreventiveBtn: TSpeedButton;
@@ -257,6 +258,7 @@ end;
 
     property SelectAll: boolean write SetSelectAll;
     property SelectedItems: ArrayOfBaseID read GetSelectedItems;
+    property SelectedItemsList: TBaseIDList read GetSelectedItemsList;
     property SelectedCount: Int64 read GetSelectedCount;
     property CurrentId: BaseID read GetCurrentId write SetCurrentId;
     property FillFreez:boolean read fFillFreez write fFillFreez;
@@ -930,6 +932,11 @@ begin
             Result[i]:= fSelectedItems.Items[i];
           end;
     //end;
+end;
+
+function TwfDBGrid.GetSelectedItemsList: TBaseIDList;
+begin
+  Result:= fSelectedItems;
 end;
 
 function TwfDBGrid.GetSQLText: TStrings;

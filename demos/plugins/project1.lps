@@ -35,7 +35,6 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FmPlugin1U"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="11"/>
         <TopLine Value="18"/>
         <CursorPos X="33" Y="53"/>
@@ -50,6 +49,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FmPlugin2U"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="10"/>
         <CursorPos X="27" Y="16"/>
         <UsageCount Value="89"/>
