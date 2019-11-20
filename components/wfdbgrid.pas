@@ -196,6 +196,7 @@ end;
 
     procedure SetColumns(aValue: TStrings);
     procedure SetColumnsFromString(aValue: TStrings);
+    procedure SetCurrentId(aValue: BaseID);
     procedure SetEntity(aValue: TwfEntity);
     procedure SetFilled(aValue: boolean);
     procedure SetfSQLText(aValue: TStrings);
@@ -256,7 +257,7 @@ end;
     property SelectAll: boolean write SetSelectAll;
     property SelectedItems: ArrayOfBaseID read GetSelectedItems;
     property SelectedCount: Int64 read GetSelectedCount;
-    property CurrentId: BaseID read GetCurrentId;
+    property CurrentId: BaseID read GetCurrentId write SetCurrentId;
     property FillFreez:boolean read fFillFreez write fFillFreez;
     property SQLCurrent: TStrings read fSQLCurrent;
 
@@ -625,6 +626,12 @@ begin
     AutoFillColumns:= aAutoFillColumns;
     FreeAndNil(aStringList);
   end;
+end;
+
+procedure TwfDBGrid.SetCurrentId(aValue: BaseID);
+begin
+if Assigned(DataSet) then
+  DataSet.Locate('ID',aValue, [loPartialKey]);
 end;
 
 procedure TwfDBGrid.SetColumns(aValue: TStrings);
