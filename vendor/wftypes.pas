@@ -44,6 +44,8 @@ type
   TErrorEvent = procedure(Sender: TObject; const E: Exception) of object;
   TVarTextEvent = procedure(Sender: TObject; var aValue: string) of object;
   TTextEvent = procedure(Sender: TObject; const aValue: string) of object;
+  TVariantEvent = procedure(Sender: TObject; const aValue: variant) of object;
+  TBaseEvent = procedure(Sender: TObject; const aValue: BaseID) of object;
   TStringsEvent = procedure(Sender: TObject; const aText: string; const aStrings: TStrings) of object;
   TResultEvent = procedure(Sender: TObject; const aResult: boolean) of object;
   TResultsEvent = procedure(Sender: TObject; const aResults: ArrayOfInt64) of object;

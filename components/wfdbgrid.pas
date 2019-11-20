@@ -161,6 +161,7 @@ end;
 
     fWhereList: TwfCustomSQLItemList;
     fOrderByList: TwfCustomOrderByList;
+    fwOnBeforeFill: TVarTextEvent;
     fwOnDuringFill: TVarTextEvent;
     fwSearchComboBoxHistoryCount: integer;
 
@@ -323,6 +324,7 @@ end;
     property wOnLog: TTextEvent read fonLog write fonLog;
     property wOnFilled: TNotifyEvent read fonFilled write fonFilled;
     property wOnDuringFill: TVarTextEvent read fwOnDuringFill write fwOnDuringFill;
+    property wOnBeforeFill: TVarTextEvent read fwOnBeforeFill write fwOnBeforeFill;
 
     property wOnSelectionChanged: TNotifyEvent read fonSelectionChanged write fonSelectionChanged;
   end;
@@ -1476,6 +1478,8 @@ begin
     aSQL:= Trim(fSQLText.Text);
 
   if fFillFreez or not Assigned(self) or not Assigned(fBase) or (Length(aSQL)=0) then exit; //=>
+
+  if Assigned(fwOnBeforeFill) then fwOnBeforeFill(self, aSQL);
 
   Cursor:= crSQLWait;
 

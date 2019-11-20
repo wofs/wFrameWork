@@ -93,6 +93,7 @@ type
     fOnFilled: TNotifyEvent;
     fAllowEditing: boolean;
     fOnGridFiltering: TNotifyEvent;
+    fwOnSetedCurrentId: TBaseEvent;
     ssCtrlDown: Boolean;
 
     procedure AsyncInit(Data: PtrInt);
@@ -102,7 +103,9 @@ type
     procedure mItemDeleteClick(Sender: TObject);
     procedure mItemEditClick(Sender: TObject);
     procedure mItemNewClick(Sender: TObject);
+    procedure SetCurrentId(aValue: BaseID);
     procedure SetFilled(aValue: boolean);
+    procedure SetShowChildrenItems(aValue: boolean);
     procedure SetSQLGetRoot(aValue: TStrings);
     procedure SetTableNameSQLGetRoot;
     procedure SetwEntity(aValue: TwfEntity);
@@ -145,13 +148,13 @@ type
 
     property RootId: BaseID read fRootId;
     property ParentId: BaseID read fParentId;
-    property CurrentId: BaseID read fCurrentId;
+    property CurrentId: BaseID read fCurrentId write SetCurrentId;
 
     property Data[aNode: TTreeNode]: TwfTreeData read GetData;
     property Expanded: boolean read fExpanded write SetExpanded default false;
 
     //Used only in conjunction with DBGrid. Automatically installed.
-    property ShowChildrenItems: boolean read fShowChildrenItems write fShowChildrenItems;
+    property ShowChildrenItems: boolean read fShowChildrenItems write SetShowChildrenItems;
     property GridGroupField: string read fGridGroupField write fGridGroupField;
     property wOnGridFiltering: TNotifyEvent read fOnGridFiltering write fOnGridFiltering;
     property ReceiverNodeId: BaseID read fReceiverNodeId write fReceiverNodeId;
@@ -178,6 +181,7 @@ type
     property wOnWriteNodeData: TwfWriteNodeData read fonWriteNodeData write fonWriteNodeData;
     property wOnNewNodeWriteParams: TwfNewNodeWriteParams read fonNewNodeWriteParams write fonNewNodeWriteParams;
     property wOnFilled: TNotifyEvent read fOnFilled write fOnFilled;
+    property wOnSetedCurrentId: TBaseEvent read fwOnSetedCurrentId write fwOnSetedCurrentId;
     property wOnAddBefore:TAcceptEvent read fOnAddBefore write fOnAddBefore;
     property wOnEditBefore:TAcceptEvent read fOnEditBefore write fOnEditBefore;
     property wOnDeleteBefore:TAcceptEvent read fOnDeleteBefore write fOnDeleteBefore;
@@ -330,6 +334,15 @@ begin
   NewNode;
 end;
 
+procedure TwfTreeView.SetCurrentId(aValue: BaseID);
+begin
+  fCurrentId:= aValue;
+
+  ExpandThis(fCurrentId);
+
+  if Assigned(fwOnSetedCurrentId) then fwOnSetedCurrentId(self, aValue);
+end;
+
 procedure TwfTreeView.SetFilled(aValue: boolean);
 begin
   if not Assigned(fBase) then exit;
@@ -339,6 +352,22 @@ begin
   else
   begin
     Items.Clear;
+  end;
+end;
+
+procedure TwfTreeView.SetShowChildrenItems(aValue: boolean);
+var
+  aCurrentId: BaseID;
+begin
+  //if fShowChildrenItems=aValue then Exit;
+  fShowChildrenItems:=aValue;
+
+  aCurrentId:= CurrentId;
+
+  if Assigned(fBase) then
+  begin
+    Fill(nil);
+    ExpandThis(aCurrentId);
   end;
 end;
 
