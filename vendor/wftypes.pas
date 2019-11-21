@@ -77,7 +77,7 @@ type
   TwfLogClasses = set of TwfLogClass;
 
 const
-  wfLE = #10;
+  wfLE = LineEnding;
   wfEmptyStr = '';
   wfEmptyDouble = 0.0;
   wfEmptyInt = 0;

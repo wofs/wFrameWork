@@ -96,6 +96,7 @@ type
     fSQLTreeGetRoot: TStrings;
     fTableName: string;
     fBase: TwfBase;
+    procedure AppendText(var aStrings: TStrings; const aText: string);
     function GetBase: TwfBase;
     function GetTableName: string;
     procedure SetBase(aValue: TwfBase);
@@ -416,15 +417,15 @@ begin
   case GetEngine of
     seFirebird: begin
       {$IFDEF USEGUID}
-            fSQLCreate.Append(Format('CREATE TABLE %s ( '+wfLE
+            AppendText(fSQLCreate,Format('CREATE TABLE %s ( '+wfLE
                +'     ID        GUID NOT NULL /* GUID = CHAR(32) NOT NULL */, '+wfLE
                +'     IDPARENT  GUID /* GUID = CHAR(32) NOT NULL */, '+wfLE
                +'     NAME      VARCHAR(500) '+wfLE
                +' );',[TableName]));
-            fSQLCreate.Append('COMMIT;');
-            fSQLCreate.Append(Format('ALTER TABLE %s ADD CONSTRAINT PK_%s PRIMARY KEY (ID);',[TableName,TableName]));
-            fSQLCreate.Append('SET TERM ^ ;');
-            fSQLCreate.Append(Format('CREATE OR ALTER TRIGGER %s_BI0 FOR %s '+wfLE
+            AppendText(fSQLCreate,'COMMIT;');
+            AppendText(fSQLCreate,Format('ALTER TABLE %s ADD CONSTRAINT PK_%s PRIMARY KEY (ID);',[TableName,TableName]));
+            AppendText(fSQLCreate,'SET TERM ^ ;');
+            AppendText(fSQLCreate,Format('CREATE OR ALTER TRIGGER %s_BI0 FOR %s '+wfLE
                +' ACTIVE BEFORE INSERT POSITION 0 '+wfLE
                +' AS '+wfLE
                +' begin '+wfLE
@@ -432,18 +433,18 @@ begin
                +'     NEW.ID = REPLACE(UUID_TO_CHAR(GEN_UUID()),''-'',''''); '+wfLE
                +' end '+wfLE
                +' ^',[TableName,TableName]));
-            fSQLCreate.Append('SET TERM ; ^');
+            AppendText(fSQLCreate,'SET TERM ; ^');
          {$ELSE}
-             fSQLCreate.Append(Format('CREATE TABLE %s ( '+wfLE
+             AppendText(fSQLCreate,Format('CREATE TABLE %s ( '+wfLE
                 +'     ID        BIGINT NOT NULL, '+wfLE
                 +'     IDPARENT  BIGINT, '+wfLE
                 +'     NAME      VARCHAR(500) '+wfLE
                 +' );',[TableName]));
-             fSQLCreate.Append('COMMIT;');
-             fSQLCreate.Append(Format('ALTER TABLE %s ADD CONSTRAINT PK_%s PRIMARY KEY (ID);',[TableName,TableName]));
-             fSQLCreate.Append(Format('CREATE SEQUENCE GEN_%s_ID START WITH 0 INCREMENT BY 1;',[TableName]));
-             fSQLCreate.Append('SET TERM ^ ;');
-             fSQLCreate.Append(Format('CREATE OR ALTER TRIGGER %s_BI FOR %s'+wfLE
+             AppendText(fSQLCreate,'COMMIT;');
+             AppendText(fSQLCreate,Format('ALTER TABLE %s ADD CONSTRAINT PK_%s PRIMARY KEY (ID);',[TableName,TableName]));
+             AppendText(fSQLCreate,Format('CREATE SEQUENCE GEN_%s_ID START WITH 0 INCREMENT BY 1;',[TableName]));
+             AppendText(fSQLCreate,'SET TERM ^ ;');
+             AppendText(fSQLCreate,Format('CREATE OR ALTER TRIGGER %s_BI FOR %s'+wfLE
                 +' ACTIVE BEFORE INSERT POSITION 0'+wfLE
                 +' AS'+wfLE
                 +' BEGIN'+wfLE
@@ -451,7 +452,7 @@ begin
                 +'     NEW.ID = (SELECT SALT FROM WF_GET_DEPARTMENTSALT)+GEN_ID(GEN_%s_ID,1);'+wfLE
                 +' END '+wfLE
                 +' ^',[TableName,TableName,TableName]));
-             fSQLCreate.Append('SET TERM ; ^');
+             AppendText(fSQLCreate,'SET TERM ; ^');
 
          {$ENDIF}
     end;
@@ -460,13 +461,13 @@ begin
     sePostgreSQL: begin
       {$IFDEF USEGUID}
           //CREATE EXTENSION "uuid-ossp";
-          fSQLCreate.Append(Format('CREATE TABLE %s ( '+wfLE
+          AppendText(fSQLCreate,Format('CREATE TABLE %s ( '+wfLE
              +'     ID        uuid DEFAULT uuid_generate_v4 () PRIMARY KEY, '+wfLE
              +'     IDPARENT  BIGINT, '+wfLE
              +'     NAME      CHARACTER VARYING(500) '+wfLE
              +' );',[TableName]));
       {$ELSE}
-          fSQLCreate.Append(Format('CREATE TABLE %s ( '+wfLE
+          AppendText(fSQLCreate,Format('CREATE TABLE %s ( '+wfLE
              +'     ID        BIGSERIAL PRIMARY KEY, '+wfLE
              +'     IDPARENT  BIGINT, '+wfLE
              +'     NAME      CHARACTER VARYING(500) '+wfLE
@@ -476,6 +477,14 @@ begin
     else
       fSQLCreate.Append('');
   end;
+end;
+
+procedure TwfEntity.AppendText(var aStrings:TStrings; const aText: string);
+begin
+  if fSQLCreate.Count>0 then
+    fSQLCreate.Text := fSQLCreate.Text + wfLE;
+
+  fSQLCreate.Text:= fSQLCreate.Text + aText;
 end;
 
 procedure TwfEntity.SetSQLTreeDragNode(aValue: TStrings);
