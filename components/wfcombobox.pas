@@ -16,7 +16,7 @@ unit wfComboBox;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls, PropEdits,
   wfBase, wfEntity, wfClasses, wfTypes, wfFunc;
 
 type
@@ -96,6 +96,7 @@ procedure Register;
 begin
   {$I wfcombobox_icon.lrs}
   RegisterComponents('WF',[TwfComboBox]);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfComboBox, 'wSQLGetList', TSQLPropertyEditor);
 end;
 
 { TwfComboBox }

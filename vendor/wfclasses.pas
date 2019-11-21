@@ -17,7 +17,7 @@ unit wfClasses;
 interface
 
 uses
-  Classes, SysUtils, fgl, wfTypes, wfFunc, LazUTF8, Buttons, db;
+  Classes, SysUtils, fgl, wfTypes, wfFunc, wfSQLEditor, LazUTF8, UITypes, PropEdits, Buttons, Dialogs, db;
 
 type
 
@@ -136,7 +136,42 @@ type
      property onLog: TTextEvent read fonLog write fonLog;
    end;
 
+   { TSQLPropertyEditor }
+
+   TSQLPropertyEditor = class(TClassPropertyEditor )
+   public
+     procedure Edit; Override;
+     function  GetAttributes: TPropertyAttributes; Override;
+   end;
+
 implementation
+
+{ TSQLPropertyEditor }
+
+procedure TSQLPropertyEditor.Edit;
+var
+  aSQLDialog: TFmSQLEditor;
+  aNewValue, aOldValue: TStrings;
+begin
+  aOldValue := TStrings(GetObjectValue);
+  aSQLDialog:= TFmSQLEditor.Create(aOldValue);
+
+  try
+    aSQLDialog.Editor.Lines:= TStrings(GetObjectValue(TStrings));
+    if (aSQLDialog.ShowModal = mrOK) then
+      begin
+         aNewValue := aSQLDialog.Editor.Lines;
+         SetPtrValue(aNewValue);
+      end;
+  finally
+    FreeAndNil(aSQLDialog);
+  end;
+end;
+
+function TSQLPropertyEditor.GetAttributes: TPropertyAttributes;
+begin
+  Result := [paDialog];
+end;
 
 { TwfOrderBy }
 

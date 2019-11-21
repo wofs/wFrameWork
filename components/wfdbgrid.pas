@@ -341,8 +341,8 @@ procedure Register;
 begin
   {$I wfdbgrid_icon.lrs}
   RegisterComponents('WF',[TwfDBGrid]);
-
-  //RegisterPropertyEditor(TypeInfo(TDBGridClickEvent), TwfDBGrid, 'OnTitleClick', nil);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfDBGrid, 'wSQLText', TSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfDBGrid, 'wColumnsString', TSQLPropertyEditor);
 end;
 
 { TwfGroupComboBox }

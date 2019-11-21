@@ -15,7 +15,7 @@ unit wfSQLScript;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, sqldb;
+  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, wfClasses, PropEdits, sqldb;
 
 type
   TwfSQLScript = class(TSQLScript)
@@ -37,6 +37,7 @@ procedure Register;
 begin
   {$I wfsqlscript_icon.lrs}
   RegisterComponents('WF',[TwfSQLScript]);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfSQLScript, 'Script', TSQLPropertyEditor);
 end;
 
 end.

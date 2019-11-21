@@ -21,7 +21,7 @@ uses
       cmem,
     {$ENDIF}{$ENDIF}
     Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ComCtrls,
-    LazUTF8, wfTypes, wfResourceStrings, wfFunc, wfDialogs, wfClasses,
+    LazUTF8, PropEdits, wfTypes, wfResourceStrings, wfFunc, wfDialogs, wfClasses,
     TwfProgressU, wfreportviewer, wfBase, wfSQLQuery, db, fpspreadsheetctrls,
     fpspreadsheet, fpsTypes;
 
@@ -285,6 +285,9 @@ procedure Register;
 begin
   {$I wfreport_icon.lrs}
   RegisterComponents('WF',[TwfReport]);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfReportItem, 'ColumnsString', TSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfReportItem, 'SQLQuery', TSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfReportItem, 'SQLQueryGroup', TSQLPropertyEditor);
 end;
 
 { TwfReportThread }

@@ -16,7 +16,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  Grids, StdCtrls, Buttons, Spin, wfFunc, wfTypes, wfBase, wfComboBox;
+  Grids, StdCtrls, Buttons, Spin, PropEdits, wfFunc, wfTypes, wfClasses, wfBase, wfComboBox;
 
 type
   TwfValueListEditor = class;
@@ -288,6 +288,7 @@ procedure Register;
 begin
   {$I wfvaluelisteditor_icon.lrs}
   RegisterComponents('WF',[TwfValueListEditor]);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfValue, 'ObjectStrings', TSQLPropertyEditor);
 end;
 
 { TwfValueColor }

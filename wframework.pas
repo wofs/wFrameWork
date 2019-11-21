@@ -11,7 +11,7 @@ uses
   wfResourceStrings, wfTypes, wfClasses, wfFunc, wfDialogs, wfThreadU, wfPlugins, wfLog, wfVersions, wfIBConnection, 
   wfPQConnection, wfODBCConnection, wfBase, wfSQLQuery, wfSQLScript, wfSQLTransaction, wfTreeView, wfDBGrid, 
   wfComboBox, wfStatusProgressBar, wfReport, wfSettings, wfEntity, wfValueListEditor, TwfProgressU, wfReportViewer, 
-  LazarusPackageIntf;
+  wfSQLEditor, LazarusPackageIntf;
 
 implementation
 

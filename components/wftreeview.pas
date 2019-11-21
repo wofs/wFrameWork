@@ -195,7 +195,7 @@ procedure Register;
 begin
   {$I wftreeview_icon.lrs}
   RegisterComponents('WF', [TwfTreeView]);
-
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfTreeView, 'wSQLGetRoot', TSQLPropertyEditor);
 end;
 
 { TwfTreeView }
