@@ -55,6 +55,11 @@ type
        constructor Create(AOwner: TPersistent; const aFreeAfterUse: boolean = false);
    end;
 
+   TwfSQL = record
+     aText: string;
+     aParams: TwfParams;
+   end;
+
    { TwfBaseField }
 
    TwfBaseField = record

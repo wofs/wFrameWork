@@ -151,7 +151,7 @@ end;
     fSelectedItems: TBaseIDList;
     fSelectGridId: BaseID;
     fShiftState: TShiftState;
-    fSQLCurrent: TStrings;
+    fSQLRecord: TwfSQL;
     fSQLText: TStrings;
     fstCtrl: boolean;
     fEntity: TwfEntity;
@@ -190,6 +190,7 @@ end;
     function GetSelectedCount: Int64;
     function GetSelectedItems: ArrayOfBaseID;
     function GetSelectedItemsList: TBaseIDList;
+    function GetSQLCurrent: TwfSQL;
     function GetSQLText: TStrings;
     function ExistsField(aFieldName: string): boolean;
     function GetSearchPreventiveBtn: TSpeedButton;
@@ -236,6 +237,7 @@ end;
   protected
     procedure SelectRow;
     procedure wfDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure SetSQLCurrent(aSQL: string; aParams: TwfParams);
 
   public
     constructor Create(AOwner: TComponent); override;
@@ -262,7 +264,7 @@ end;
     property SelectedCount: Int64 read GetSelectedCount;
     property CurrentId: BaseID read GetCurrentId write SetCurrentId;
     property FillFreez:boolean read fFillFreez write fFillFreez;
-    property SQLCurrent: TStrings read fSQLCurrent;
+    property SQLCurrent: TwfSQL read GetSQLCurrent;
 
   published
     //Trees to automatically generate the Where the grid.
@@ -939,6 +941,11 @@ begin
   Result:= fSelectedItems;
 end;
 
+function TwfDBGrid.GetSQLCurrent: TwfSQL;
+begin
+  Result:= fSQLRecord;
+end;
+
 function TwfDBGrid.GetSQLText: TStrings;
 begin
   Result:= fSQLText;
@@ -1098,6 +1105,12 @@ begin
        Canvas.TextOut(Rect.Right - 2 - Canvas.TextWidth(aColumnText), Rect.Top + 2, aColumnText);
     end;
 
+end;
+
+procedure TwfDBGrid.SetSQLCurrent(aSQL: string; aParams: TwfParams);
+begin
+  fSQLRecord.aText:= aSQL;
+  fSQLRecord.aParams.Assign(aParams);
 end;
 
 procedure TwfDBGrid.KeyDown(var Key: Word; Shift: TShiftState);
@@ -1419,7 +1432,7 @@ begin
   fFillFreez:= false;
 
   fSQLText:= TStringList.Create;
-  fSQLCurrent:= TStringList.Create;
+  fSQLRecord.aParams:= TwfParams.Create(self);
 
   fColumnsString:= TStringList.Create;
   fColumnsString.Clear;
@@ -1461,7 +1474,7 @@ begin
     FreeAndNil(fGroupComboBoxes);
     FreeAndNil(fGroupTrees);
     FreeAndNil(fSQLText);
-    FreeAndNil(fSQLCurrent);
+    FreeAndNil(fSQLRecord.aParams);
     FreeAndNil(fColumnsString);
     FreeAndNil(fSelectedItems);
     FreeAndNil(fWhereList);
@@ -1500,14 +1513,12 @@ begin
 
     aPosition:= GetSearchComboBoxGetSelPosition;
 
+    SetSQLCurrent(aSQL, aParams);
 
     fDataSet:= fBase.OpenSQL(aSQL, aParams, fUseThreadToSelect);
     fDataSource.DataSet:= fDataSet;
 
     SetSearchComboBoxGetSelPosition(aPosition);
-{ TODO : ДОДЕЛАТЬ!!!!
-fSQLCurrent }
-    fSQLCurrent.Assign(fDataSet.SQL);
 
     Log('');
 

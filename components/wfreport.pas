@@ -21,7 +21,7 @@ uses
       cmem,
     {$ENDIF}{$ENDIF}
     Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ComCtrls,
-    LazUTF8, wfTypes, wfResourceStrings, wfFunc, wfDialogs,
+    LazUTF8, wfTypes, wfResourceStrings, wfFunc, wfDialogs, wfClasses,
     TwfProgressU, wfreportviewer, wfBase, wfSQLQuery, db, fpspreadsheetctrls,
     fpspreadsheet, fpsTypes;
 
@@ -113,10 +113,11 @@ type
     fReportThread: TwfReportThread;
     fProgress: TwfProgress;
     fReportType: TwfReportType;
-    fSQLQuery: TStrings;
+    fSQLRecord: TwfSQL;
     fExportTemplateFile: string;
     fSQLQueryGroup: TStrings;
     fSQLQueryStep: word;
+    fSQLQuery: TStrings;
     fTerminated: boolean;
     fViewer: TwfReportViewer;
     fUseProgressBar: boolean;
@@ -126,6 +127,7 @@ type
     function GetHeaderColor: TColor;
     function GetRootPath: string;
     function GetSilentMode: boolean;
+    function GetSQLQuery: TStrings;
     function GetUsedColumnString: boolean;
     function GetUsedTemplate: boolean;
     procedure ReportExecute(const Sender: TwfReportThread; const Msg: Word;
@@ -141,6 +143,7 @@ type
     procedure SetHeaderColor(aValue: TColor);
     procedure SetSQLQuery(aValue: TStrings);
     procedure SetSQLQueryGroup(aValue: TStrings);
+    procedure SetSQLRecord(aValue: TwfSQL);
     procedure SetTerminated(AValue: boolean);
     function ThreadInit: boolean;
     procedure ThreadStop;
@@ -180,6 +183,7 @@ type
     property UsedTemplate: boolean read GetUsedTemplate;
     property UsedColumnString: boolean read GetUsedColumnString;
     property Terminated: boolean read fTerminated write SetTerminated;
+    property SQLRecord: TwfSQL read fSQLRecord write SetSQLRecord;
   published
 
     property Name: string read fName write fName;
@@ -188,7 +192,8 @@ type
     //Use rtSpreadSheet report type
     property SQLQueryGroup: TStrings read fSQLQueryGroup write SetSQLQueryGroup;
     // SQL query to get report data
-    property SQLQuery: TStrings read fSQLQuery write SetSQLQuery;
+    property SQLQuery: TStrings read GetSQLQuery write SetSQLQuery;
+
     //Use only DefaultExport
     //SQL query step. Allows you to split the retrieval of rows from the database into portions.
     //0 - fetching in a single query
@@ -656,10 +661,12 @@ var
   i: Integer;
   aColumnIndex, aStep, iDS, iRows: integer;
   aCSV: TFileStream;
-  aCSVText, aSQL: String;
+  aCSVText: String;
+  aSQL, aSQLTemp: string;
   aPosSelect: PtrInt;
   aRowsCount: Int64;
   aStepIt: Boolean;
+  aParams: TwfParams;
 const
   uCommaChar     = ';';
 
@@ -705,8 +712,10 @@ begin
   aStep:= fSQLQueryStep;
   aStepIt:= (aStep>0);
   iRows:= 0;
-  aSQL:= SQLQuery.Text;
-  aRowsCount:= Base.GetRowsCount(aSQL);
+  aSQL:= fSQLRecord.aText;
+  aParams:= fSQLRecord.aParams;
+
+  aRowsCount:= Base.GetRowsCount(fSQLRecord);
   ProgressInit(aRowsCount,1);
 
   aPosSelect := UTF8Pos('SELECT', aSQL)+UTF8Length('SELECT');
@@ -727,10 +736,12 @@ begin
 
     if Terminated then break;
 
+    aSQLTemp:= aSQL;
+
     if aStepIt then
-      aDataSet:= Base.OpenSQL(Format(aSQL,[aStep,iRows]))
-    else
-      aDataSet:= Base.OpenSQL(aSQL);
+      aSQLTemp:= Format(aSQLTemp,[aStep,iRows]);
+
+      aDataSet:= Base.OpenSQL(aSQLTemp, aParams);
 
     aDataSet.First;
 
@@ -816,13 +827,14 @@ var
   aColumns: TwfReportColumns;
   i: Integer;
   aStep, iRows, wsCol: integer;
-  aSQL, aFileName, aExportTemplateFile: String;
+  aSQL, aFileName, aExportTemplateFile, aSQLTemp: String;
   aPosSelect: PtrInt;
   aRowsCount: Int64;
   aStepIt: Boolean;
   aWorkbookSource: TsWorkbookSource;
   aWorkSheet: TsWorksheet;
   wsRow: Int64;
+  aParams: TwfParams;
 
 begin
   { TODO : добавить экспорт с группировкой }
@@ -853,8 +865,11 @@ begin
   iRows:= 0;
   wsRow:= fFirstRow;
 
-  aSQL:= SQLQuery.Text;
-  aRowsCount:= Base.GetRowsCount(aSQL);
+  aSQL:= fSQLRecord.aText;
+  aParams:= fSQLRecord.aParams;
+
+  aRowsCount:= Base.GetRowsCount(fSQLRecord);
+
   ProgressInit(aRowsCount,1);
 
   aPosSelect := UTF8Pos('SELECT', aSQL)+UTF8Length('SELECT');
@@ -879,10 +894,12 @@ begin
   while iRows<aRowsCount do begin
     if Terminated then break;
 
+    aSQLTemp:= aSQL;
+
     if aStepIt then
-      aDataSet:= Base.OpenSQL(Format(aSQL,[aStep,iRows]))
-    else
-      aDataSet:= Base.OpenSQL(aSQL);
+      aSQLTemp:= Format(aSQLTemp,[aStep,iRows]);
+
+      aDataSet:= Base.OpenSQL(aSQLTemp, aParams);
 
     aDataSet.First;
 
@@ -971,6 +988,13 @@ begin
   Result:=TwfReport(TwfReportItems(GetOwner).Owner).SilentMode;
 end;
 
+function TwfReportItem.GetSQLQuery: TStrings;
+begin
+  fSQLQuery.Text:= fSQLRecord.aText;
+  //Base.WriteParamsToLog(fSQLRecord.aParams);
+  Result:= fSQLQuery;
+end;
+
 function TwfReportItem.GetUsedColumnString: boolean;
 begin
   Result:= not IsEmpty(fColumnsString);
@@ -1033,12 +1057,21 @@ end;
 
 procedure TwfReportItem.SetSQLQuery(aValue: TStrings);
 begin
-  fSQLQuery.Assign(aValue);
+  fSQLRecord.aText:= aValue.Text;
 end;
 
 procedure TwfReportItem.SetSQLQueryGroup(aValue: TStrings);
 begin
   fSQLQueryGroup.Assign(aValue);
+end;
+
+procedure TwfReportItem.SetSQLRecord(aValue: TwfSQL);
+var
+  aParams: TwfParams;
+begin
+  fSQLRecord:= aValue;
+
+  aParams:= fSQLRecord.aParams;
 end;
 
 procedure TwfReportItem.SetTerminated(AValue: boolean);
@@ -1062,8 +1095,8 @@ begin
   fReportThread:= nil;
   fTerminated:= true;
                        { TODO : Группировка в отчете }
-  fSQLQuery:= TStringList.Create;
   fSQLQueryGroup:= TStringList.Create;
+  fSQLQuery:= TStringList.Create;
   fColumnsString:= TStringList.Create;
   fHeaderColor:= clWhite;
   fReportType:= rtSpreadSheet;
@@ -1075,8 +1108,8 @@ end;
 
 destructor TwfReportItem.Destroy;
 begin
-  FreeAndNil(fSQLQuery);
   FreeAndNil(fSQLQueryGroup);
+  FreeAndNil(fSQLQuery);
   FreeAndNil(fColumnsString);
   inherited Destroy;
 end;

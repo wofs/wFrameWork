@@ -171,6 +171,7 @@ type
 
       {Get}
       function GetRowsCount(const uSQL: string): int64;
+      function GetRowsCount(const uSQL: TwfSQL): int64;
 
       {Convert}
       function DataToStr(aField: TField; aCSVComma: boolean= false; aBr: boolean = false): string;
@@ -189,6 +190,9 @@ type
 
       procedure TransactionCommit(aTransaction: TwfSQLTransaction);
       procedure TransactionRolback(aTransaction: TwfSQLTransaction);
+
+      // Records query settings in a log file
+      procedure WriteParamsToLog(var aParams: TwfParams; const aHeader: string = 'Params');
 
       {-= Wokring with params =-}
       // Create Params List
@@ -1167,11 +1171,23 @@ end;
 
 function TwfBase.GetRowsCount(const uSQL: string): int64;
 var
+  aSQL: TwfSQL;
+begin
+  aSQL.aText:= uSQL;
+  aSQL.aParams:= TwfParams.Create(self, true);
+
+  GetRowsCount(aSQL);
+end;
+
+function TwfBase.GetRowsCount(const uSQL: TwfSQL): int64;
+var
   aPosFrom, aPosSelect, aPosFromRes, aPosOrderBy, aPosJoin: PtrInt;
   aSQL: String;
   aData: TwfData;
+  aParams: TwfParams;
 begin
-   aSQL:= uSQL;
+   aSQL:= uSQL.aText;
+   aParams:= uSQL.aParams;
    aPosFromRes:= 0;
    aData:= nil;
 
@@ -1197,7 +1213,7 @@ begin
 
    UTF8Delete(aSQL,aPosOrderBy,Length(aSQL)-aPosOrderBy+1);
 
-   aData:= GetData(aSQL);
+   aData:= GetData(aSQL, aParams);
    try
      Result:= aData.Data(0,'COUNT');
    finally
@@ -1474,13 +1490,13 @@ begin
      Transaction:= aTransaction;
      SQL.Text:= uSQL;
      Log(SQL.Text);
-     if aParams.Count>0 then
-       Log('-= Params =-');
+
      for i:=0 to aParams.Count-1 do
      begin
        Params.ParamByName(aParams[i].Name).Value:= ParamToVar(aParams[i]);
-       Log(':'+Params[i].Name+' = '+Params[i].AsString);
      end;
+
+     WriteParamsToLog(aParams);
 
      try
        Open;
@@ -1488,6 +1504,24 @@ begin
        if aParams.FreeAfterUse then FreeAndNil(aParams);
      end;
    end;
+end;
+
+{@@ ----------------------------------------------------------------------------
+Records query settings in a log file
+  @param  aParams   SQL Params
+-------------------------------------------------------------------------------}
+
+procedure TwfBase.WriteParamsToLog(var aParams: TwfParams; const aHeader: string);
+var
+  i: Integer;
+begin
+  Log('-= '+aHeader+' =-');
+  for i:=0 to aParams.Count-1 do
+  begin
+    Log(':'+aParams[i].Name+' = '+aParams[i].AsString);
+  end;
+  Log('-= End Write Params =-');
+  Log('');
 end;
 
 {@@ ----------------------------------------------------------------------------
