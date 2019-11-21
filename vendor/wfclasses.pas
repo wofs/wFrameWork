@@ -21,30 +21,6 @@ uses
 
 type
 
-   //{ TEntity }
-   //
-   //TEntity = class (TObject)
-   //
-   //private
-   //  fCreateTable: ArrayOfString;
-   //  fDel: string;
-   //  fDropTable: ArrayOfString;
-   //  fFind: string;
-   //  fItem: string;
-   //  fList: string;
-   //  fNew: string;
-   //  published
-   //    property CreateTable: ArrayOfString read fCreateTable write fCreateTable;
-   //    property DropTable: ArrayOfString read fDropTable write fDropTable;
-   //
-   //    property List: string read fList write fList;
-   //    property Item: string read fItem write fItem;
-   //    property Find: string read fFind write fFind;
-   //
-   //    property New: string read fNew write fNew;
-   //    property Del: string read fDel write fDel;
-   //end;
-
    { TwfParams }
 
    TwfParams = class (TParams)

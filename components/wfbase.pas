@@ -1515,6 +1515,8 @@ procedure TwfBase.WriteParamsToLog(var aParams: TwfParams; const aHeader: string
 var
   i: Integer;
 begin
+  if aParams.Count = 0 then exit;
+
   Log('-= '+aHeader+' =-');
   for i:=0 to aParams.Count-1 do
   begin
