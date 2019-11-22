@@ -10,8 +10,8 @@ interface
 uses
   wfResourceStrings, wfTypes, wfClasses, wfFunc, wfDialogs, wfThreadU, wfPlugins, wfLog, wfVersions, wfIBConnection, 
   wfPQConnection, wfODBCConnection, wfBase, wfSQLQuery, wfSQLScript, wfSQLTransaction, wfTreeView, wfDBGrid, 
-  wfComboBox, wfStatusProgressBar, wfReport, wfSettings, wfEntity, wfValueListEditor, TwfProgressU, wfReportViewer, 
-  wfSQLEditor, LazarusPackageIntf;
+  wfComboBox, wfStatusProgressBar, wfReport, wfImport, wfSettings, wfEntity, wfValueListEditor, TwfProgressU, 
+  wfReportViewer, wfSQLEditor, LazarusPackageIntf;
 
 implementation
 
@@ -32,6 +32,7 @@ begin
   RegisterUnit('wfComboBox', @wfComboBox.Register);
   RegisterUnit('wfStatusProgressBar', @wfStatusProgressBar.Register);
   RegisterUnit('wfReport', @wfReport.Register);
+  RegisterUnit('wfImport', @wfImport.Register);
   RegisterUnit('wfSettings', @wfSettings.Register);
   RegisterUnit('wfEntity', @wfEntity.Register);
   RegisterUnit('wfValueListEditor', @wfValueListEditor.Register);

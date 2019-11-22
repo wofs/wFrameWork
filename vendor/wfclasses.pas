@@ -189,6 +189,7 @@ type
 
 implementation
 
+
 { TwfDesignSQLItems }
 
 function TwfDesignSQLItems.ItemByName(aName: string): TwfDesignSQLItem;

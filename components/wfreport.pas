@@ -21,12 +21,11 @@ uses
       cmem,
     {$ENDIF}{$ENDIF}
     Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ComCtrls,
-    LazUTF8, PropEdits, wfTypes, wfResourceStrings, wfFunc, wfDialogs, wfClasses,
+    LazUTF8, PropEdits, wfTypes, wfResourceStrings, wfFunc, wfDialogs, wfClasses, wfThreadU,
     TwfProgressU, wfreportviewer, wfBase, wfSQLQuery, db, fpspreadsheetctrls,
     fpspreadsheet, fpsTypes;
 
 type
-  TwfReportThread = class;
 
   TwfReportType = (rtSpreadSheet, rtCSV);
 
@@ -51,36 +50,8 @@ type
   TwfReportProgress = procedure(aReport: TwfReportItem; const Msg: Word; const Value: Word) of object;
   TwfReportMessage = procedure(aReport: TwfReportItem; const Msg: Word; const Param: Variant) of object;
 
-  TwfThreadExecuteEvent =  procedure(const Sender: TwfReportThread; const Msg: Word; var Param: Variant) of object;
-  TwfThreadFinishEvent = procedure(const Sender: TwfReportThread; const Msg: Word; const Param: Variant) of object;
-  TwfThreadProgress = procedure(const Sender: TwfReportThread; const Msg: Word; const Value: Word) of object;
-  TwfThreadMessage = procedure(const Sender: TwfReportThread; const Msg: Word; const Param: Variant) of object;
-  TwfThreadNotify = procedure(const Sender: TwfReportThread) of object;
+  TwfReportThread = class(TwfThread);
 
-  { TwfReportThread }
-
-  TwfReportThread = class(TThread)
-  private
-    fonException: TErrorEvent;
-    fonExecute: TwfThreadExecuteEvent;
-    fonFinish: TwfThreadFinishEvent;
-    fonMessage: TwfThreadMessage;
-    fonProgress: TwfThreadProgress;
-
-    fMsg: Word;
-    fParam: variant;
-
-  protected
-    procedure Execute; override;
-  public
-    constructor Create(CreateSuspended : boolean);
-
-    property onExecute: TwfThreadExecuteEvent read fonExecute write fonExecute;
-    property onFinish: TwfThreadFinishEvent read fonFinish write fonFinish;
-    property onProgress: TwfThreadProgress read fonProgress write fonProgress;
-    property onMessage: TwfThreadMessage read fonMessage write fonMessage;
-    property onException: TErrorEvent read fonException write fonException;
-  end;
   { TwfReportItem }
 
   TwfReportItem = class(TCollectionItem)
@@ -123,20 +94,20 @@ type
     fUseProgressBar: boolean;
     fUseViewer: boolean;
 
-    procedure AllTasksFinished(const Sender: TwfReportThread);
+    procedure AllTasksFinished(const Sender: TwfThread);
     function GetHeaderColor: TColor;
     function GetRootPath: string;
     function GetSilentMode: boolean;
     function GetSQLQuery: TStrings;
     function GetUsedColumnString: boolean;
     function GetUsedTemplate: boolean;
-    procedure ReportExecute(const Sender: TwfReportThread; const Msg: Word;
+    procedure ReportExecute(const Sender: TwfThread; const Msg: Word;
       var Param: Variant);
-    procedure ReportFinish(const Sender: TwfReportThread; const Msg: Word;
+    procedure ReportFinish(const Sender: TwfThread; const Msg: Word;
       const Param: Variant);
-    procedure ReportProgress(const Sender: TwfReportThread; const Msg: Word;
+    procedure ReportProgress(const Sender: TwfThread; const Msg: Word;
       const Value: Word);
-    procedure ReportMessage(const Sender: TwfReportThread; const Msg: Word;
+    procedure ReportMessage(const Sender: TwfThread; const Msg: Word;
       const Param: Variant);
     procedure ReportForceFinish(Sender: TObject);
     procedure SetColumnsString(aValue: TStrings);
@@ -288,27 +259,6 @@ begin
   RegisterPropertyEditor(TypeInfo(TStrings), TwfReportItem, 'ColumnsString', TSQLPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfReportItem, 'SQLQuery', TSQLPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfReportItem, 'SQLQueryGroup', TSQLPropertyEditor);
-end;
-
-{ TwfReportThread }
-
-constructor TwfReportThread.Create(CreateSuspended: boolean);
-begin
-  inherited Create(CreateSuspended);
-  FreeOnTerminate:= true;
-end;
-
-procedure TwfReportThread.Execute;
-begin
-  try
-     fParam:= true;
-     if Assigned(fonExecute) then fonExecute(self, fMsg, fParam);
-  except
-    on E: Exception do
-      if Assigned(fonException) then fonException(self, E);
-  end;
-
-  if Assigned(fonFinish) then fonFinish(self, fMsg, fParam);
 end;
 
 { TwfReportItems }
@@ -608,8 +558,7 @@ begin
    end;
 end;
 
-procedure TwfReportItem.ReportMessage(const Sender: TwfReportThread;
-  const Msg: Word; const Param: Variant);
+procedure TwfReportItem.ReportMessage(const Sender: TwfThread; const Msg: Word; const Param: Variant);
 begin
   if Assigned(fonMessage) then fonMessage(self, Msg, Param);
 end;
@@ -957,8 +906,7 @@ begin
   end;
 end;
 
-procedure TwfReportItem.ReportExecute(const Sender: TwfReportThread;
-  const Msg: Word; var Param: Variant);
+procedure TwfReportItem.ReportExecute(const Sender: TwfThread; const Msg: Word; var Param: Variant);
 begin
   if Assigned(fonExecute) then fonExecute(self, Msg, Param)
   else
@@ -968,7 +916,7 @@ begin
     end;
 end;
 
-procedure TwfReportItem.AllTasksFinished(const Sender: TwfReportThread);
+procedure TwfReportItem.AllTasksFinished(const Sender: TwfThread);
 begin
    Terminated:= true;
   if Assigned(onForceFinish) then onForceFinish(Sender);
@@ -1008,8 +956,7 @@ begin
   Result:= not IsEmpty(fExportTemplateFile);
 end;
 
-procedure TwfReportItem.ReportFinish(const Sender: TwfReportThread;
-  const Msg: Word; const Param: Variant);
+procedure TwfReportItem.ReportFinish(const Sender: TwfThread; const Msg: Word; const Param: Variant);
 var
   ResultIndex: Integer;
 begin
@@ -1034,8 +981,7 @@ begin
     end;
 end;
 
-procedure TwfReportItem.ReportProgress(const Sender: TwfReportThread;
-  const Msg: Word; const Value: Word);
+procedure TwfReportItem.ReportProgress(const Sender: TwfThread; const Msg: Word; const Value: Word);
 begin
   if Assigned(fProgress) then
     fProgress.SetBar(Value);
