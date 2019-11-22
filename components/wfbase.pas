@@ -22,7 +22,7 @@ uses
     cmem,
   {$ENDIF}{$ENDIF}
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, LazUTF8,
-  wfTypes, wfClasses, wfResourceStrings, wfFunc, wfSQLQuery, wfSQLTransaction,
+  wfTypes, wfClasses, wfResourceStrings, wfFunc, wfParamsU, wfSQLQuery, wfSQLTransaction,
   wfIBConnection, wfSQLScript, wfODBCConnection, wfPQConnection, db, sqldb,
   TwfProgressU;
 

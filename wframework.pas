@@ -8,7 +8,8 @@ unit wFrameWork;
 interface
 
 uses
-  wfResourceStrings, wfTypes, wfClasses, wfFunc, wfDialogs, wfThreadU, wfPlugins, wfLog, wfVersions, wfIBConnection, 
+  wfResourceStrings, wfTypes, wfFunc, wfDialogs, wfThreadU, wfClasses, wfCustomSQLItemListU, wfParamsU, wfIntSQLItemU, 
+  wfSQLPropertyEditorU, wfDesignSQLItemsU, wfCustomOrderByListU, wfPlugins, wfLog, wfVersions, wfIBConnection, 
   wfPQConnection, wfODBCConnection, wfBase, wfSQLQuery, wfSQLScript, wfSQLTransaction, wfTreeView, wfDBGrid, 
   wfComboBox, wfStatusProgressBar, wfReport, wfImport, wfSettings, wfEntity, wfValueListEditor, TwfProgressU, 
   wfReportViewer, wfSQLEditor, LazarusPackageIntf;

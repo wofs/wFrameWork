@@ -17,7 +17,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, PropEdits, wfFunc,
-  wfTypes, wfClasses, sqldb, db;
+  wfTypes, wfClasses, wfSQLPropertyEditorU, sqldb, db;
 
 type
 
@@ -45,11 +45,11 @@ procedure Register;
 begin
   {$I wfsqlquery_icon.lrs}
   RegisterComponents('WF',[TwfSQLQuery]);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfSQLQuery, 'SQL', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfSQLQuery, 'InsertSQL', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfSQLQuery, 'UpdateSQL', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfSQLQuery, 'DeleteSQL', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfSQLQuery, 'RefreshSQL', TSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfSQLQuery, 'SQL', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfSQLQuery, 'InsertSQL', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfSQLQuery, 'UpdateSQL', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfSQLQuery, 'DeleteSQL', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfSQLQuery, 'RefreshSQL', TwfSQLPropertyEditor);
 end;
 
 { TwfSQLQuery }

@@ -17,7 +17,7 @@ interface
 
 uses
   Classes, SysUtils, db, sqldb, LResources, Forms, Controls, Graphics, Dialogs,
-  LazUTF8, wfTypes, wfFunc, wfResourceStrings, wfClasses, wfBase, PropEdits;
+  LazUTF8, wfTypes, wfFunc, wfResourceStrings, wfClasses, wfDesignSQLItemsU, wfSQLPropertyEditorU, wfBase, PropEdits;
 
 type
 
@@ -147,18 +147,18 @@ procedure Register;
 begin
   {$I wfentity_icon.lrs}
   RegisterComponents('WF',[TwfEntity]);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLCreate', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLDrop', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLGetList', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLGetListFull', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLGetListShort', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLItemDel', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLItemGet', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLItemNew', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLItemUpdate', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLTreeDragNode', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'fSQLTreeGetRoot', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfDesignSQLItem, 'SQL', TSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLCreate', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLDrop', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLGetList', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLGetListFull', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLGetListShort', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLItemDel', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLItemGet', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLItemNew', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLItemUpdate', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLTreeDragNode', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'fSQLTreeGetRoot', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfDesignSQLItem, 'SQL', TwfSQLPropertyEditor);
 end;
 
 

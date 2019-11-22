@@ -19,7 +19,7 @@ interface
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ComCtrls,
   Menus, PropEdits, wfBase, wfSQLQuery, wfEntity, wfResourceStrings, wfTypes,
-  wfClasses, wfFunc;
+  wfClasses, wfFunc, wfParamsU, wfSQLPropertyEditorU;
 
 var
   wfTree_Images: TImageList;
@@ -196,7 +196,7 @@ procedure Register;
 begin
   {$I wftreeview_icon.lrs}
   RegisterComponents('WF', [TwfTreeView]);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfTreeView, 'wSQLGetRoot', TSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfTreeView, 'wSQLGetRoot', TwfSQLPropertyEditor);
 end;
 
 { TwfTreeView }

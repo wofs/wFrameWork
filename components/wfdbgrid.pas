@@ -20,7 +20,7 @@ uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, DBGrids,
   ComCtrls, StdCtrls, Grids, LCLType, Buttons, LazUTF8, PropEdits, wfBase,
   wfSQLQuery, wfEntity, wfTreeView, wfComboBox, wfTypes, wfClasses,
-  wfResourceStrings, wfFunc, db;
+  wfResourceStrings, wfFunc, wfCustomSQLItemListU, wfCustomOrderByListU, wfParamsU, wfSQLPropertyEditorU, db;
 
   var
     wfGrid_Images: TImageList;
@@ -341,8 +341,8 @@ procedure Register;
 begin
   {$I wfdbgrid_icon.lrs}
   RegisterComponents('WF',[TwfDBGrid]);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfDBGrid, 'wSQLText', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfDBGrid, 'wColumnsString', TSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfDBGrid, 'wSQLText', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfDBGrid, 'wColumnsString', TwfSQLPropertyEditor);
 end;
 
 { TwfGroupComboBox }

@@ -20,10 +20,9 @@ uses
       cthreads,
       cmem,
     {$ENDIF}{$ENDIF}
-    Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ComCtrls,
-    LazUTF8, PropEdits, wfTypes, wfResourceStrings, wfFunc, wfDialogs, wfClasses, wfThreadU,
-    TwfProgressU, wfreportviewer, wfBase, wfSQLQuery, db, fpspreadsheetctrls,
-    fpspreadsheet, fpsTypes;
+    Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ComCtrls, LazUTF8, PropEdits, wfTypes,
+    wfResourceStrings, wfFunc, wfDialogs, wfClasses, wfThreadU, wfSQLPropertyEditorU, wfParamsU, TwfProgressU,
+    wfreportviewer, wfBase, wfSQLQuery, db, fpspreadsheetctrls, fpspreadsheet, fpsTypes;
 
 type
 
@@ -256,9 +255,9 @@ procedure Register;
 begin
   {$I wfreport_icon.lrs}
   RegisterComponents('WF',[TwfReport]);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfReportItem, 'ColumnsString', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfReportItem, 'SQLQuery', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfReportItem, 'SQLQueryGroup', TSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfReportItem, 'ColumnsString', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfReportItem, 'SQLQuery', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfReportItem, 'SQLQueryGroup', TwfSQLPropertyEditor);
 end;
 
 { TwfReportItems }

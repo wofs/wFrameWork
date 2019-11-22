@@ -17,7 +17,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, StdCtrls, PropEdits,
-  wfBase, wfEntity, wfClasses, wfTypes, wfFunc;
+  wfBase, wfEntity, wfClasses, wfTypes, wfFunc, wfSQLPropertyEditorU, wfParamsU;
 
 type
   TwfComboBoxData = class(TObject)
@@ -96,7 +96,7 @@ procedure Register;
 begin
   {$I wfcombobox_icon.lrs}
   RegisterComponents('WF',[TwfComboBox]);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfComboBox, 'wSQLGetList', TSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfComboBox, 'wSQLGetList', TwfSQLPropertyEditor);
 end;
 
 { TwfComboBox }
