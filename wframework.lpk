@@ -510,7 +510,7 @@ convey the exclusion of warranty; and each file should have at least the
 
 Degtyarev Alexander A. 
 E-mail: degtyarev.alexander.code@yandex.ru"/>
-    <Version Minor="1" Release="3" Build="22"/>
+    <Version Minor="1" Release="3" Build="23"/>
     <Files Count="28">
       <Item1>
         <Filename Value="vendor\wfresourcestrings.pas"/>

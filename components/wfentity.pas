@@ -498,7 +498,7 @@ begin
       SetSQLCreateTable();
 
    if fSQLGetList.Count = 0 then
-      fSQLGetList.Text:= Format('SELECT T1.ID, T1.IDPARENT, T1.NAME, (SELECT COUNT(*) FROM %s T WHERE T.IDPARENT=T1.ID) CCOUNT FROM %s T1 ORDER BY T1.IDPARENT, T1.NAME',[TableName, TableName]);
+      fSQLGetList.Text:= Format('SELECT '+wfLE+'T1.ID, T1.IDPARENT, T1.NAME, '+wfLE+'(SELECT COUNT(*) FROM %s T WHERE T.IDPARENT=T1.ID) CCOUNT '+wfLE+'FROM %s T1 '+wfLE+'ORDER BY T1.IDPARENT, T1.NAME',[TableName, TableName]);
 
    if fSQLGetListFull.Count = 0 then
       fSQLGetListFull.Text:= Format('SELECT * FROM %s',[TableName]);
@@ -513,20 +513,20 @@ begin
       fSQLItemGet.Text:= Format('SELECT * FROM %s WHERE ID=:ID',[TableName]);
 
    if fSQLItemNew.Count = 0 then
-      fSQLItemNew.Text:= Format('INSERT INTO %s (IDPARENT, NAME) VALUES (:IDPARENT, :NAME) RETURNING ID',[TableName]);
+      fSQLItemNew.Text:= Format('INSERT INTO %s '+wfLE+'(IDPARENT, NAME) '+wfLE+'VALUES (:IDPARENT, :NAME) RETURNING ID',[TableName]);
 
    if fSQLItemUpdate.Count = 0 then
-      fSQLItemUpdate.Text:= Format('UPDATE %s SET IDPARENT=:IDPARENT, NAME=:NAME WHERE ID=:ID RETURNING ID',[TableName]);
+      fSQLItemUpdate.Text:= Format('UPDATE %s '+wfLE+'SET IDPARENT=:IDPARENT, NAME=:NAME '+wfLE+'WHERE ID=:ID RETURNING ID',[TableName]);
 
    if fSQLTreeGetRoot.Count = 0 then
    {$IFDEF USEGUID}
-      fSQLTreeGetRoot.Text:= Format('SELECT T1.ID, T1.IDPARENT, T1.NAME, (SELECT COUNT(*) FROM %s T WHERE T.IDPARENT=T1.ID) CCOUNT FROM %s T1 WHERE T1.IDPARENT=''''',[TableName,TableName]);
+      fSQLTreeGetRoot.Text:= Format('SELECT T1.ID, T1.IDPARENT, T1.NAME, (SELECT COUNT(*) FROM %s T WHERE T.IDPARENT=T1.ID) CCOUNT '+wfLE+'FROM %s T1 WHERE T1.IDPARENT=''''',[TableName,TableName]);
    {$ELSE}
-      fSQLTreeGetRoot.Text:= Format('SELECT T1.ID, T1.IDPARENT, T1.NAME, (SELECT COUNT(*) FROM %s T WHERE T.IDPARENT=T1.ID) CCOUNT FROM %s T1 WHERE T1.IDPARENT=0',[TableName,TableName]);
+      fSQLTreeGetRoot.Text:= Format('SELECT '+wfLE+'T1.ID, T1.IDPARENT, T1.NAME, '+wfLE+'(SELECT COUNT(*) FROM %s T WHERE T.IDPARENT=T1.ID) CCOUNT '+wfLE+'FROM %s T1 '+wfLE+'WHERE T1.IDPARENT=0',[TableName,TableName]);
    {$ENDIF}
 
    if fSQLTreeDragNode.Count = 0 then
-     fSQLTreeDragNode.Text:= Format('UPDATE %s SET %s=:%s WHERE ID=:ID RETURNING ID',[fTableName,'%s','%s']);
+     fSQLTreeDragNode.Text:= Format('UPDATE '+wfLE+'%s SET %s=:%s WHERE ID=:ID RETURNING ID',[fTableName,'%s','%s']);
 
    if fSQLDrop.Count = 0 then
       fSQLDrop.Text:= Format('DROP TABLE %s;',[TableName]);
@@ -581,10 +581,10 @@ begin
       fSQLItemGet.Text:= Format('SELECT * FROM %s WHERE ID=:ID',[TableName]);
 
    if fSQLItemNew.Count = 0 then
-      fSQLItemNew.Text:= Format('INSERT INTO %s (IDPARENT, NAME) VALUES (:IDPARENT, :NAME) RETURNING ID',[TableName]);
+      fSQLItemNew.Text:= Format('INSERT INTO %s '+wfLE+'(IDPARENT, NAME) '+wfLE+'VALUES (:IDPARENT, :NAME) RETURNING ID',[TableName]);
 
    if fSQLItemUpdate.Count = 0 then
-      fSQLItemUpdate.Text:= Format('UPDATE %s SET IDPARENT=:IDPARENT, NAME=:NAME WHERE ID=:ID RETURNING ID',[TableName]);
+      fSQLItemUpdate.Text:= Format('UPDATE '+wfLE+'%s '+wfLE+'SET IDPARENT=:IDPARENT, NAME=:NAME '+wfLE+'WHERE ID=:ID RETURNING ID',[TableName]);
 
    if fSQLTreeGetRoot.Count = 0 then
       fSQLTreeGetRoot.Text:= '';
