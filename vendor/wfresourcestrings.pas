@@ -68,6 +68,10 @@ uses
     rsReportNoFileNameSpecified                       = 'No file name specified!';
     rsReportNoSQLQuerySpecified                       = 'No SQLQuery specified!';
 
+    {-= Import =-}
+    rsImportNoSourceSpecified                         = 'No source specified!';
+    rsImportNoSQLQuerySpecified                       = 'No SQLQuery specified!';
+
     {-= Plugins =-}
     rsPluginsNoFindedPanel                            = 'Not found TPanel on %s';
     rsPluginPopupMenuToForm                           = 'Unpin';

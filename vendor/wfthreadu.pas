@@ -10,17 +10,18 @@ uses
 type
   TwfThread = class;
 
-  TwfThreadExecuteEvent =  procedure(const Sender: TwfThread; const Msg: Word; var Param: Variant) of object;
-  TwfThreadFinishEvent = procedure(const Sender: TwfThread; const Msg: Word; const Param: Variant) of object;
-  TwfThreadProgress = procedure(const Sender: TwfThread; const Msg: Word; const Value: Word) of object;
-  TwfThreadMessage = procedure(const Sender: TwfThread; const Msg: Word; const Param: Variant) of object;
-  TwfThreadNotify = procedure(const Sender: TwfThread) of object;
+  TwfThreadExecuteEvent =  procedure(Sender: TwfThread; const Msg: Word; var Param: Variant) of object;
+  TwfThreadFinishEvent = procedure(Sender: TwfThread; const Msg: Word; const Param: Variant) of object;
+  TwfThreadProgress = procedure(Sender: TwfThread; const Msg: Word; const Value: Word) of object;
+  TwfThreadMessage = procedure(Sender: TwfThread; const Msg: Word; const Param: Variant) of object;
+  TwfThreadException = procedure(Sender: TwfThread; const E: Exception) of object;
+  TwfThreadNotify = procedure(Sender: TwfThread) of object;
 
   { TwfThread }
 
   TwfThread = class(TThread)
   private
-    fonException: TErrorEvent;
+    fonException: TwfThreadException;
     fonExecute: TwfThreadExecuteEvent;
     fonFinish: TwfThreadFinishEvent;
     fonMessage: TwfThreadMessage;
@@ -38,7 +39,8 @@ type
     property onFinish: TwfThreadFinishEvent read fonFinish write fonFinish;
     property onProgress: TwfThreadProgress read fonProgress write fonProgress;
     property onMessage: TwfThreadMessage read fonMessage write fonMessage;
-    property onException: TErrorEvent read fonException write fonException;
+    //use   Thread.Synchronize(DumpExceptionCallStack);
+    property onException: TwfThreadException read fonException write fonException;
   end;
 
 implementation

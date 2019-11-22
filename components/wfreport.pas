@@ -100,13 +100,13 @@ type
     function GetSQLQuery: TStrings;
     function GetUsedColumnString: boolean;
     function GetUsedTemplate: boolean;
-    procedure ReportExecute(const Sender: TwfThread; const Msg: Word;
+    procedure ReportExecute(Sender: TwfThread; const Msg: Word;
       var Param: Variant);
-    procedure ReportFinish(const Sender: TwfThread; const Msg: Word;
+    procedure ReportFinish(Sender: TwfThread; const Msg: Word;
       const Param: Variant);
-    procedure ReportProgress(const Sender: TwfThread; const Msg: Word;
+    procedure ReportProgress(Sender: TwfThread; const Msg: Word;
       const Value: Word);
-    procedure ReportMessage(const Sender: TwfThread; const Msg: Word;
+    procedure ReportMessage(Sender: TwfThread; const Msg: Word;
       const Param: Variant);
     procedure ReportForceFinish(Sender: TObject);
     procedure SetColumnsString(aValue: TStrings);
@@ -557,7 +557,7 @@ begin
    end;
 end;
 
-procedure TwfReportItem.ReportMessage(const Sender: TwfThread; const Msg: Word; const Param: Variant);
+procedure TwfReportItem.ReportMessage(Sender: TwfThread; const Msg: Word; const Param: Variant);
 begin
   if Assigned(fonMessage) then fonMessage(self, Msg, Param);
 end;
@@ -905,7 +905,7 @@ begin
   end;
 end;
 
-procedure TwfReportItem.ReportExecute(const Sender: TwfThread; const Msg: Word; var Param: Variant);
+procedure TwfReportItem.ReportExecute(Sender: TwfThread; const Msg: Word; var Param: Variant);
 begin
   if Assigned(fonExecute) then fonExecute(self, Msg, Param)
   else
@@ -955,7 +955,7 @@ begin
   Result:= not IsEmpty(fExportTemplateFile);
 end;
 
-procedure TwfReportItem.ReportFinish(const Sender: TwfThread; const Msg: Word; const Param: Variant);
+procedure TwfReportItem.ReportFinish(Sender: TwfThread; const Msg: Word; const Param: Variant);
 var
   ResultIndex: Integer;
 begin
@@ -980,7 +980,7 @@ begin
     end;
 end;
 
-procedure TwfReportItem.ReportProgress(const Sender: TwfThread; const Msg: Word; const Value: Word);
+procedure TwfReportItem.ReportProgress(Sender: TwfThread; const Msg: Word; const Value: Word);
 begin
   if Assigned(fProgress) then
     fProgress.SetBar(Value);
