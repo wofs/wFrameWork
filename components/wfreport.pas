@@ -113,7 +113,7 @@ type
     fReportThread: TwfReportThread;
     fProgress: TwfProgress;
     fReportType: TwfReportType;
-    fSQLRecord: TwfSQL;
+    fSQLRecord: TwfSQLRecord;
     fExportTemplateFile: string;
     fSQLQueryGroup: TStrings;
     fSQLQueryStep: word;
@@ -143,7 +143,7 @@ type
     procedure SetHeaderColor(aValue: TColor);
     procedure SetSQLQuery(aValue: TStrings);
     procedure SetSQLQueryGroup(aValue: TStrings);
-    procedure SetSQLRecord(aValue: TwfSQL);
+    procedure SetSQLRecord(aValue: TwfSQLRecord);
     procedure SetTerminated(AValue: boolean);
     function ThreadInit: boolean;
     procedure ThreadStop;
@@ -183,7 +183,7 @@ type
     property UsedTemplate: boolean read GetUsedTemplate;
     property UsedColumnString: boolean read GetUsedColumnString;
     property Terminated: boolean read fTerminated write SetTerminated;
-    property SQLRecord: TwfSQL read fSQLRecord write SetSQLRecord;
+    property SQLRecord: TwfSQLRecord read fSQLRecord write SetSQLRecord;
   published
 
     property Name: string read fName write fName;
@@ -1068,7 +1068,7 @@ begin
   fSQLQueryGroup.Assign(aValue);
 end;
 
-procedure TwfReportItem.SetSQLRecord(aValue: TwfSQL);
+procedure TwfReportItem.SetSQLRecord(aValue: TwfSQLRecord);
 var
   aParams: TwfParams;
 begin

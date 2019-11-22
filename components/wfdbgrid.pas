@@ -151,7 +151,7 @@ end;
     fSelectedItems: TBaseIDList;
     fSelectGridId: BaseID;
     fShiftState: TShiftState;
-    fSQLRecord: TwfSQL;
+    fSQLRecord: TwfSQLRecord;
     fSQLText: TStrings;
     fstCtrl: boolean;
     fEntity: TwfEntity;
@@ -190,7 +190,7 @@ end;
     function GetSelectedCount: Int64;
     function GetSelectedItems: ArrayOfBaseID;
     function GetSelectedItemsList: TBaseIDList;
-    function GetSQLCurrent: TwfSQL;
+    function GetSQLCurrent: TwfSQLRecord;
     function GetSQLText: TStrings;
     function ExistsField(aFieldName: string): boolean;
     function GetSearchPreventiveBtn: TSpeedButton;
@@ -264,7 +264,7 @@ end;
     property SelectedCount: Int64 read GetSelectedCount;
     property CurrentId: BaseID read GetCurrentId write SetCurrentId;
     property FillFreez:boolean read fFillFreez write fFillFreez;
-    property SQLCurrent: TwfSQL read GetSQLCurrent;
+    property SQLCurrent: TwfSQLRecord read GetSQLCurrent;
 
   published
     //Trees to automatically generate the Where the grid.
@@ -941,7 +941,7 @@ begin
   Result:= fSelectedItems;
 end;
 
-function TwfDBGrid.GetSQLCurrent: TwfSQL;
+function TwfDBGrid.GetSQLCurrent: TwfSQLRecord;
 begin
   Result:= fSQLRecord;
 end;

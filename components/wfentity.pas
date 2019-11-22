@@ -21,55 +21,6 @@ uses
 
 type
 
-  //  { TSQLStringsPropertyEditor }
-  //
-  //TSQLStringsPropertyEditor = class(TStringsPropertyEditor)
-  //private
-  //  procedure EditSQL;
-  //public
-  //  procedure Edit; override;
-  //  function CreateEnhancedDlg(s: TStrings): TSQLStringsPropertyEditorDlg; virtual;
-  //  function GetAttributes: TPropertyAttributes; override;
-  //end;
-
-  { TwfSQLItem }
-
-  TwfSQLItem = class(TCollectionItem)
-    protected
-      function GetDisplayName: string; override;
-    private
-      fDescription: string;
-      fName: string;
-      fSQL: TStrings;
-      function GetSQL: TStrings;
-      procedure SetSQL(aValue: TStrings);
-
-    public
-      constructor Create(ACollection: TCollection); override;
-      destructor Destroy; override;
-
-    published
-      property Name: string read fName write fName;
-      property SQL: TStrings read GetSQL write SetSQL;
-      property Description: string read fDescription write fDescription;
-
-  end;
-
-
-    { TwfSQLItems }
-
-    TwfSQLItems = class(TOwnedCollection)
-
-    private
-
-    protected
-
-    public
-      function ItemByName(aName: string):TwfSQLItem;
-      function ItemByNameSQL(aName: string): string;
-
-    end;
-
   { TwfEntity }
 
   TwfEntity = class(TComponent)
@@ -90,7 +41,7 @@ type
     fSQLItemDel: TStrings;
     fSQLItemGet: TStrings;
     fSQLItemNew: TStrings;
-    fSQLItems: TwfSQLItems;
+    fSQLItems: TwfDesignSQLItems;
     fSQLItemUpdate: TStrings;
     fSQLTreeDragNode: TStrings;
     fSQLTreeGetRoot: TStrings;
@@ -170,7 +121,7 @@ type
 
     property SQLDrop: TStrings read fSQLDrop write SetSQLDrop;
 
-    property SQLItems: TwfSQLItems read fSQLItems write fSQLItems;
+    property SQLItems: TwfDesignSQLItems read fSQLItems write fSQLItems;
 
     //Set SQL presets
     property aSQLPresets: TwfEntitySQLPresets read faSQLPresets write SetSQLPresets default spNone;
@@ -207,64 +158,9 @@ begin
   RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLItemUpdate', TSQLPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLTreeDragNode', TSQLPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'fSQLTreeGetRoot', TSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfSQLItem, 'SQL', TSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfDesignSQLItem, 'SQL', TSQLPropertyEditor);
 end;
 
-{ TwfSQLItems }
-
-function TwfSQLItems.ItemByName(aName: string): TwfSQLItem;
-var
-  i: Integer;
-begin
-Result:= nil;
-
-for i:=0 to Count-1 do
- if UTF8UpperCase(TwfSQLItem(Items[i]).Name) = UTF8UpperCase(aName) then
-   begin
-     Result:= TwfSQLItem(Items[i]);
-     Break;
-   end;
-
-if not Assigned(Result) then
-  raise Exception.Create(Format(rsExceptObjectNotAssigned,['']));
-end;
-
-function TwfSQLItems.ItemByNameSQL(aName: string): string;
-begin
-  Result:= ItemByName(aName).SQL.Text;
-end;
-
-{ TwfSQLItem }
-
-function TwfSQLItem.GetDisplayName: string;
-begin
-if Length(fName)>0 then
-  Result:= fName
-else
-  Result:=inherited GetDisplayName;
-end;
-
-function TwfSQLItem.GetSQL: TStrings;
-begin
-  Result:= fSQL;
-end;
-
-procedure TwfSQLItem.SetSQL(aValue: TStrings);
-begin
-  fSQL.Assign(aValue);
-end;
-
-constructor TwfSQLItem.Create(ACollection: TCollection);
-begin
-  inherited Create(ACollection);
-  fSQL:= TStringList.Create();
-end;
-
-destructor TwfSQLItem.Destroy;
-begin
-  inherited Destroy;
-  FreeAndNil(fSQL);
-end;
 
 { TwfEntity }
 
@@ -636,7 +532,7 @@ begin
   fSQLTreeDragNode:= TStringList.Create;
   fSQLDrop:= TStringList.Create;
   fGridColumnsString:= TStringList.Create;
-  fSQLItems:= TwfSQLItems.Create(self, TwfSQLItem);
+  fSQLItems:= TwfDesignSQLItems.Create(self, TwfDesignSQLItem);
 end;
 
 destructor TwfEntity.Destroy;

@@ -17,7 +17,8 @@ unit wfClasses;
 interface
 
 uses
-  Classes, SysUtils, fgl, wfTypes, wfFunc, wfSQLEditor, LazUTF8, UITypes, PropEdits, Buttons, Dialogs, db;
+  Classes, SysUtils, fgl, wfTypes, wfFunc, wfResourceStrings, wfSQLEditor, LazUTF8, UITypes, PropEdits, Buttons,
+  Dialogs, db;
 
 type
 
@@ -29,11 +30,6 @@ type
      public
        property FreeAfterUse: boolean read fFreeAfterUse;
        constructor Create(AOwner: TPersistent; const aFreeAfterUse: boolean = false);
-   end;
-
-   TwfSQL = record
-     aText: string;
-     aParams: TwfParams;
    end;
 
    { TwfBaseField }
@@ -84,9 +80,16 @@ type
      property AsString: string read GetAsString;
    end;
 
-   { TwfSQLItem }
+   { TwfSQLRecord }
 
-   TwfSQLItem = class
+   TwfSQLRecord = record
+     aText: string;
+     aParams: TwfParams;
+   end;
+
+   { TwfIntSQLItem }
+
+   TwfIntSQLItem = class
        Name: string;
        Value: string;
        Params: TwfParams;
@@ -136,6 +139,46 @@ type
      property onLog: TTextEvent read fonLog write fonLog;
    end;
 
+   { TwfDesignSQLItem }
+
+   TwfDesignSQLItem = class(TCollectionItem)
+     protected
+       function GetDisplayName: string; override;
+     private
+       fDescription: string;
+       fName: string;
+       fSQL: TStrings;
+       fParams: TwfParams;
+       function GetParams: TwfParams;
+       function GetSQL: TStrings;
+       procedure SetParams(aValue: TwfParams);
+       procedure SetSQL(aValue: TStrings);
+
+     public
+       constructor Create(ACollection: TCollection); override;
+       destructor Destroy; override;
+
+     published
+       property Name: string read fName write fName;
+       property SQL: TStrings read GetSQL write SetSQL;
+       property Params: TwfParams read GetParams write SetParams;
+       property Description: string read fDescription write fDescription;
+   end;
+
+
+     { TwfDesignSQLItems }
+
+     TwfDesignSQLItems = class(TOwnedCollection)
+
+     private
+
+     protected
+
+     public
+       function ItemByName(aName: string):TwfDesignSQLItem;
+       function ItemByNameSQL(aName: string): string;
+     end;
+
    { TSQLPropertyEditor }
 
    TSQLPropertyEditor = class(TClassPropertyEditor )
@@ -145,6 +188,74 @@ type
    end;
 
 implementation
+
+{ TwfDesignSQLItems }
+
+function TwfDesignSQLItems.ItemByName(aName: string): TwfDesignSQLItem;
+var
+  i: Integer;
+begin
+Result:= nil;
+
+for i:=0 to Count-1 do
+ if UTF8UpperCase(TwfDesignSQLItem(Items[i]).Name) = UTF8UpperCase(aName) then
+   begin
+     Result:= TwfDesignSQLItem(Items[i]);
+     Break;
+   end;
+
+if not Assigned(Result) then
+  raise Exception.Create(Format(rsExceptObjectNotAssigned,['']));
+end;
+
+function TwfDesignSQLItems.ItemByNameSQL(aName: string): string;
+begin
+  Result:= ItemByName(aName).SQL.Text;
+end;
+
+{ TwfDesignSQLItem }
+
+function TwfDesignSQLItem.GetDisplayName: string;
+begin
+if Length(fName)>0 then
+  Result:= fName
+else
+  Result:=inherited GetDisplayName;
+end;
+
+function TwfDesignSQLItem.GetSQL: TStrings;
+begin
+  Result:= fSQL;
+end;
+
+function TwfDesignSQLItem.GetParams: TwfParams;
+begin
+  Result:= fParams;
+end;
+
+procedure TwfDesignSQLItem.SetParams(aValue: TwfParams);
+begin
+  fParams.Assign(aValue);
+end;
+
+procedure TwfDesignSQLItem.SetSQL(aValue: TStrings);
+begin
+  fSQL.Assign(aValue);
+end;
+
+constructor TwfDesignSQLItem.Create(ACollection: TCollection);
+begin
+  inherited Create(ACollection);
+  fSQL:= TStringList.Create();
+  fParams:= TwfParams.Create(self);
+end;
+
+destructor TwfDesignSQLItem.Destroy;
+begin
+  inherited Destroy;
+  FreeAndNil(fSQL);
+  FreeAndNil(fParams);
+end;
 
 { TSQLPropertyEditor }
 
@@ -284,9 +395,9 @@ begin
 end;
 
 
-{ TwfSQLItem }
+{ TwfIntSQLItem }
 
-constructor TwfSQLItem.Create(aName, aValue: string; var aParams: TwfParams;
+constructor TwfIntSQLItem.Create(aName, aValue: string; var aParams: TwfParams;
   const uType: TSQLItemType);
 var
   i: Integer;
@@ -316,7 +427,7 @@ begin
   aName:= UTF8UpperCase(aName);
 
   for i:=0 to Count-1 do
-    if TwfSQLItem(Items[i]).Name = aName then
+    if TwfIntSQLItem(Items[i]).Name = aName then
     begin
       Result:= i;
       Break;
@@ -494,8 +605,8 @@ begin
   aIndex:= IndexOf(aName);
   if aIndex>-1 then
   begin
-    aValue:= TwfSQLItem(Items[aIndex]).Value;
-    aParams:= TwfSQLItem(Items[aIndex]).Params;
+    aValue:= TwfIntSQLItem(Items[aIndex]).Value;
+    aParams:= TwfIntSQLItem(Items[aIndex]).Params;
   end;
 end;
 
@@ -512,7 +623,7 @@ begin
   aIndex:= IndexOf(aName);
   if aIndex>-1 then
   begin
-    with TwfSQLItem(Items[aIndex]) do
+    with TwfIntSQLItem(Items[aIndex]) do
     begin
       Value:= aValue;
       ItemType:= uType;
@@ -525,7 +636,7 @@ begin
     end;
   end
   else
-    Add(TwfSQLItem.Create(aName, aValue, aParams, uType));
+    Add(TwfIntSQLItem.Create(aName, aValue, aParams, uType));
 end;
 
 destructor TwfCustomSQLItemList.Destroy;
@@ -540,8 +651,8 @@ var
 begin
   for i:=0 to Count-1 do
     begin
-      FreeAndNil(TwfSQLItem(Items[i]).Params);
-      TwfSQLItem(Items[i]).Free;
+      FreeAndNil(TwfIntSQLItem(Items[i]).Params);
+      TwfIntSQLItem(Items[i]).Free;
     end;
   Clear;
 end;
@@ -556,7 +667,7 @@ begin
 
   for i:=0 to Count-1 do
     begin
-      aParams:= TwfSQLItem(Items[i]).Params;
+      aParams:= TwfIntSQLItem(Items[i]).Params;
       if Assigned(aParams) then
         for iParam:= 0 to aParams.Count-1 do
           Result.AddParam(aParams.Items[iParam]);
@@ -577,14 +688,14 @@ begin
   try
     for i:=0 to Count-1 do
     begin
-      if TwfSQLItem(Items[i]).ItemType = stIn then
-        aIn.Add(TwfSQLItem(Items[i]).Value)
+      if TwfIntSQLItem(Items[i]).ItemType = stIn then
+        aIn.Add(TwfIntSQLItem(Items[i]).Value)
       else
         begin
         if (i>0) and (UTF8Length(Result)>0) then
           Result:= Result+' OR ';
 
-          Result:= Result+' '+TwfSQLItem(Items[i]).Value+' ';
+          Result:= Result+' '+TwfIntSQLItem(Items[i]).Value+' ';
         end;
     end;
 
@@ -620,7 +731,7 @@ begin
 
   for i:=0 to Count-1 do
     begin
-      aParams:= TwfSQLItem(Items[i]).Params;
+      aParams:= TwfIntSQLItem(Items[i]).Params;
 
       if Assigned(aParams) then
         begin
@@ -650,8 +761,8 @@ end;
 
 procedure TwfCustomSQLItemList.DelItem(const aIndex: integer);
 begin
-  FreeAndNil(TwfSQLItem(Items[aIndex]).Params);
-  TwfSQLItem(Items[aIndex]).Free;
+  FreeAndNil(TwfIntSQLItem(Items[aIndex]).Params);
+  TwfIntSQLItem(Items[aIndex]).Free;
   Delete(aIndex);
 end;
 

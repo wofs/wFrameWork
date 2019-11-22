@@ -171,7 +171,7 @@ type
 
       {Get}
       function GetRowsCount(const uSQL: string): int64;
-      function GetRowsCount(const uSQL: TwfSQL): int64;
+      function GetRowsCount(const uSQL: TwfSQLRecord): int64;
 
       {Convert}
       function DataToStr(aField: TField; aCSVComma: boolean= false; aBr: boolean = false): string;
@@ -1171,7 +1171,7 @@ end;
 
 function TwfBase.GetRowsCount(const uSQL: string): int64;
 var
-  aSQL: TwfSQL;
+  aSQL: TwfSQLRecord;
 begin
   aSQL.aText:= uSQL;
   aSQL.aParams:= TwfParams.Create(self, true);
@@ -1179,7 +1179,7 @@ begin
   GetRowsCount(aSQL);
 end;
 
-function TwfBase.GetRowsCount(const uSQL: TwfSQL): int64;
+function TwfBase.GetRowsCount(const uSQL: TwfSQLRecord): int64;
 var
   aPosFrom, aPosSelect, aPosFromRes, aPosOrderBy, aPosJoin: PtrInt;
   aSQL: String;
