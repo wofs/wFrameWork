@@ -10,7 +10,7 @@ uses
 type
   { TwfSQLPropertyEditor }
 
-  TwfSQLPropertyEditor = class(TClassPropertyEditor )
+  TwfSQLPropertyEditor = class(TClassPropertyEditor)
   public
     procedure Edit; Override;
     function  GetAttributes: TPropertyAttributes; Override;

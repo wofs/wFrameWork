@@ -21,6 +21,36 @@ type
 
   TwfImportThread = class(TwfThread);
 
+  { TwfFormatItem }
+
+  TwfFormatItem = class(TCollectionItem)
+    private
+      fDescription: TStrings;
+      fName: string;
+
+    protected
+
+    public
+      constructor Create(ACollection: TCollection); override;
+      destructor Destroy; override;
+
+    published
+      property Name: string read fName write fName;
+      property Description: TStrings read fDescription write fDescription;
+  end;
+
+  { TwfFormatItems }
+
+  TwfFormatItems = class(TOwnedCollection)
+    protected
+
+    public
+      function ItemByName(aName: string):TwfFormatItem;
+
+    published
+      property OwnerComponent: TPersistent read GetOwner;
+  end;
+
   { TwfImportItem }
 
   TwfImportItem = class(TCollectionItem)
@@ -28,6 +58,7 @@ type
   private
       fDescription: string;
       fEntity: TwfEntity;
+      fFormats: TwfFormatItems;
       fImportType: TwfImportType;
       fProgressBarStyle: TProgressBarStyle;
       fSource: string;
@@ -66,6 +97,7 @@ type
       destructor Destroy; override;
 
       property Import: TwfImportThread read fImportThread;
+      property OwnerComponent: TPersistent read GetOwner;
 
     published
       property SQLItems: TwfDesignSQLItems read fSQLItems write fSQLItems;
@@ -75,6 +107,7 @@ type
       property Name: string read fName write fName;
       property Entity: TwfEntity read GetEntity write fEntity;
       property Description: string read fDescription write fDescription;
+      property Formats: TwfFormatItems read fFormats write fFormats;
 
       //Use ProgressBar
       //Use Task.PostProgress() and aImport.ProgressInit() procedure to control the ProgressBar
@@ -99,13 +132,15 @@ type
   { TwfImportItems }
 
   TwfImportItems = class(TOwnedCollection)
+  private
     protected
 
     public
       function ItemByName(aName: string):TwfImportItem;
 
-    published
       property OwnerComponent: TPersistent read GetOwner;
+    published
+
   end;
 
 
@@ -119,6 +154,7 @@ type
     fSilentMode: boolean;
     function DialogsOpenLoadDialog(aCaption: string; aFilter: string; const aFilterIndex: word=1): string;
     function GetBase: TwfBase;
+    function GetIsDesigning: boolean;
 
   protected
 
@@ -129,7 +165,10 @@ type
     function Running(aImportName: string): boolean;
     procedure Start(aImportName: string);
     procedure Stop(aImportName: string);
+
     function GetRootPath:string;
+
+    property OwnerComponent: TPersistent read GetOwner;
   published
     property Items: TwfImportItems read fItems write fItems;
     //wfBase to work with database
@@ -149,6 +188,40 @@ begin
   {$I wfimport_icon.lrs}
   RegisterComponents('WF',[TwfImport]);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfDesignSQLItem, 'SQL', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfFormatItem, 'Description', TwfSQLPropertyEditor);
+end;
+
+{ TwfFormatItem }
+
+constructor TwfFormatItem.Create(ACollection: TCollection);
+begin
+  inherited Create(ACollection);
+  fDescription:= TStringList.Create;
+end;
+
+destructor TwfFormatItem.Destroy;
+begin
+  FreeAndNil(fDescription);
+  inherited Destroy;
+end;
+
+{ TwfFormatItems }
+
+function TwfFormatItems.ItemByName(aName: string): TwfFormatItem;
+var
+  i: Integer;
+begin
+  Result:= nil;
+
+  for i:=0 to Count-1 do
+   if TwfFormatItem(Items[i]).Name = aName then
+     begin
+       Result:= TwfFormatItem(Items[i]);
+       Break;
+     end;
+
+  if not Assigned(Result) then
+    raise Exception.Create(Format(rsExceptObjectNotAssigned,['']));
 end;
 
 { TwfImportItems }
@@ -268,7 +341,7 @@ constructor TwfImportItem.Create(ACollection: TCollection);
 begin
   inherited Create(ACollection);
   fSQLItems:= TwfDesignSQLItems.Create(self, TwfDesignSQLItem);
-
+  fFormats:= TwfFormatItems.Create(self, TwfFormatItem);
 
   fImportThread:= nil;
   fTerminated:= true;
@@ -279,6 +352,7 @@ end;
 destructor TwfImportItem.Destroy;
 begin
   FreeAndNil(fSQLItems);
+  FreeAndNil(fFormats);
   inherited Destroy;
 end;
 
@@ -290,10 +364,16 @@ begin
   Result:= fBase;
 end;
 
+function TwfImport.GetIsDesigning: boolean;
+begin
+  Result:= csDesigning in ComponentState;
+end;
+
 constructor TwfImport.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   fItems:= TwfImportItems.Create(self, TwfImportItem);
+
   fSilentMode:= false;
   fRootPath:= IncludeTrailingBackslash(ExtractFileDir(Application.ExeName));
 end;

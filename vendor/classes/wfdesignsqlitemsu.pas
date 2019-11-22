@@ -5,7 +5,7 @@ unit wfDesignSQLItemsU;
 interface
 
 uses
-  Classes, SysUtils, wfParamsU, wfResourceStrings, LazUTF8;
+  Classes, SysUtils, wfParamsU, wfResourceStrings, wfClasses, db, LazUTF8;
 
 type
   { TwfDesignSQLItem }
@@ -16,8 +16,10 @@ type
     private
       fDescription: string;
       fName: string;
+      fParseSQL: Boolean;
       fSQL: TStrings;
       fParams: TwfParams;
+
       function GetParams: TwfParams;
       function GetSQL: TStrings;
       procedure SetParams(aValue: TwfParams);
@@ -30,9 +32,11 @@ type
     published
       property Name: string read fName write fName;
       property SQL: TStrings read GetSQL write SetSQL;
+      property ParseSQL : Boolean read fParseSQL write fParseSQL default true;
       property Params: TwfParams read GetParams write SetParams;
       property Description: string read fDescription write fDescription;
-  end;
+
+ end;
 
   { TwfDesignSQLItems }
 
@@ -45,9 +49,11 @@ type
   public
     function ItemByName(aName: string):TwfDesignSQLItem;
     function ItemByNameSQL(aName: string): string;
+
   end;
 
 implementation
+
 
 { TwfDesignSQLItems }
 
@@ -101,6 +107,12 @@ end;
 procedure TwfDesignSQLItem.SetSQL(aValue: TStrings);
 begin
   fSQL.Assign(aValue);
+
+  if ParseSQL then
+    begin
+      Params.Clear;
+      Params.ParseSQL(fSQL.Text,true);
+    end;
 end;
 
 constructor TwfDesignSQLItem.Create(ACollection: TCollection);
@@ -108,6 +120,7 @@ begin
   inherited Create(ACollection);
   fSQL:= TStringList.Create();
   fParams:= TwfParams.Create(self);
+  fParseSQL:= true;
 end;
 
 destructor TwfDesignSQLItem.Destroy;
