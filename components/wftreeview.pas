@@ -100,6 +100,7 @@ type
     function GetBase: TwfBase;
     function GetEntity: TwfEntity;
     function GetFilled: boolean;
+    function GetSQLGetRoot: TStrings;
     procedure mItemDeleteClick(Sender: TObject);
     procedure mItemEditClick(Sender: TObject);
     procedure mItemNewClick(Sender: TObject);
@@ -166,7 +167,7 @@ type
     property wEntity: TwfEntity read GetEntity write SetwEntity;
     property wTableName: string read fTableName write fTableName;
     //Ex: SELECT ID, IDPARENT, NAME FROM TABLE WHERE IDPARENT=0
-    property wSQLGetRoot: TStrings read fSQLGetRoot write SetSQLGetRoot;
+    property wSQLGetRoot: TStrings read GetSQLGetRoot write SetSQLGetRoot;
     //For mode Design.
     //Allows you to fill in the tree data in the form design mode.
     property wFilled: boolean read GetFilled write SetFilled;
@@ -253,6 +254,11 @@ begin
   Result:= Items.Count>0;
 end;
 
+function TwfTreeView.GetSQLGetRoot: TStrings;
+begin
+  Result:= fSQLGetRoot;
+end;
+
 function TwfTreeView.GetEntity: TwfEntity;
 begin
   if not Assigned(fEntity) then
@@ -287,30 +293,31 @@ begin
     PopupMenu.Items.Add(aMenuItem);
   end;
 
-  case fBase.Engine of
-    seFirebird: begin
-      fSQLGetChildrensAll:= 'with recursive tree '
-              +' as (select t.id '
-              +'     from %s t '
-              +'     where t.%s = :ID '
-              +'     union all '
-              +'     select t.id '
-              +'     from %s t '
-              +'     inner join tree prior on prior.id = t.%s) '
-              +' select * from tree';
+  if Assigned(fBase) then
+    case fBase.Engine of
+      seFirebird: begin
+        fSQLGetChildrensAll:= 'with recursive tree '
+                +' as (select t.id '
+                +'     from %s t '
+                +'     where t.%s = :ID '
+                +'     union all '
+                +'     select t.id '
+                +'     from %s t '
+                +'     inner join tree prior on prior.id = t.%s) '
+                +' select * from tree';
+      end;
+      sePostgreSQL: begin
+        fSQLGetChildrensAll:= 'with recursive tree '
+                +' as (select t.id, t.name '
+                +'     from %s t '
+                +'     where %s = :ID '
+                +'     union all '
+                +'     select t.id, t.name '
+                +'     from %s t '
+                +'     inner join tree prior on prior.id = t.%s) '
+                +' select * from tree';
+      end;
     end;
-    sePostgreSQL: begin
-      fSQLGetChildrensAll:= 'with recursive tree '
-              +' as (select t.id, t.name '
-              +'     from %s t '
-              +'     where %s = :ID '
-              +'     union all '
-              +'     select t.id, t.name '
-              +'     from %s t '
-              +'     inner join tree prior on prior.id = t.%s) '
-              +' select * from tree';
-    end;
-  end;
 end;
 
 function TwfTreeView.GetBase: TwfBase;
