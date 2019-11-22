@@ -18,6 +18,11 @@
         </Verbosity>
       </Other>
     </CompilerOptions>
+    <Description Value="Version (X.Y.Z.S):
+X - release
+Y - number of visual component
+Z - significant changes
+S - small changes, improvements, bug fixes"/>
     <License Value="                  GNU LESSER GENERAL PUBLIC LICENSE
                        Version 2.1, February 1999
 
@@ -510,7 +515,7 @@ convey the exclusion of warranty; and each file should have at least the
 
 Degtyarev Alexander A. 
 E-mail: degtyarev.alexander.code@yandex.ru"/>
-    <Version Minor="1" Release="3" Build="26"/>
+    <Version Minor="19" Release="1"/>
     <Files Count="36">
       <Item1>
         <Filename Value="vendor\wfresourcestrings.pas"/>
