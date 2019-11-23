@@ -76,6 +76,9 @@ type
   TwfLogClass =(lcDebug, lcError, lcInfo, lcWarning, lcEvent);
   TwfLogClasses = set of TwfLogClass;
 
+  TwfStringsEditorMode = (stmSQL, stmIni, stmText);
+
+
 const
   wfLE = LineEnding;
   wfEmptyStr = '';

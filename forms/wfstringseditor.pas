@@ -1,4 +1,4 @@
-unit wfSQLEditor;
+unit wfStringsEditor;
 
 {$mode objfpc}{$H+}
 
@@ -7,15 +7,15 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Buttons, LCLType, ComCtrls, wfTypes,
   SynEdit, SynCompletion, SynHighlighterSQL, SynHighlighterMulti, SynPluginSyncroEdit, SynEditTypes,
-  SynEditMarkupHighAll, SynHighlighterIni, LazUTF8, LazStringUtils;
+  SynEditMarkupHighAll, SynHighlighterIni, SynHighlighterTeX, SynHighlighterAny, LazUTF8, LazStringUtils;
 
 type
 
   TOnAfterSearch = procedure (Sender:TObject; cnt: Integer) of object;
 
-  { TFmSQLEditor }
+  { TFmStringsEditor }
 
-  TFmSQLEditor = class(TForm)
+  TFmStringsEditor = class(TForm)
     btnOK: TBitBtn;
     btnCancel: TBitBtn;
     cbReplace: TCheckBox;
@@ -36,11 +36,13 @@ type
     Editor: TSynEdit;
     splitSearch: TSplitter;
     StatusBar1: TStatusBar;
+    SynText: TSynAnySyn;
     SynAutoComplete: TSynAutoComplete;
     SynCompletion: TSynCompletion;
     SynIni: TSynIniSyn;
     SynPluginSyncroEdit: TSynPluginSyncroEdit;
     SynSQL: TSynSQLSyn;
+    SynTeXSyn1: TSynTeXSyn;
     procedure cbReplaceChange(Sender: TObject);
     procedure EditorKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure EditorKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -54,8 +56,10 @@ type
     function ClearLineFromComment(const aText: string): string;
     function CommentText(const aText: string): string;
     function GetCaretPositionAsString: string;
-    //procedure SetModeIni();
-    //procedure SetModeSQL();
+    procedure InitMode(aMode: TwfStringsEditorMode);
+    procedure SetModeIni();
+    procedure SetModeSQL();
+    procedure SetModeText();
     procedure SetSelectCurrentRow;
     function GetOptions: TSynSearchOptions;
     procedure InitHighlightAllCaret();
@@ -69,20 +73,20 @@ type
     procedure DoSearch;
 
   public
-    constructor Create(aStrings: TStrings);
+    constructor Create(aStrings: TStrings; aMode: TwfStringsEditorMode);
 
   end;
 
 var
-  FmSQLEditor: TFmSQLEditor;
+  FmStringsEditor: TFmStringsEditor;
 
 implementation
 
 {$R *.lfm}
 
-{ TFmSQLEditor }
+{ TFmStringsEditor }
 
-procedure TFmSQLEditor.pSearchVisibleClick(Sender: TObject);
+procedure TFmStringsEditor.pSearchVisibleClick(Sender: TObject);
 begin
   pSearch.Visible:= not pSearch.Visible;
   splitSearch.Enabled:= pSearch.Visible;
@@ -93,17 +97,17 @@ begin
     Self.Width:= Self.Width - pSearch.Width;
 end;
 
-procedure TFmSQLEditor.AfterSearch(Sender: TObject; cnt: Integer);
+procedure TFmStringsEditor.AfterSearch(Sender: TObject; cnt: Integer);
 begin
   SetStatus('Last search : "'+edSearch.Text+'" matched: '+inttostr(cnt),1);
 end;
 
-procedure TFmSQLEditor.SetStatus(aText: string; const aPanel: integer = 0);
+procedure TFmStringsEditor.SetStatus(aText: string; const aPanel: integer = 0);
 begin
   StatusBar1.Panels[aPanel].Text := aText;
 end;
 
-procedure TFmSQLEditor.EditorKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TFmStringsEditor.EditorKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if (Key = VK_F) and (ssCtrl in Shift) then
   begin
@@ -112,12 +116,12 @@ begin
   end;
 end;
 
-function  TFmSQLEditor.GetCaretPositionAsString:string;
+function  TFmStringsEditor.GetCaretPositionAsString:string;
 begin
   Result:= Format('[Cursor] Row:%d Col:%d',[Editor.CaretY, Editor.CaretX]);
 end;
 
-procedure TFmSQLEditor.SetSelectCurrentRow;
+procedure TFmStringsEditor.SetSelectCurrentRow;
 var
   i, aResult: Integer;
 begin
@@ -135,7 +139,7 @@ begin
    end;
 end;
 
-procedure TFmSQLEditor.EditorKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TFmStringsEditor.EditorKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 var
   aSelText: String;
 begin
@@ -155,17 +159,17 @@ begin
   end;
 end;
 
-procedure TFmSQLEditor.EditorMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TFmStringsEditor.EditorMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   SetStatus(GetCaretPositionAsString);
 end;
 
-procedure TFmSQLEditor.cbReplaceChange(Sender: TObject);
+procedure TFmStringsEditor.cbReplaceChange(Sender: TObject);
 begin
   gbReplace.Visible:= TCheckBox(Sender).Checked;
 end;
 
-function TFmSQLEditor.CommentText(const aText: string): string;
+function TFmStringsEditor.CommentText(const aText: string): string;
 begin
   Result:=LazStringUtils.CommentText(aText,comtCPP);
 
@@ -175,7 +179,7 @@ begin
     Result:=LazStringUtils.CommentText(aText,comtCPP);
 end;
 
-function TFmSQLEditor.ClearLineFromComment(const aText: string):string;
+function TFmStringsEditor.ClearLineFromComment(const aText: string):string;
 var
   i,k: Integer;
   aChar: Char;
@@ -196,7 +200,7 @@ begin
       end;
 end;
 
-function TFmSQLEditor.UncommentLines(const aText: string): string;
+function TFmStringsEditor.UncommentLines(const aText: string): string;
 var
   aStrings: TStringList;
   i: Integer;
@@ -223,7 +227,7 @@ begin
 
 end;
 
-procedure TFmSQLEditor.edSearchKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TFmStringsEditor.edSearchKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if Key = VK_RETURN then begin
     Key := 0;
@@ -240,24 +244,24 @@ begin
   end;
 end;
 
-procedure TFmSQLEditor.FormShow(Sender: TObject);
+procedure TFmStringsEditor.FormShow(Sender: TObject);
 begin
   Editor.SetFocus;
 end;
 
-procedure TFmSQLEditor.actFindPreviousExecute(Sender :TObject);
+procedure TFmStringsEditor.actFindPreviousExecute(Sender :TObject);
 begin
   FBackwards := True;
   DoSearch;
 end;
 
-procedure TFmSQLEditor.actFindNextExecute(Sender :TObject);
+procedure TFmStringsEditor.actFindNextExecute(Sender :TObject);
 begin
   FBackwards := False;
   DoSearch;
 end;
 
-procedure TFmSQLEditor.DoSearch;
+procedure TFmStringsEditor.DoSearch;
 var
   cnt: Integer;
 begin
@@ -269,7 +273,7 @@ begin
   AfterSearch(Editor, cnt);
 end;
 
-function TFmSQLEditor.GetOptions :TSynSearchOptions;
+function TFmStringsEditor.GetOptions :TSynSearchOptions;
 begin
   Result := [ssoFindContinue];
   if FBackwards then
@@ -296,38 +300,45 @@ begin
 
 end;
 
-constructor TFmSQLEditor.Create(aStrings: TStrings);
+constructor TFmStringsEditor.Create(aStrings: TStrings; aMode: TwfStringsEditorMode);
 begin
   inherited Create(nil);
   FBackwards:= false;
   Editor.Lines.Assign(aStrings);
-  //InitMode(aMode);
+  InitMode(aMode);
   InitHighlightAllCaret();
 end;
 
-//procedure TFmSQLEditor.InitMode(aMode: TwfStringsEditorMode);
-//begin
-//  case aMode of
-//    stmSQL: SetModeSQL;
-//    stmIni: SetModeIni;
-//  end;
-//end;
-//
-//procedure TFmSQLEditor.SetModeSQL();
-//begin
-//   self.Caption:= Format('%s [%s]',[self.Caption, 'SQL']);
-//   Editor.Highlighter:= SynSQL;
-//end;
-//
-//procedure TFmSQLEditor.SetModeIni();
-//begin
-//   self.Caption:= Format('%s [%s]',[self.Caption, 'Ini']);
-//   Editor.Highlighter:= SynIni;
-//   SynCompletion.ItemList.Clear;
-//   SynAutoComplete.AutoCompleteList.Clear;
-//end;
+procedure TFmStringsEditor.InitMode(aMode: TwfStringsEditorMode);
+begin
+  case aMode of
+    stmText  : SetModeText;
+    stmSQL   : SetModeSQL;
+    stmIni   : SetModeIni;
+  end;
+end;
 
-procedure TFmSQLEditor.InitHighlightAllCaret();
+procedure TFmStringsEditor.SetModeSQL();
+begin
+   self.Caption:= Format('%s [%s]',[self.Caption, 'SQL']);
+   Editor.Highlighter:= SynSQL;
+end;
+
+procedure TFmStringsEditor.SetModeText();
+begin
+   self.Caption:= Format('%s [%s]',[self.Caption, 'Text']);
+   Editor.Highlighter:= SynText;
+end;
+
+procedure TFmStringsEditor.SetModeIni();
+begin
+   self.Caption:= Format('%s [%s]',[self.Caption, 'Ini']);
+   Editor.Highlighter:= SynIni;
+   SynCompletion.ItemList.Clear;
+   SynAutoComplete.AutoCompleteList.Clear;
+end;
+
+procedure TFmStringsEditor.InitHighlightAllCaret();
 var
   SynMarkup: TSynEditMarkupHighlightAllCaret;
 begin

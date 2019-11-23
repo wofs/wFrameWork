@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ComCtrls, PropEdits, LazUTF8, wfBase, wfEntity,
-  wfTypes, wfClasses, wfThreadU, wfResourceStrings, TwfProgressU, wfDesignSQLItemsU, wfSQLPropertyEditorU;
+  wfTypes, wfClasses, wfThreadU, wfResourceStrings, TwfProgressU, wfImportTemplatesU, wfDesignSQLItemsU,
+  wfSQLPropertyEditorU, wfIniPropertyEditorU, wfStringsPropertyEditor;
 
 type
 
@@ -26,9 +27,13 @@ type
   TwfFormatItem = class(TCollectionItem)
     private
       fDescription: TStrings;
+      fFormat: TStrings;
       fName: string;
+      procedure SetDescription(aValue: TStrings);
+      procedure SetFormat(aValue: TStrings);
 
     protected
+      function GetDisplayName: string; override;
 
     public
       constructor Create(ACollection: TCollection); override;
@@ -36,7 +41,8 @@ type
 
     published
       property Name: string read fName write fName;
-      property Description: TStrings read fDescription write fDescription;
+      property Description: TStrings read fDescription write SetDescription;
+      property Format: TStrings read fFormat write SetFormat;
   end;
 
   { TwfFormatItems }
@@ -188,20 +194,42 @@ begin
   {$I wfimport_icon.lrs}
   RegisterComponents('WF',[TwfImport]);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfDesignSQLItem, 'SQL', TwfSQLPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(TStrings), TwfFormatItem, 'Description', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfFormatItem, 'Description', TwfStringsPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfFormatItem, 'Format', TwfIniPropertyEditor);
 end;
 
 { TwfFormatItem }
+
+procedure TwfFormatItem.SetDescription(aValue: TStrings);
+begin
+  fDescription.Assign(aValue);
+end;
+
+procedure TwfFormatItem.SetFormat(aValue: TStrings);
+begin
+  fFormat.Assign(aValue);
+end;
+
+function TwfFormatItem.GetDisplayName: string;
+begin
+  if Length(fName)>0 then
+    Result:= fName
+  else
+    Result:=inherited GetDisplayName;
+end;
 
 constructor TwfFormatItem.Create(ACollection: TCollection);
 begin
   inherited Create(ACollection);
   fDescription:= TStringList.Create;
+  fFormat:= TStringList.Create;
+  fFormat.Text:= uTemplateFormatHelp;
 end;
 
 destructor TwfFormatItem.Destroy;
 begin
   FreeAndNil(fDescription);
+  FreeAndNil(fFormat);
   inherited Destroy;
 end;
 

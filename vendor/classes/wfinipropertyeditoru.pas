@@ -1,4 +1,4 @@
-unit wfSQLPropertyEditorU;
+unit wfIniPropertyEditorU;
 
 {$mode objfpc}{$H+}
 
@@ -9,9 +9,9 @@ uses
 
 type
 
-  { TwfSQLPropertyEditor }
+  { TwfIniPropertyEditor }
 
-  TwfSQLPropertyEditor = class(TwfStringsPropertyEditor)
+  TwfIniPropertyEditor = class(TwfStringsPropertyEditor)
   public
     constructor Create(Hook: TPropertyEditorHook; APropCount: Integer); override;
 
@@ -19,13 +19,12 @@ type
 
 implementation
 
+{ TwfIniPropertyEditor }
 
-{ TwfSQLPropertyEditor }
-
-constructor TwfSQLPropertyEditor.Create(Hook: TPropertyEditorHook; APropCount: Integer);
+constructor TwfIniPropertyEditor.Create(Hook: TPropertyEditorHook; APropCount: Integer);
 begin
   inherited Create(Hook, APropCount);
-  Mode:= stmSQL;
+  Mode:= stmIni;
 end;
 
 end.

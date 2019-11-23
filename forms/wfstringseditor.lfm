@@ -1,9 +1,9 @@
-object FmSQLEditor: TFmSQLEditor
-  Left = 477
+object FmStringsEditor: TFmStringsEditor
+  Left = 402
   Height = 508
-  Top = 274
+  Top = 194
   Width = 752
-  Caption = 'Strings Editor [SQL]'
+  Caption = 'Strings Editor'
   ClientHeight = 508
   ClientWidth = 752
   OnShow = FormShow
@@ -1010,6 +1010,24 @@ object FmSQLEditor: TFmSQLEditor
     DefaultFilter = 'Файлы INI (*.ini)|*.ini'
     Enabled = False
     left = 409
+    top = 128
+  end
+  object SynTeXSyn1: TSynTeXSyn
+    DefaultFilter = 'Файлы TeX (*.tex)|*.tex'
+    Enabled = False
+    left = 409
+    top = 192
+  end
+  object SynText: TSynAnySyn
+    Enabled = False
+    Comments = []
+    DetectPreprocessor = False
+    IdentifierChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz'
+    Markup = False
+    Entity = False
+    DollarVariables = False
+    ActiveDot = False
+    left = 520
     top = 128
   end
 end

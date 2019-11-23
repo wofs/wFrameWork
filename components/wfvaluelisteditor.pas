@@ -15,8 +15,8 @@ unit wfValueListEditor;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs,
-  Grids, StdCtrls, Buttons, Spin, PropEdits, wfFunc, wfTypes, wfClasses, wfSQLPropertyEditorU, wfBase, wfComboBox;
+  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, Grids, StdCtrls, Buttons, Spin, PropEdits, wfFunc,
+  wfTypes, wfClasses, wfSQLPropertyEditorU, wfTextPropertyEditorU, wfBase, wfComboBox;
 
 type
   TwfValueListEditor = class;
