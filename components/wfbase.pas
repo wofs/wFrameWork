@@ -449,30 +449,13 @@ end;
   @result   string      String Value
 -------------------------------------------------------------------------------}
 function TwfBase.AsString(aArr: ArrayOfInt64): string;
-var
-  i: Integer;
 begin
- Result:='';
- for i:=0 to High(aArr) do
- begin
-   if Length(Result)>0 then
-     Result:= Result+',';
-
-   Result:= Result+ IntToStr(aArr[i]);
- end;
+  wfFunc.AsString(aArr);
 end;
 
 function TwfBase.AsString(aStrings: TStrings): string;
-var
-  i: Integer;
 begin
-  Result:= EmptyStr;
-  for i:=0 to aStrings.Count-1 do begin
-      if not IsEmpty(Result) then
-         Result += wfLE;
-
-      Result += aStrings.Strings[i];
-  end;
+  wfFunc.AsString(aStrings);
 end;
 
 function TwfBase.GetLongTransactionStatus: boolean;
@@ -1643,17 +1626,8 @@ end;
   @result   string
 -------------------------------------------------------------------------------}
 function TwfBase.AsString(aArr: ArrayOfString): string;
-var
-  i: Integer;
 begin
- Result:='';
- for i:=0 to High(aArr) do
- begin
-   if Length(Result)>0 then
-     Result:= Result+',';
-
-   Result:= Result+ aArr[i];
- end;
+ wfFunc.AsString(aArr);
 end;
 
 {@@ ----------------------------------------------------------------------------
@@ -1662,21 +1636,8 @@ end;
   @result   string
 -------------------------------------------------------------------------------}
 function TwfBase.AsString(aArr: ArrayOfBaseID): string;
-var
-  i: Integer;
 begin
- Result:='';
- for i:=0 to High(aArr) do
- begin
-   if Length(Result)>0 then
-     Result:= Result+',';
-
-   {$IFDEF USEGUID}
-     Result:= Result+ aArr[i]
-   {$ELSE}
-     Result:= Result+ IntToStr(aArr[i])
-   {$ENDIF}
- end;
+ wfFunc.AsString(aArr);
 end;
 
 {@@ ----------------------------------------------------------------------------

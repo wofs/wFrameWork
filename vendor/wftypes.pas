@@ -32,6 +32,7 @@ type
   ArrayOfDouble   = array of double;
   ArrayOfCurrency   = array of currency;
   ArrayOfString   = array of string;
+  ArrayOfChar   = array of char;
   ArrayOfConst    = array of TVarRec;
   ArrayOfVariant  = array of variant;
   ArrayOfDateTime = array of TDateTime;

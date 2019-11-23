@@ -35,6 +35,9 @@ type
   public
     constructor Create(CreateSuspended : boolean);
 
+    property Msg: Word read fMsg write fMsg;
+    property Param: variant read fParam write fParam;
+
     property onExecute: TwfThreadExecuteEvent read fonExecute write fonExecute;
     property onFinish: TwfThreadFinishEvent read fonFinish write fonFinish;
     property onProgress: TwfThreadProgress read fonProgress write fonProgress;

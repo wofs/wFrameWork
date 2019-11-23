@@ -5,13 +5,20 @@ unit wfImport;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ComCtrls, PropEdits, LazUTF8, wfBase, wfEntity,
-  wfTypes, wfClasses, wfThreadU, wfResourceStrings, TwfProgressU, wfImportTemplatesU, wfDesignSQLItemsU,
-  wfSQLPropertyEditorU, wfIniPropertyEditorU, wfStringsPropertyEditor;
+  Classes, windows, SysUtils, math, IniFiles, LResources, Forms, Controls, Graphics, Dialogs, ComCtrls, PropEdits,
+  LazUTF8, LazFileUtils, wfBase, wfEntity, wfTypes, wfClasses, wfThreadU, wfFunc, wfResourceStrings, TwfProgressU,
+  wfImportTemplatesU, wfDesignSQLItemsU, wfSQLPropertyEditorU, wfIniPropertyEditorU, wfStringsPropertyEditor,
+  wfFormatParserU;
 
 type
 
   TwfImportType = (itSpreadSheet, itCSV);
+  //[Инит]
+  //[Данные]
+  //[ДанныеВБазе]
+  //[Логика]
+
+
 
   TwfImportItem = class;
 
@@ -20,9 +27,11 @@ type
   TwfImportProgress = procedure(aImport: TwfImportItem; const Msg: Word; const Value: Word) of object;
   TwfImportMessage = procedure(aImport: TwfImportItem; const Msg: Word; const Param: Variant) of object;
 
+  { TwfImportThread }
+
   TwfImportThread = class(TwfThread);
 
-  { TwfFormatItem }
+   { TwfFormatItem }
 
   TwfFormatItem = class(TCollectionItem)
     private
@@ -162,7 +171,6 @@ type
     function DialogsOpenLoadDialog(aCaption: string; aFilter: string; const aFilterIndex: word=1): string;
     function GetBase: TwfBase;
     function GetIsDesigning: boolean;
-
   protected
 
   public
@@ -170,7 +178,7 @@ type
     destructor Destroy; override;
 
     function Running(aImportName: string): boolean;
-    procedure Start(aImportName: string);
+    procedure Start(aImportName: string; aFormatName: string);
     procedure Stop(aImportName: string);
 
     function GetRootPath:string;
@@ -283,6 +291,7 @@ begin
   if Assigned(fImportThread) then exit;
 
   fImportThread:= TwfImportThread.Create(true);
+
   with fImportThread do begin
     onExecute:= @ImportExecute;
     onFinish:= @ImportFinish;
@@ -452,12 +461,13 @@ begin
   end;
 end;
 
-procedure TwfImport.Start(aImportName: string);
+procedure TwfImport.Start(aImportName: string; aFormatName: string);
 var
   aImport: TwfImportItem;
   aDialogFilter: String;
 begin
   aImport:= fItems.ItemByName(aImportName);
+
   if Assigned(aImport) then
     begin
       if aImport.SQLItems.Count = 0 then
@@ -469,7 +479,7 @@ begin
             raise Exception.Create(rsImportNoSourceSpecified);
 
           case aImport.ImportType of
-            itSpreadSheet     : aDialogFilter:= 'OpenDocument (*.ods)|*.ods|Excel (*.xls)|*.xls|Excel (*.xlsx)|*.xlsx|Comma Text (*.csv)|*.csv';
+            itSpreadSheet     : aDialogFilter:= 'preadsheets (*.ods;*.xls;*.xlsx)|*.ods;*.xls;*.xlsx';
             itCSV             : aDialogFilter:= 'Comma Text (*.csv)|*.csv'
             else
               aDialogFilter:='';

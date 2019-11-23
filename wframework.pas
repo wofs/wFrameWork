@@ -8,11 +8,11 @@ unit wFrameWork;
 interface
 
 uses
-  wfResourceStrings, wfTypes, wfFunc, wfDialogs, wfThreadU, wfClasses, wfCustomSQLItemListU, wfParamsU, wfIntSQLItemU, 
-  wfSQLPropertyEditorU, wfDesignSQLItemsU, wfCustomOrderByListU, wfIniPropertyEditorU, wfPlugins, wfLog, wfVersions, 
-  wfIBConnection, wfPQConnection, wfODBCConnection, wfBase, wfSQLQuery, wfSQLScript, wfSQLTransaction, wfTreeView, 
-  wfDBGrid, wfComboBox, wfStatusProgressBar, wfReport, wfImport, wfSettings, wfEntity, wfValueListEditor, 
-  wfImportTemplatesU, TwfProgressU, wfReportViewer, wfStringsEditor, LazarusPackageIntf;
+  wfResourceStrings, wfImportTemplatesU, wfTypes, wfFunc, wfDialogs, wfThreadU, wfClasses, wfCustomSQLItemListU, 
+  wfParamsU, wfIntSQLItemU, wfSQLPropertyEditorU, wfDesignSQLItemsU, wfCustomOrderByListU, wfIniPropertyEditorU, 
+  wfPlugins, wfLog, wfVersions, wfIBConnection, wfPQConnection, wfODBCConnection, wfBase, wfSQLQuery, wfSQLScript, 
+  wfSQLTransaction, wfTreeView, wfDBGrid, wfComboBox, wfStatusProgressBar, wfReport, wfImport, wfSettings, wfEntity, 
+  wfValueListEditor, TwfProgressU, wfReportViewer, wfStringsEditor, wfFormatParserU, LazarusPackageIntf;
 
 implementation
 

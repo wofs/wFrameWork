@@ -20,6 +20,8 @@ uses
   Classes, SysUtils, db, LazUTF8, Graphics, Dialogs, StdCtrls, wfTypes,
   md5, fileinfo, fpspreadsheet, fpsTypes, fpspreadsheetctrls;
 
+function StringToVar(Value: string): variant;
+
 function VarToStr(Value: variant): string;
 function VarToBool(Value: variant): boolean;
 function VarToInt64(Value: variant): Int64;
@@ -29,6 +31,7 @@ function BoolToInt(aValue: Boolean):Integer;
 function BaseIDToStr(aValue: BaseID):string;
 function GetVarType(aValue: variant):tvartype;
 function GetOnlyCorrectChars(aValue: string): string;
+function GetOnlyCorrectCharsUTF8(aValue: string): string;
 function GetOnlyChars(aValue: string): string;
 function GetOnlyNumbers(aValue: string): Double;
 function GetOnlyDateTime(aValue: string): TDateTime;
@@ -77,6 +80,12 @@ function GetUID:string;
 
 function GetVersion: string;
 function CalcMD5File(aFileName: string): string;
+
+function AsString(aArr: ArrayOfString): string;
+function AsString(aArr: ArrayOfBaseID): string;
+function AsString(aArr: ArrayOfInt64): string;
+function AsString(aStrings: TStrings): string;
+
 implementation
 
 procedure WriteValue(aWorksheet: TsWorksheet; aRow, aCol: integer; aField: TField; const aFontStyles: TsFontStyles; aCellColor: TsColor; aFontColor: TsColor;
@@ -294,6 +303,86 @@ begin
 
 end;
 
+function AsString(aArr: ArrayOfString): string;
+var
+  i: Integer;
+begin
+ Result:='';
+ for i:=0 to High(aArr) do
+ begin
+   if Length(Result)>0 then
+     Result:= Result+',';
+
+   Result:= Result+ aArr[i];
+ end;
+end;
+
+function AsString(aArr: ArrayOfBaseID): string;
+var
+  i: Integer;
+begin
+ Result:='';
+ for i:=0 to High(aArr) do
+ begin
+   if Length(Result)>0 then
+     Result:= Result+',';
+
+   {$IFDEF USEGUID}
+     Result:= Result+ aArr[i]
+   {$ELSE}
+     Result:= Result+ IntToStr(aArr[i])
+   {$ENDIF}
+ end;
+
+end;
+
+function AsString(aArr: ArrayOfInt64): string;
+var
+  i: Integer;
+begin
+ Result:='';
+ for i:=0 to High(aArr) do
+ begin
+   if Length(Result)>0 then
+     Result:= Result+',';
+
+   Result:= Result+ IntToStr(aArr[i]);
+ end;
+
+end;
+
+function AsString(aStrings: TStrings): string;
+var
+  i: Integer;
+begin
+  Result:= EmptyStr;
+  for i:=0 to aStrings.Count-1 do begin
+      if not IsEmpty(Result) then
+         Result += wfLE;
+
+      Result += aStrings.Strings[i];
+  end;
+
+end;
+
+function StringToVar(Value: string): variant;
+var
+  aInt: int64;
+  aDate: TDateTime;
+  aDouble: Double;
+begin
+  if TryStrToInt64(Value, aInt) then
+    Result:= aInt
+  else
+    if TryStrToFloat(Value, aDouble) then
+      Result:= aDouble
+  else
+    if TryStrToDate(Value, aDate) then
+      Result:= aDate
+  else
+    Result:= Value;
+end;
+
 function VarToStr(Value: variant): string;
 begin
   Result := '';
@@ -368,6 +457,30 @@ begin
         if not (aValue[N] in ['a'..'z','A'..'Z', '0'..'9']) then Delete(aValue, N, 1);
 
   Result:= aValue;
+end;
+
+function GetOnlyCorrectCharsUTF8(aValue:String):String;
+
+  function GetChar(aIndex: integer):string;
+  begin
+    Result := UTF8Copy(aValue, aIndex, 1);
+  end;
+
+const
+  SymbolsRus = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюяЁё';
+var
+  i : Integer;
+  aText, aSymbol: String;
+begin
+  Result := '';
+  for i := 1 to Length(aValue) do
+    begin
+      aSymbol:= GetChar(i);
+
+      if (UTF8Pos(aSymbol, SymbolsRus)>0) then
+        Result := Result + aSymbol;
+
+    end;
 end;
 
 function GetOnlyChars(aValue: string): string;
