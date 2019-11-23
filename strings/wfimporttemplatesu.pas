@@ -9,6 +9,8 @@ uses
 
 const
 uTemplateFormatHelp = '[Инит]'+wfLE
+          +';Лист электронной таблицы (только для ftSpreadsheet)'+wfLE
+          +'Лист = 1'+wfLE
           +';Первая строка с данными'+wfLE
           +'ПерваяСтрока = 10'+wfLE
           +';Первая колонка с данными'+wfLE

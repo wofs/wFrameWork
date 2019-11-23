@@ -22,6 +22,11 @@ uses
 
 type
 
+   // Запись строка + колонка
+   TwfRowCol = Record
+     Row: Cardinal;
+     Col: Cardinal;
+   end;
    { TwfBaseField }
 
    TwfBaseField = record

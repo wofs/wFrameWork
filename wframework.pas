@@ -12,7 +12,8 @@ uses
   wfParamsU, wfIntSQLItemU, wfSQLPropertyEditorU, wfDesignSQLItemsU, wfCustomOrderByListU, wfIniPropertyEditorU, 
   wfPlugins, wfLog, wfVersions, wfIBConnection, wfPQConnection, wfODBCConnection, wfBase, wfSQLQuery, wfSQLScript, 
   wfSQLTransaction, wfTreeView, wfDBGrid, wfComboBox, wfStatusProgressBar, wfReport, wfImport, wfSettings, wfEntity, 
-  wfValueListEditor, TwfProgressU, wfReportViewer, wfStringsEditor, wfFormatParserU, LazarusPackageIntf;
+  wfValueListEditor, TwfProgressU, wfReportViewer, wfStringsEditor, wfFormatParserU, wfImportReaderU, 
+  LazarusPackageIntf;
 
 implementation
 
