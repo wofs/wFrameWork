@@ -54,7 +54,6 @@ type
       function ItemByName(aName: string):TwfFormatItem;
 
     published
-      property OwnerComponent: TPersistent read GetOwner;
   end;
 
   { TwfImportItem }
@@ -62,7 +61,8 @@ type
   TwfImportItem = class(TCollectionItem)
 
   private
-      fDescription: string;
+      fDescription: TStrings;
+      fDescriptionShort: string;
       fEntity: TwfEntity;
       fFormats: TwfFormatItems;
       fImportType: TwfImportType;
@@ -86,6 +86,7 @@ type
       procedure ImportFinish(Sender: TwfThread; const Msg: Word; const Param: Variant);
       procedure ImportMessage(Sender: TwfThread; const Msg: Word; const Param: Variant);
       procedure ImportProgress(Sender: TwfThread; const Msg: Word; const Value: Word);
+      procedure SetDescription(aValue: TStrings);
       function ThreadInit: boolean;
 
       procedure SetTerminated(aValue: boolean);
@@ -112,7 +113,8 @@ type
 
       property Name: string read fName write fName;
       property Entity: TwfEntity read GetEntity write fEntity;
-      property Description: string read fDescription write fDescription;
+      property Description: TStrings read fDescription write SetDescription;
+      property DescriptionShort: string read fDescriptionShort write fDescriptionShort;
       property Formats: TwfFormatItems read fFormats write fFormats;
 
       //Use ProgressBar
@@ -144,7 +146,6 @@ type
     public
       function ItemByName(aName: string):TwfImportItem;
 
-      property OwnerComponent: TPersistent read GetOwner;
     published
 
   end;
@@ -194,6 +195,7 @@ begin
   {$I wfimport_icon.lrs}
   RegisterComponents('WF',[TwfImport]);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfDesignSQLItem, 'SQL', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfImportItem, 'Description', TwfStringsPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfFormatItem, 'Description', TwfStringsPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfFormatItem, 'Format', TwfIniPropertyEditor);
 end;
@@ -331,6 +333,11 @@ begin
   if Assigned(onProgress) then onProgress(self, Msg, Value);
 end;
 
+procedure TwfImportItem.SetDescription(aValue: TStrings);
+begin
+  fDescription.Assign(aValue);
+end;
+
 procedure TwfImportItem.SetTerminated(aValue: boolean);
 begin
   if fTerminated=AValue then Exit;
@@ -370,6 +377,7 @@ begin
   inherited Create(ACollection);
   fSQLItems:= TwfDesignSQLItems.Create(self, TwfDesignSQLItem);
   fFormats:= TwfFormatItems.Create(self, TwfFormatItem);
+  fDescription:= TStringList.Create;
 
   fImportThread:= nil;
   fTerminated:= true;
@@ -381,6 +389,7 @@ destructor TwfImportItem.Destroy;
 begin
   FreeAndNil(fSQLItems);
   FreeAndNil(fFormats);
+  FreeAndNil(fDescription);
   inherited Destroy;
 end;
 
@@ -481,8 +490,8 @@ begin
                     onStopForce:=@ImportForceFinish;
                     Bar.Style:= ProgressBarStyle;
                     ShowInTaskBar:= stAlways;
-                    if UTF8Length(fDescription)>0 then
-                      Caption:= fDescription;
+                    if UTF8Length(fDescriptionShort)>0 then
+                      Caption:= fDescriptionShort;
                     Show;
                   end;
               end;

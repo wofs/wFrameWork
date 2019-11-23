@@ -1,7 +1,7 @@
 object FmStringsEditor: TFmStringsEditor
-  Left = 402
+  Left = 468
   Height = 508
-  Top = 194
+  Top = 264
   Width = 752
   Caption = 'Strings Editor'
   ClientHeight = 508
@@ -1012,17 +1012,14 @@ object FmStringsEditor: TFmStringsEditor
     left = 409
     top = 128
   end
-  object SynTeXSyn1: TSynTeXSyn
-    DefaultFilter = 'Файлы TeX (*.tex)|*.tex'
-    Enabled = False
-    left = 409
-    top = 192
-  end
   object SynText: TSynAnySyn
     Enabled = False
+    CommentAttri.Foreground = clGreen
     Comments = []
     DetectPreprocessor = False
     IdentifierChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz'
+    NumberAttri.Foreground = clMaroon
+    StringAttri.Foreground = clTeal
     Markup = False
     Entity = False
     DollarVariables = False

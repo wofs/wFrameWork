@@ -21,8 +21,9 @@ uses
       cmem,
     {$ENDIF}{$ENDIF}
     Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, ComCtrls, LazUTF8, PropEdits, wfTypes,
-    wfResourceStrings, wfFunc, wfDialogs, wfClasses, wfThreadU, wfSQLPropertyEditorU, wfParamsU, TwfProgressU,
-    wfreportviewer, wfBase, wfSQLQuery, db, fpspreadsheetctrls, fpspreadsheet, fpsTypes;
+    wfResourceStrings, wfFunc, wfDialogs, wfClasses, wfThreadU, wfSQLPropertyEditorU, wfParamsU,
+    wfStringsPropertyEditor, TwfProgressU, wfreportviewer, wfBase, wfSQLQuery, db, fpspreadsheetctrls, fpspreadsheet,
+    fpsTypes;
 
 type
 
@@ -67,7 +68,8 @@ type
   private
     fColumnsString: TStrings;
     fDefaultColWidth: word;
-    fDescription: string;
+    fDescription: TStrings;
+    fDescriptionShort: string;
     fExportFileName: string;
     fExportTemplateDir: string;
     fFirstCol: word;
@@ -110,6 +112,7 @@ type
       const Param: Variant);
     procedure ReportForceFinish(Sender: TObject);
     procedure SetColumnsString(aValue: TStrings);
+    procedure SetDescription(aValue: TStrings);
     procedure SetHeaderColor(aValue: TColor);
     procedure SetSQLQuery(aValue: TStrings);
     procedure SetSQLQueryGroup(aValue: TStrings);
@@ -157,7 +160,8 @@ type
   published
 
     property Name: string read fName write fName;
-    property Description: string read fDescription write fDescription;
+    property Description: TStrings read fDescription write SetDescription;
+    property DescriptionShort: string read fDescriptionShort write fDescriptionShort;
     //SQL query to retrieve groups in the report
     //Use rtSpreadSheet report type
     property SQLQueryGroup: TStrings read fSQLQueryGroup write SetSQLQueryGroup;
@@ -258,6 +262,7 @@ begin
   RegisterPropertyEditor(TypeInfo(TStrings), TwfReportItem, 'ColumnsString', TwfSQLPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfReportItem, 'SQLQuery', TwfSQLPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfReportItem, 'SQLQueryGroup', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfReportItem, 'Description', TwfStringsPropertyEditor);
 end;
 
 { TwfReportItems }
@@ -354,7 +359,7 @@ begin
               aDialogFilter:='';
           end;
 
-          aReport.ExportFileName:= DialogsOpenSaveDialog(aReport.Description, aDialogFilter);
+          aReport.ExportFileName:= DialogsOpenSaveDialog(aReport.DescriptionShort, aDialogFilter);
 
           if Length(aReport.ExportFileName)=0 then
             exit;
@@ -370,8 +375,8 @@ begin
                     onStopForce:=@ReportForceFinish;
                     Bar.Style:= ProgressBarStyle;
                     ShowInTaskBar:= stAlways;
-                    if Length(fDescription)>0 then
-                      Caption:= fDescription;
+                    if Length(DescriptionShort)>0 then
+                      Caption:= DescriptionShort;
                     Show;
                   end;
               end;
@@ -998,6 +1003,11 @@ begin
   fColumnsString.Assign(aValue);
 end;
 
+procedure TwfReportItem.SetDescription(aValue: TStrings);
+begin
+  fDescription.Assign(aValue);
+end;
+
 procedure TwfReportItem.SetHeaderColor(aValue: TColor);
 begin
   fHeaderColor:= ColorToRGB(aValue);
@@ -1046,6 +1056,7 @@ begin
   fSQLQueryGroup:= TStringList.Create;
   fSQLQuery:= TStringList.Create;
   fColumnsString:= TStringList.Create;
+  fDescription:= TStringList.Create;
   fHeaderColor:= clWhite;
   fReportType:= rtSpreadSheet;
   fSQLQueryStep:= 0;
@@ -1059,6 +1070,7 @@ begin
   FreeAndNil(fSQLQueryGroup);
   FreeAndNil(fSQLQuery);
   FreeAndNil(fColumnsString);
+  FreeAndNil(fDescription);
   inherited Destroy;
 end;
 

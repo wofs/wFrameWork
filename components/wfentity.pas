@@ -16,8 +16,8 @@ unit wfEntity;
 interface
 
 uses
-  Classes, SysUtils, db, sqldb, LResources, Forms, Controls, Graphics, Dialogs,
-  LazUTF8, wfTypes, wfFunc, wfResourceStrings, wfClasses, wfDesignSQLItemsU, wfSQLPropertyEditorU, wfBase, PropEdits;
+  Classes, SysUtils, db, sqldb, LResources, Forms, Controls, Graphics, Dialogs, LazUTF8, wfTypes, wfFunc,
+  wfResourceStrings, wfClasses, wfDesignSQLItemsU, wfSQLPropertyEditorU, wfStringsPropertyEditor, wfBase, PropEdits;
 
 type
 
@@ -158,6 +158,8 @@ begin
   RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLItemUpdate', TwfSQLPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'SQLTreeDragNode', TwfSQLPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'fSQLTreeGetRoot', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'Description', TwfStringsPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfEntity, 'GridColumnsString', TwfSQLPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfDesignSQLItem, 'SQL', TwfSQLPropertyEditor);
 end;
 

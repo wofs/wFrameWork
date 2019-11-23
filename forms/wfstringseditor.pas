@@ -42,7 +42,6 @@ type
     SynIni: TSynIniSyn;
     SynPluginSyncroEdit: TSynPluginSyncroEdit;
     SynSQL: TSynSQLSyn;
-    SynTeXSyn1: TSynTeXSyn;
     procedure cbReplaceChange(Sender: TObject);
     procedure EditorKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure EditorKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);

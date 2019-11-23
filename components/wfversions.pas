@@ -16,7 +16,8 @@ unit wfVersions;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, wfEntity;
+  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, PropEdits, wfEntity, wfSQLPropertyEditorU,
+  wfStringsPropertyEditor;
 
 type
   { TwfVersion }
@@ -26,7 +27,7 @@ type
     function GetDisplayName: string; override;
   private
     fDescription: TStrings;
-    fSQLStrings: TStrings;
+    fSQL: TStrings;
     fVersion: string;
     procedure SetDescription(aValue: TStrings);
     procedure SetSQLStrings(aValue: TStrings);
@@ -37,7 +38,7 @@ type
   published
       property Version: string read fVersion write fVersion;
       property Description: TStrings read fDescription write SetDescription;
-      property SQLStrings: TStrings read fSQLStrings write SetSQLStrings;
+      property SQL: TStrings read fSQL write SetSQLStrings;
   end;
 
   { TwfVersions }
@@ -64,6 +65,8 @@ procedure Register;
 begin
   {$I wfversions_icon.lrs}
   RegisterComponents('WF',[TwfVersions]);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfVersion, 'SQL', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfVersion, 'Description', TwfStringsPropertyEditor);
 end;
 
 { TwfVersions }
@@ -94,19 +97,20 @@ end;
 
 procedure TwfVersion.SetSQLStrings(aValue: TStrings);
 begin
-  fSQLStrings.Assign(aValue);
+  fSQL.Assign(aValue);
 end;
 
 constructor TwfVersion.Create(ACollection: TCollection);
 begin
   inherited Create(ACollection);
   fDescription:= TStringList.Create;
-  fSQLStrings:= TStringList.Create;
+  fSQL:= TStringList.Create;
 end;
 
 destructor TwfVersion.Destroy;
 begin
   FreeAndNil(fDescription);
+  FreeAndNil(fSQL);
   inherited Destroy;
 end;
 
