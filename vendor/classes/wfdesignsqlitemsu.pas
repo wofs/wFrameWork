@@ -14,7 +14,7 @@ type
     protected
       function GetDisplayName: string; override;
     private
-      fDescription: string;
+      fDescription: TStrings;
       fName: string;
       fParseSQL: Boolean;
       fSQL: TStrings;
@@ -34,7 +34,7 @@ type
       property SQL: TStrings read GetSQL write SetSQL;
       property ParseSQL : Boolean read fParseSQL write fParseSQL default true;
       property Params: TwfParams read GetParams write SetParams;
-      property Description: string read fDescription write fDescription;
+      property Description: TStrings read fDescription write fDescription;
 
  end;
 
@@ -119,6 +119,7 @@ constructor TwfDesignSQLItem.Create(ACollection: TCollection);
 begin
   inherited Create(ACollection);
   fSQL:= TStringList.Create();
+  fDescription:= TStringList.Create();
   fParams:= TwfParams.Create(self);
   fParseSQL:= true;
 end;
@@ -127,6 +128,7 @@ destructor TwfDesignSQLItem.Destroy;
 begin
   inherited Destroy;
   FreeAndNil(fSQL);
+  FreeAndNil(fDescription);
   FreeAndNil(fParams);
 end;
 

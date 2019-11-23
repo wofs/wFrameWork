@@ -195,6 +195,7 @@ begin
   {$I wfimport_icon.lrs}
   RegisterComponents('WF',[TwfImport]);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfDesignSQLItem, 'SQL', TwfSQLPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(TStrings), TwfDesignSQLItem, 'Description', TwfSQLPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfImportItem, 'Description', TwfStringsPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfFormatItem, 'Description', TwfStringsPropertyEditor);
   RegisterPropertyEditor(TypeInfo(TStrings), TwfFormatItem, 'Format', TwfIniPropertyEditor);
