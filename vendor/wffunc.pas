@@ -36,6 +36,8 @@ function GetOnlyChars(aValue: string): string;
 function GetOnlyNumbers(aValue: string): Double;
 function GetOnlyDateTime(aValue: string): TDateTime;
 
+function GetCellAdressType(aAddress: variant):TwfCellAdressType;
+
 procedure GetExcelFilesList(aPath: string; aList: TStrings );
 
 procedure DeleteEmplyItems(aStringList: TStringList);
@@ -374,7 +376,7 @@ var
 begin
   aList:= TStringList.Create;
   try
-    aList.CommaText:=aDelimiter;
+    aList.Delimiter:=aDelimiter;
     aList.DelimitedText:= aString;
     SetLength(Result, aList.Count);
 
@@ -531,6 +533,19 @@ begin
         if not (aValue[N] in ['.',':',' ', '0'..'9']) then Delete(aValue, N, 1);
 
   TryStrToDate(UTF8Trim(aValue),Result);
+end;
+
+function GetCellAdressType(aAddress: variant): TwfCellAdressType;
+var
+  aAddressTmp: String;
+begin
+  aAddressTmp:= VarToStr(aAddress);
+
+  if Length(GetOnlyChars(aAddressTmp)) = Length(aAddressTmp) then Result:= catCharOnly
+  else
+    if Length(FloatToStr(GetOnlyNumbers(aAddressTmp))) = Length(aAddressTmp) then Result:= catNumberOnly
+    else
+      Result:= catFull;
 end;
 
 procedure GetExcelFilesList(aPath: string; aList: TStrings );

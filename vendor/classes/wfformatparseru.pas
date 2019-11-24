@@ -61,11 +61,11 @@ type
      uParamGroupInRows    = 'ГруппыВСтроках';
 
      uSectionData         = 'Данные';
-     uSectionDataInBase   = 'Параметры';
+     uSectionDataParams   = 'Параметры';
      uSectionDataLogic    = 'Логика';
 
    function GetDataType(aData: string): TValueType;
-   function GetSection(const aQueryDataType: boolean=false): TwfFormatSection;
+   function GetSection(aSectionName: string; const aQueryDataType: boolean=false): TwfFormatSection;
    function IsCalculatedType(aValue: string): boolean;
    function IsComplexType(aValue: string): boolean;
    private
@@ -153,6 +153,8 @@ begin
 
 
       for i:= 0 to aSections.Count-1 do begin
+        aParams.Clear;
+        aValues.Clear;
         aSectionName:= aSections[i];
         aIni.ReadSection(aSectionName, aParams);
 
@@ -207,17 +209,17 @@ begin
       end;
 end;
 
-function TwfFormatPaser.GetSection(const aQueryDataType: boolean = false): TwfFormatSection;
+function TwfFormatPaser.GetSection(aSectionName: string; const aQueryDataType: boolean = false): TwfFormatSection;
 var
   aSection: TwfIniSection;
   i: Integer;
 begin
-  aSection:= GetSectionByName(uSectionData);
+  aSection:= GetSectionByName(aSectionName);
 
   SetLength(Result, aSection.Count);
 
   for i:= 0 to aSection.Count-1 do begin
-    Result[i].Name := GetOnlyCorrectChars(aSection.Content[i].Param);
+    Result[i].Name := GetOnlyCorrectCharsUTF8(aSection.Content[i].Param);
 
     if aQueryDataType then
       Result[i].DataType := GetDataType(aSection.Content[i].Param)
@@ -233,7 +235,7 @@ end;
 function TwfFormatPaser.GetDataSection: TwfFormatSection;
 
 begin
-  Result:= GetSection(true);
+  Result:= GetSection(uSectionData, true);
 end;
 
 function TwfFormatPaser.GetFirstCol: integer;
@@ -262,12 +264,12 @@ end;
 
 function TwfFormatPaser.GetLogicSection: TwfFormatSection;
 begin
-  Result:= GetSection();
+  Result:= GetSection(uSectionDataLogic);
 end;
 
 function TwfFormatPaser.GetParamsSection: TwfFormatSection;
 begin
-  Result:= GetSection();
+  Result:= GetSection(uSectionDataParams);
 end;
 
 function TwfFormatPaser.GetSectionByName(aSectionName: string): TwfIniSection;
@@ -286,7 +288,7 @@ end;
 
 function TwfFormatPaser.GetWorkSheet: integer;
 begin
-  Result:= VarToInt64(GetSectionByName(uSectionInit).ValueByParam(uParamWorkSheet));
+  Result:= VarToInt64(GetSectionByName(uSectionInit).ValueByParam(uParamWorkSheet))-1;
 end;
 
 destructor TwfFormatPaser.Destroy;
@@ -305,6 +307,7 @@ begin
     if UTF8UpperCase(aParam) = aSection[i].Name then
        begin
          Result:= aSection[i].Value;
+         break;
        end;
   end;
 end;

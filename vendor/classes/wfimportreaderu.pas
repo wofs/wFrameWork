@@ -57,7 +57,7 @@ type
     procedure GetRowCol(aDataCell: PCell; out aRow: Cardinal; out aCol: Cardinal);
     // Returns the index sheet
     function GetWorkSheet(aIndex: integer): TsWorksheet;
-    procedure WriteContentRowInOut(var aContentRow: TwfImportContentRow);
+    procedure WriteContentRow(var aContentRow: TwfImportContentRow);
 
   public
     constructor Create(aSource: string; aFormat: TStrings);
@@ -118,8 +118,11 @@ procedure TwfImportReaderXLS.SetContentCells(var aContentRow: TwfImportContentRo
 var
   aRowCol: TwfRowCol;
   i: Integer;
+  aName, aValue: String;
 begin
   for i:= 0 to High(fDataSection) do begin
+    aValue:= VarToStr(fDataSection[i].Value);
+    aName:= fDataSection[i].Name;
     aRowCol:= GetRowCol(fDataSection[i].Value);
 
     if (aRowCol.Col = aCell^.Col) then
@@ -134,13 +137,16 @@ end;
 procedure TwfImportReaderXLS.FOpenWorkBook(Sender: TObject);
 var
   ADataCell: PCell;
-  aRow, aCol, aRowCurrent: Cardinal;
+  aRow, aCol: Cardinal;
+  aRowCurrent, aFirstRow, aFirstCol: integer;
   aContentRow: TwfImportContentRow;
 begin
 { TODO -owofs -cTwfImportReader : Дописать работу со сложными данными:
 Объединение строк
 Суммирование чисел }
   fWorksheet:= GetWorkSheet(Format.WorkSheet);
+  aFirstRow:= Format.FirstRow;
+  aFirstCol:= Format.FirstCol;
   aRowCurrent:= -1;
   SetLength(aContentRow.Row, Length(Format.DataSection));
 
@@ -149,25 +155,28 @@ begin
        aRow:= aDataCell^.Row;
        aCol:= aDataCell^.Col;
 
-       if (aRow <> aRowCurrent) then
-       begin
-         ContentRowClear(aContentRow);
-         aRowCurrent:= aRow;
-       end;
+       if (aRow>= aFirstRow) and (aCol>=aFirstCol) then begin
+         if (aRow <> aRowCurrent) then
+         begin
+           ContentRowClear(aContentRow);
+           aRowCurrent:= aRow;
+         end;
 
-        SetContentCells(aContentRow, ADataCell);
+          SetContentCells(aContentRow, ADataCell);
 
-       if IsContent(aContentRow) then
-       begin
-          WriteContentRowInOut(aContentRow);
-          ContentRowClear(aContentRow);
+         if IsContent(aContentRow) then
+         begin
+            WriteContentRow(aContentRow);
+            ContentRowClear(aContentRow);
+         end;
        end;
      end;
 end;
 
-procedure TwfImportReaderXLS.WriteContentRowInOut(var aContentRow: TwfImportContentRow);
+procedure TwfImportReaderXLS.WriteContentRow(var aContentRow: TwfImportContentRow);
 begin
-  if Assigned(onWriteContentRow) then onWriteContentRow(self, aContentRow);
+  if Assigned(fonWriteContentRow) then
+    fonWriteContentRow(self, aContentRow);
 end;
 
 function TwfImportReaderXLS.IsContent(var aContentRow: TwfImportContentRow):boolean;
@@ -176,6 +185,7 @@ const
 var
   aRecordCondition: ArrayOfString;
   i, k, aCount: Integer;
+  aRecord, aName: String;
 begin
  Result:= false;
  aCount:= 0;
@@ -183,7 +193,10 @@ begin
 
  for i:=0 to High(aContentRow.Row) do begin
    for k:= 0 to High(aRecordCondition) do begin
-     if aContentRow.Row[i].Name = aRecordCondition[k] then inc(aCount);
+     aRecord:= aRecordCondition[k];
+     aName:= aContentRow.Row[i].Name;
+     if UTF8UpperCase(aName) = UTF8UpperCase(aRecord) then
+     inc(aCount);
    end;
  end;
 
@@ -201,6 +214,7 @@ begin
 
   fWorkBook.Options := fWorkBook.Options + [boBufStream];
   fWorkBook.OnOpenWorkbook:= @FOpenWorkBook;
+  //Use the Start procedure to start the import
 end;
 
 destructor TwfImportReaderXLS.Destroy;
@@ -248,19 +262,24 @@ end;
 
 function TwfImportReaderXLS.GetRowCol(aAddress: string): TwfRowCol;
 var
-  aPosAsterisk: PtrInt;
   aAddressTemp: String;
+  aCol: Longint;
 begin
   //aAddress:= 'A5*10';
   aAddressTemp:= aAddress;
 
   with Result do begin
-    aPosAsterisk:= UTF8Pos('*', aAddressTemp);
-
-    if aPosAsterisk>0 then
-      aAddressTemp:= UTF8Copy(aAddressTemp,1,aPosAsterisk-1);
-
-      ParseCellString(aAddressTemp, Row, Col);
+    case GetCellAdressType(aAddress) of
+      catNumberOnly: begin
+        Row:=0;
+        TryStrToInt(aAddress, aCol);
+        Col:= aCol;
+      end;
+      catCharOnly: begin
+        ParseCellString(aAddressTemp+'1', Row, Col);
+      end;
+      catFull: ParseCellString(aAddressTemp, Row, Col);
+    end;
   end;
 end;
 

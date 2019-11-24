@@ -79,6 +79,7 @@ type
 
   TwfStringsEditorMode = (stmSQL, stmIni, stmText);
 
+  TwfCellAdressType = (catCharOnly, catNumberOnly, catFull);
 
 
 const
