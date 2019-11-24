@@ -33,11 +33,14 @@ type
     fLogicSection: TwfFormatSection;
     // Flag to stop import. To handle on their own.
     fTerminated: Boolean;
+    // Returns the value calculated by the formula
     function GetCalculatedValue(aCalculatedString: string; var aContentRow: TwfImportContentRow): Currency;
+    // Fixes an issue in the calculation due to an incorrect fraction separator
     function GetCorrectTextValue(aValue: Variant): string;
+    // Writes the calculated value to the result string
     procedure WriteCalculatedValue(var aContentRow: TwfImportContentRow);
+    // Writes the concatenated string to the result string
     procedure WriteComplexValue(var aContentRow: TwfImportContentRow);
-
 
   protected
     // Clearing the content line between fill interations
@@ -48,9 +51,11 @@ type
     procedure WriteContentRow(var aContentRow: TwfImportContentRow); virtual;
     // Replaces the specified parameters for string concatenation
     function GetComplexValue(aComplexString: string; var aContentRow: TwfImportContentRow): string;
-
+    // Data section
     property DataSection: TwfFormatSection read fDataSection write fDataSection;
+    // Parameters section
     property ParamsSection: TwfFormatSection read fParamsSection write fParamsSection;
+    // Logic section
     property LogicSection: TwfFormatSection read fLogicSection write fLogicSection;
 
   public
@@ -59,8 +64,9 @@ type
 
     // Starts reading-implement yourself
     procedure Start; virtual; abstract;
-
+    // Data source
     property Source: string read fSource;
+    // Format parser reference
     property Format: TwfFormatPaser read fFormat;
     // Flag to stop import. To install and to handle on their own!
     property Terminated: boolean read fTerminated write fTerminated;
@@ -132,7 +138,6 @@ begin
     fonWriteContentRow(self, aContentRow);
 end;
 
-// Fixes an issue in the calculation due to an incorrect fraction separator
 function TwfImportReader.GetCorrectTextValue(aValue: Variant):string;
 begin
  case TVarData(aValue).VType of

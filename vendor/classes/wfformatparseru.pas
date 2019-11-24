@@ -17,20 +17,23 @@ uses
   Classes, SysUtils, fgl, IniFiles, LazUTF8, LazFileUtils, LazStringUtils, wfTypes, wfFunc, wfFormatParserDefU;
 
 type
+   // Enumeration: groups in rows
    TwfGroupInRows = (girYes, girNo, girNotUsed);
 
    { TwfIniRecord }
 
+   // Record of ini file
    TwfIniRecord = record
      Param: string;
      Value: variant;
    end;
 
-
+   // Records of ini file
    TwfIniRecords = array of TwfIniRecord;
 
    { TwfIniSection }
 
+   // Ini file section
    TwfIniSection = class
    private
      fContent: TwfIniRecords;
@@ -38,17 +41,22 @@ type
      function GetCount: integer;
 
    public
+     // Returns the value by parameter name
      function ValueByParam(aParam: string):variant;
-
+     // The name of the section
      property Name: string read fName write fName;
+     // Number of records per section
      property Count: integer read GetCount;
+     // Content section
      property Content: TwfIniRecords read fContent;
    end;
 
    { TwfIniSections }
 
+   // Ini file sections
    TwfIniSections = specialize TFPGObjectList<TwfIniSection>;
 
+   // Record of Format
    TwfFormatRecord = record
      Name: string;
      DataType: TValueType;
@@ -57,29 +65,39 @@ type
      aCalculatedType: boolean;
    end;
 
+   // Format section
    TwfFormatSection = array of TwfFormatRecord;
 
   { TwfFormatPaser }
-
+   // Parser of a format represented as strings written in the INI file notation.
    TwfFormatPaser = class
    private
+   // Converts the format to UpperCase
    procedure FormatRawUpperCase;
+   // Returns the required data type
    function GetDataType(aData: string): TValueType;
+   // Returns the format section by name
    function GetSection(aSectionName: string; const aQueryDataType: boolean=false): TwfFormatSection;
+   // If a value is computed
    function IsCalculatedType(aValue: string): boolean;
+   // If a value is the result of combining a string of records
    function IsComplexType(aValue: string): boolean;
+
    private
      fFormatRaw: TStrings;
      fSections: TwfIniSections;
-
-     procedure AddContent(aSectionName: string; aParams, aValues: TStrings);
+     // The parsing of the format from the list of strings in the structure
      procedure FillContent;
+     // Adds content to the section
+     procedure AddContent(aSectionName: string; aParams, aValues: TStrings);
+
      function GetDataSection: TwfFormatSection;
+     function GetParamsSection: TwfFormatSection;
+     function GetLogicSection: TwfFormatSection;
+
      function GetFirstCol: integer;
      function GetFirstRow: integer;
      function GetGroupInRows: TwfGroupInRows;
-     function GetLogicSection: TwfFormatSection;
-     function GetParamsSection: TwfFormatSection;
 
      function GetSectionByName(aSectionName: string):TwfIniSection;
      function GetWorkSheet: integer;
@@ -88,14 +106,21 @@ type
      constructor Create(aFormat: TStrings); virtual;
      destructor Destroy; override;
 
+     // Returns the value by parameter name
      function GetValueByParam(aParam: string; aSection: TwfFormatSection): variant;
-
+     // Numeric value of the sheet to load (starts with 1)
      property WorkSheet: integer read GetWorkSheet;
+     // From which line to read data
      property FirstRow: integer read GetFirstRow;
+     // From which column to read data
      property FirstCol: integer read GetFirstCol;
+     // Groups in rows
      property GroupInRows: TwfGroupInRows read GetGroupInRows;
+     // Data section
      property DataSection: TwfFormatSection read GetDataSection;
+     // Parameters section
      property ParamsSection: TwfFormatSection read GetParamsSection;
+     // Logic section
      property LogicSection: TwfFormatSection read GetLogicSection;
 
    end;

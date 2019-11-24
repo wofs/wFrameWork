@@ -27,6 +27,7 @@ type
     fWorkBook: TsWorkbook;
     fWorksheet: TsWorksheet;
 
+    // Procedure performed after opening a spreadsheet
     procedure FOpenWorkBook(Sender: TObject);
     // Returns cell background color
     function GetBackground(aCell: PCell): TsColor;
@@ -34,7 +35,9 @@ type
     procedure SetContentCells(var aContentRow: TwfImportContentRow; aCell: PCell);
     // Returns the line contained in the cell
     function GetDataString(aCell: PCell; const aValueType: TValueType=vtDefault): string;
+    // Returns the variant value contained in the cell.
     function GetDataVariant(aCell: PCell; const aValueType: TValueType=vtDefault): variant;
+    // Returns a table field by parameter name
     function GetField(aParam: string): string;
     // Returns font style
     function GetFontStyles(aCell: PCell): TsFontStyles;
@@ -53,7 +56,7 @@ type
   public
     constructor Create(aSource: string; aFormat: TStrings); override;
     destructor Destroy; override;
-
+    // Start reading a spreadsheet file
     procedure Start;
   end;
 

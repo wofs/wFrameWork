@@ -21,13 +21,8 @@ uses
 
 type
 
+  // Enumeration: input types
   TwfImportType = (itSpreadSheet, itCSV);
-  //[Инит]
-  //[Данные]
-  //[ДанныеВБазе]
-  //[Логика]
-
-
 
   TwfImportItem = class;
 
@@ -38,10 +33,12 @@ type
 
   { TwfImportThread }
 
+   // The flow of imports
   TwfImportThread = class(TwfThread);
 
    { TwfFormatItem }
 
+   // Format item
   TwfFormatItem = class(TCollectionItem)
     private
       fDescription: TStrings;
@@ -58,17 +55,22 @@ type
       destructor Destroy; override;
 
     published
+      // Name
       property Name: string read fName write fName;
+      // Description
       property Description: TStrings read fDescription write SetDescription;
+      // Format as strings written in Ini notation.
       property Format: TStrings read fFormat write SetFormat;
   end;
 
   { TwfFormatItems }
 
+  // Import formats
   TwfFormatItems = class(TOwnedCollection)
     protected
 
     public
+      // Returns the import format by name
       function ItemByName(aName: string):TwfFormatItem;
 
     published
@@ -76,6 +78,7 @@ type
 
   { TwfImportItem }
 
+  // Import item
   TwfImportItem = class(TCollectionItem)
 
   private
@@ -99,7 +102,9 @@ type
       fSQLItems: TwfDesignSQLItems;
       fUseProgressBar: boolean;
 
+
       function GetEntity: TwfEntity;
+
       procedure ImportExecute(Sender: TwfThread; const Msg: Word; var Param: Variant);
       procedure ImportFinish(Sender: TwfThread; const Msg: Word; const Param: Variant);
       procedure ImportMessage(Sender: TwfThread; const Msg: Word; const Param: Variant);
