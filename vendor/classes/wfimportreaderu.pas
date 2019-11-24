@@ -32,6 +32,8 @@ type
     function IsContent(var aContentRow: TwfImportContentRow): boolean; virtual;
     // Raises an event for the row's entry.
     procedure WriteContentRow(var aContentRow: TwfImportContentRow);
+    // Replaces the specified parameters for string concatenation
+    function GetComplexTypeValue(aComplexString: string; var aContentRow: TwfImportContentRow): string;
 
     property DataSection: TwfFormatSection read fDataSection write fDataSection;
     property ParamsSection: TwfFormatSection read fParamsSection write fParamsSection;
@@ -75,13 +77,32 @@ begin
     fonWriteContentRow(self, aContentRow);
 end;
 
+function TwfImportReader.GetComplexTypeValue(aComplexString: string; var aContentRow: TwfImportContentRow): string;
+var
+  i: Integer;
+  aSearchParam: String;
+begin
+  Result:= aComplexString;
+
+  for i:= 0 to High(aContentRow.Row) do begin
+    aSearchParam:= '{'+aContentRow.Row[i].Name+'}';
+
+    if IsEntry(aSearchParam, Result) then
+      begin
+        Result:= UTF8StringReplace(Result, aSearchParam, '%s', [rfReplaceAll, rfIgnoreCase]);
+        Result:= SysUtils.Format(Result, [aSearchParam]);
+      end;
+
+    //Result += UTF8StringReplace(Result, aContentRow.Row[i].);
+  end;
+end;
+
 function TwfImportReader.IsContent(var aContentRow: TwfImportContentRow):boolean;
 const
-  uIsContent = 'ЗаписьЕсли';
+  uIsContent = 'ЗАПИСЬЕСЛИ';
 var
   aRecordCondition: ArrayOfString;
   i, k, aCount: Integer;
-  aRecord, aName: String;
 begin
  Result:= false;
  aCount:= 0;
@@ -89,9 +110,7 @@ begin
 
  for i:=0 to High(aContentRow.Row) do begin
    for k:= 0 to High(aRecordCondition) do begin
-     aRecord:= aRecordCondition[k];
-     aName:= aContentRow.Row[i].Name;
-     if UTF8UpperCase(aName) = UTF8UpperCase(aRecord) then
+     if aContentRow.Row[i].Name = aRecordCondition[k] then
      inc(aCount);
    end;
  end;

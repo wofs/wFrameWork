@@ -54,16 +54,17 @@ type
 
    TwfFormatPaser = class
    private const
-     uSectionInit         = 'Инит';
-     uParamWorkSheet      = 'Лист';
-     uParamFistRow        = 'ПерваяСтрока';
-     uParamFistCol        = 'ПерваяКолонка';
-     uParamGroupInRows    = 'ГруппыВСтроках';
+     uSectionInit         = 'ИНИТ';
+     uParamWorkSheet      = 'ЛИСТ';
+     uParamFistRow        = 'ПЕРВАЯСТРОКА';
+     uParamFistCol        = 'ПЕРВАЯКОЛОНКА';
+     uParamGroupInRows    = 'ГРУППЫВСТРОКАХ';
 
-     uSectionData         = 'Данные';
-     uSectionDataParams   = 'Параметры';
-     uSectionDataLogic    = 'Логика';
+     uSectionData         = 'ДАННЫЕ';
+     uSectionDataParams   = 'ПАРАМЕТРЫ';
+     uSectionDataLogic    = 'ЛОГИКА';
 
+   procedure FormatRawUpperCase;
    function GetDataType(aData: string): TValueType;
    function GetSection(aSectionName: string; const aQueryDataType: boolean=false): TwfFormatSection;
    function IsCalculatedType(aValue: string): boolean;
@@ -115,7 +116,7 @@ var
 begin
   Result:= 0;
   for i:=0 to High(fContent) do begin
-    if UTF8UpperCase(aParam) = fContent[i].Param then
+    if aParam = fContent[i].Param then
        begin
          Result:= fContent[i].Value;
        end;
@@ -130,7 +131,16 @@ begin
   fFormatRaw:= TStringList.Create;
 
   fFormatRaw.Assign(aFormat);
+  FormatRawUpperCase;
   FillContent;
+end;
+
+procedure TwfFormatPaser.FormatRawUpperCase;
+var
+  i: Integer;
+begin
+  for i:=0 to fFormatRaw.Count-1 do
+    fFormatRaw.Strings[i]:= UTF8UpperCase(fFormatRaw.Strings[i]);
 end;
 
 procedure TwfFormatPaser.FillContent;
@@ -278,7 +288,7 @@ var
 begin
     Result:= nil;
   for i:=0 to fSections.Count-1 do begin
-    if UTF8UpperCase(aSectionName) = UTF8UpperCase(fSections[i].Name) then
+    if aSectionName = fSections[i].Name then
        begin
          Result:= fSections[i];
          Break;
@@ -304,7 +314,7 @@ var
 begin
   Result:= 0;
   for i:=0 to High(aSection) do begin
-    if UTF8UpperCase(aParam) = aSection[i].Name then
+    if aParam = aSection[i].Name then
        begin
          Result:= aSection[i].Value;
          break;
@@ -324,7 +334,7 @@ begin
   SetLength(aIniSection.fContent, aParams.Count);
   aIniSection.Name := aSectionName;
   for i:=0 to aParams.Count-1 do begin
-    aIniSection.fContent[i].Param:= UTF8UpperCase(aParams[i]);
+    aIniSection.fContent[i].Param:= aParams[i];
     aIniSection.fContent[i].Value:= StringToVar(aValues[i]);
   end;
 end;

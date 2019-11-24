@@ -42,7 +42,7 @@ procedure GetExcelFilesList(aPath: string; aList: TStrings );
 
 procedure DeleteEmplyItems(aStringList: TStringList);
 
-function getUTFSymbol(S:string;i:integer):string; // Retrieves the required UTF character and string
+function GetUTFSymbol(S:string; i:integer):string; // Retrieves the required UTF character and string
 procedure WriteUTF8String(aFileStream: TFileStream; aText: RawByteString);
 
 procedure WriteValue(aWorksheet:TsWorksheet; aRow, aCol: integer; aField: TField;
@@ -72,6 +72,7 @@ function IsEmpty(aID: BaseID):boolean;
 function IsEmpty(aStrings:TStrings):boolean;
 function IsEmpty(aObject:TObject):boolean;
 
+function IsEntryCaseIgnore(aSearch:string; aInText:string):boolean;
 function IsEntry(aSearch:string; aInText:string):boolean;
 
 function GetApplicationPathUnsafe:string;
@@ -226,6 +227,11 @@ end;
 function IsEmpty(aObject: TObject): boolean;
 begin
   Result:= not Assigned(aObject);
+end;
+
+function IsEntryCaseIgnore(aSearch: string; aInText: string): boolean;
+begin
+  IsEntry(UTF8UpperCase(aSearch), UTF8UpperCase(aInText));
 end;
 
 function IsEntry(aSearch: string; aInText: string): boolean;
@@ -582,7 +588,7 @@ begin
       then aStringList.Delete(i);
 end;
 
-function getUTFSymbol(S:string;i:integer):string;
+function GetUTFSymbol(S:string; i:integer):string;
 begin
 Result:= UTF8Copy(S,i,1);
 end;

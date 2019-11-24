@@ -60,7 +60,7 @@ end;
 procedure TwfImportReaderXLS.SetContentCells(var aContentRow: TwfImportContentRow; aCell: PCell);
 var
   aRowCol: TwfRowCol;
-  i: Integer;
+  i, a: Integer;
   aName, aValue: String;
 begin
   for i:= 0 to High(DataSection) do begin
@@ -72,7 +72,11 @@ begin
     begin
        aContentRow.Row[i].Name:= DataSection[i].Name;
        aContentRow.Row[i].Field:= GetField(DataSection[i].Name);
-       aContentRow.Row[i].Value:= GetDataString(aCell, DataSection[i].DataType);
+
+      if DataSection[i].aComplexType then
+         aContentRow.Row[i].Value:= GetComplexTypeValue(DataSection[i].Value, aContentRow)
+      else
+         aContentRow.Row[i].Value:= GetDataString(aCell, DataSection[i].DataType);
     end;
   end;
 end;
