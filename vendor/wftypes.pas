@@ -80,6 +80,7 @@ type
   TwfStringsEditorMode = (stmSQL, stmIni, stmText);
 
 
+
 const
   wfLE = LineEnding;
   wfEmptyStr = '';

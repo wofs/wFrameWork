@@ -182,6 +182,7 @@ type
     procedure Stop(aImportName: string);
 
     function GetRootPath:string;
+    function GetFormatByName(aImportName, aFormatName: string):TStrings;
 
     property OwnerComponent: TPersistent read GetOwner;
   published
@@ -253,7 +254,7 @@ begin
   Result:= nil;
 
   for i:=0 to Count-1 do
-   if TwfFormatItem(Items[i]).Name = aName then
+   if UTF8UpperCase(TwfFormatItem(Items[i]).Name) = UTF8UpperCase(aName) then
      begin
        Result:= TwfFormatItem(Items[i]);
        Break;
@@ -272,7 +273,7 @@ begin
   Result:= nil;
 
   for i:=0 to Count-1 do
-   if TwfImportItem(Items[i]).Name = aName then
+   if UTF8UpperCase(TwfImportItem(Items[i]).Name) = UTF8UpperCase(aName) then
      begin
        Result:= TwfImportItem(Items[i]);
        Break;
@@ -470,8 +471,6 @@ begin
 
   if Assigned(aImport) then
     begin
-      if aImport.SQLItems.Count = 0 then
-        raise Exception.Create(rsImportNoSQLQuerySpecified);
 
       if (UTF8Length(aImport.Source)=0) and (not SilentMode) then
         begin
@@ -527,6 +526,11 @@ end;
 function TwfImport.GetRootPath: string;
 begin
   Result:= fRootPath;
+end;
+
+function TwfImport.GetFormatByName(aImportName, aFormatName: string): TStrings;
+begin
+  Result:= Items.ItemByName(aImportName).fFormats.ItemByName(aFormatName).Format;
 end;
 
 

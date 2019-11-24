@@ -130,6 +130,7 @@ begin
   fFormatRaw:= TStringList.Create;
 
   fFormatRaw.Assign(aFormat);
+  FillContent;
 end;
 
 procedure TwfFormatPaser.FillContent;
@@ -161,14 +162,14 @@ begin
 
         AddContent(aSectionName, aParams, aValues);
       end;
+
+      if FileExistsUTF8(aFile) then
+         DeleteFileUTF8(aFile);
     finally
       FreeAndNil(aIni);
       FreeAndNil(aSections);
       FreeAndNil(aParams);
       FreeAndNil(aValues);
-
-      if FileExistsUTF8(aFile) then
-         DeleteFileUTF8(aFile);
     end;
 end;
 
@@ -323,8 +324,6 @@ begin
     aIniSection.fContent[i].Param:= UTF8UpperCase(aParams[i]);
     aIniSection.fContent[i].Value:= StringToVar(aValues[i]);
   end;
-
-  fSections.Items[aIndex]:= aIniSection;
 end;
 
 end.

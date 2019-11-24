@@ -70,7 +70,7 @@ uses
 
     {-= Import =-}
     rsImportNoSourceSpecified                         = 'No source specified!';
-    rsImportNoSQLQuerySpecified                       = 'No SQLQuery specified!';
+    //rsImportNoSQLQuerySpecified                       = 'No SQLQuery specified!';
 
     {-= Plugins =-}
     rsPluginsNoFindedPanel                            = 'Not found TPanel on %s';

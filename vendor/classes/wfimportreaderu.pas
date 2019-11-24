@@ -5,8 +5,8 @@ unit wfImportReaderU;
 interface
 
 uses
-  Classes, SysUtils, wfTypes, wfClasses, wfFunc, LazUTF8, wfFormatParserU, fpspreadsheet, fpsTypes, fpsallformats,
-  fpsutils;
+  Classes, SysUtils, wfTypes, wfClasses, wfFunc, wfBase, LazUTF8, wfFormatParserU, fpspreadsheet, fpsTypes,
+  fpsallformats, fpsutils;
 
 type
 
@@ -20,18 +20,22 @@ type
     Row: array of TwfImportContentCell;
   end;
 
+  TwfWriteContentRowEvent = procedure (Sender: TObject; var aContentRow: TwfImportContentRow) of object;
+
   { TwfImportReaderXLS }
 
   TwfImportReaderXLS = class
   private
     fFormat: TwfFormatPaser;
+    fonWriteContentRow: TwfWriteContentRowEvent;
+
     fWorkBook: TsWorkbook;
     fWorksheet: TsWorksheet;
     fSource: string;
     fDataSection: TwfFormatSection;
     fParamsSection: TwfFormatSection;
     fLogicSection: TwfFormatSection;
-
+    // Clearing the content line between fill interations
     procedure ContentRowClear(var aContentRow: TwfImportContentRow);
     procedure FOpenWorkBook(Sender: TObject);
     // Returns cell background color
@@ -64,6 +68,9 @@ type
 
     property Format: TwfFormatPaser read fFormat;
 
+    {Events}
+    // You must implement the data write event yourself
+    property onWriteContentRow: TwfWriteContentRowEvent read fonWriteContentRow write fonWriteContentRow;
   end;
 
 implementation
@@ -106,7 +113,7 @@ begin
   Result:= Format.GetValueByParam(aParam, fParamsSection);
 end;
 
-// Записываем найденные ячейки контента
+// We record the found content cells
 procedure TwfImportReaderXLS.SetContentCells(var aContentRow: TwfImportContentRow; aCell: PCell);
 var
   aRowCol: TwfRowCol;
@@ -160,7 +167,7 @@ end;
 
 procedure TwfImportReaderXLS.WriteContentRowInOut(var aContentRow: TwfImportContentRow);
 begin
-  { TODO -owofs -cTwfImportReader : Дописать вывод считанных данных }
+  if Assigned(onWriteContentRow) then onWriteContentRow(self, aContentRow);
 end;
 
 function TwfImportReaderXLS.IsContent(var aContentRow: TwfImportContentRow):boolean;
@@ -190,7 +197,6 @@ begin
   fDataSection:= fFormat.DataSection;
   fParamsSection:= fFormat.ParamsSection;
   fLogicSection:= fFormat.LogicSection;
-
   fWorkBook := TsWorkbook.Create;
 
   fWorkBook.Options := fWorkBook.Options + [boBufStream];
@@ -201,6 +207,7 @@ destructor TwfImportReaderXLS.Destroy;
 begin
   FreeAndNil(fFormat);
   FreeAndNil(fWorkBook);
+
   inherited Destroy;
 end;
 
