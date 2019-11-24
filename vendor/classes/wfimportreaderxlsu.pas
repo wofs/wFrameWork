@@ -61,22 +61,15 @@ procedure TwfImportReaderXLS.SetContentCells(var aContentRow: TwfImportContentRo
 var
   aRowCol: TwfRowCol;
   i, a: Integer;
-  aName, aValue: String;
 begin
   for i:= 0 to High(DataSection) do begin
-    aValue:= VarToStr(DataSection[i].Value);
-    aName:= DataSection[i].Name;
     aRowCol:= GetRowCol(DataSection[i].Value);
 
     if (aRowCol.Col = aCell^.Col) then
     begin
        aContentRow.Row[i].Name:= DataSection[i].Name;
        aContentRow.Row[i].Field:= GetField(DataSection[i].Name);
-
-      if DataSection[i].aComplexType then
-         aContentRow.Row[i].Value:= GetComplexTypeValue(DataSection[i].Value, aContentRow)
-      else
-         aContentRow.Row[i].Value:= GetDataString(aCell, DataSection[i].DataType);
+       aContentRow.Row[i].Value:= GetDataString(aCell, DataSection[i].DataType);
     end;
   end;
 end;

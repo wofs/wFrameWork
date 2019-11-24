@@ -23,6 +23,7 @@ type
     fLogicSection: TwfFormatSection;
     // Flag to stop import. To handle on their own.
     fTerminated: Boolean;
+    procedure WriteComplexType(var aContentRow: TwfImportContentRow);
 
 
   protected
@@ -31,7 +32,7 @@ type
     // Is this string content (based on the logic spelled out in the format)
     function IsContent(var aContentRow: TwfImportContentRow): boolean; virtual;
     // Raises an event for the row's entry.
-    procedure WriteContentRow(var aContentRow: TwfImportContentRow);
+    procedure WriteContentRow(var aContentRow: TwfImportContentRow); virtual;
     // Replaces the specified parameters for string concatenation
     function GetComplexTypeValue(aComplexString: string; var aContentRow: TwfImportContentRow): string;
 
@@ -71,8 +72,19 @@ begin
   end;
 end;
 
+procedure TwfImportReader.WriteComplexType(var aContentRow: TwfImportContentRow);
+var
+  i: Integer;
+begin
+ for i:=0 to High(DataSection) do begin
+   if DataSection[i].aComplexType then
+      aContentRow.Row[i].Value:= GetComplexTypeValue(DataSection[i].Value, aContentRow)
+ end;
+end;
 procedure TwfImportReader.WriteContentRow(var aContentRow: TwfImportContentRow);
 begin
+  WriteComplexType(aContentRow);
+
   if Assigned(fonWriteContentRow) then
     fonWriteContentRow(self, aContentRow);
 end;
@@ -90,10 +102,8 @@ begin
     if IsEntry(aSearchParam, Result) then
       begin
         Result:= UTF8StringReplace(Result, aSearchParam, '%s', [rfReplaceAll, rfIgnoreCase]);
-        Result:= SysUtils.Format(Result, [aSearchParam]);
+        Result:= SysUtils.Format(Result, [VarToStr(aContentRow.Row[i].Value)]);
       end;
-
-    //Result += UTF8StringReplace(Result, aContentRow.Row[i].);
   end;
 end;
 
