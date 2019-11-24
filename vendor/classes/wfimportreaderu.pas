@@ -1,3 +1,12 @@
+{
+This file is part of wfFrameWork.
+
+ wofs(c)2017-2019 [wofssirius@yandex.ru]
+ GNU LESSER GENERAL PUBLIC LICENSE v.2.1
+
+ Git: https://github.com/wofs/wFrameWork.git
+}
+
 unit wfImportReaderU;
 
 {$mode objfpc}{$H+}
@@ -24,7 +33,8 @@ type
     fLogicSection: TwfFormatSection;
     // Flag to stop import. To handle on their own.
     fTerminated: Boolean;
-    function GetCalculatedValue(aCalculatedString: string; var aContentRow: TwfImportContentRow): Double;
+    function GetCalculatedValue(aCalculatedString: string; var aContentRow: TwfImportContentRow): Currency;
+    function GetCorrectTextValue(aValue: Variant): string;
     procedure WriteCalculatedValue(var aContentRow: TwfImportContentRow);
     procedure WriteComplexValue(var aContentRow: TwfImportContentRow);
 
@@ -105,7 +115,7 @@ begin
  end;
 end;
 
-function TwfImportReader.GetCalculatedValue(aCalculatedString: string; var aContentRow: TwfImportContentRow):Double;
+function TwfImportReader.GetCalculatedValue(aCalculatedString: string; var aContentRow: TwfImportContentRow):Currency;
 var
   aFormula: String;
 begin
@@ -122,10 +132,35 @@ begin
     fonWriteContentRow(self, aContentRow);
 end;
 
+// Fixes an issue in the calculation due to an incorrect fraction separator
+function TwfImportReader.GetCorrectTextValue(aValue: Variant):string;
+begin
+ case TVarData(aValue).VType of
+     varSmallInt,
+     varInteger       : Result := IntToStr(aValue);
+     varint64         : Result := IntToStr(int64(aValue));
+     varSingle,
+     varDouble,
+     varCurrency      : begin
+       Result := CurrToStr(aValue);
+       Result:= StringReplace(Result,',','.',[]);
+     end;
+     varDate          : Result:= FormatDateTime('dd.mm.yyyy', aValue);
+     varBoolean       : if aValue then
+                       Result := 'T'
+                     else
+                       Result := 'F';
+     varString        : Result := aValue
+     else
+       WriteStr(Result, TVarData(aValue).VType)
+   end;
+end;
+
 function TwfImportReader.GetComplexValue(aComplexString: string; var aContentRow: TwfImportContentRow): string;
 var
   i: Integer;
   aSearchParam: String;
+  aValue: Variant;
 begin
   Result:= aComplexString;
 
@@ -134,8 +169,9 @@ begin
 
     if IsEntry(aSearchParam, Result) then
       begin
-        Result:= UTF8StringReplace(Result, aSearchParam, '%s', [rfReplaceAll, rfIgnoreCase]);
-        Result:= SysUtils.Format(Result, [VarToStr(aContentRow.Row[i].Value)]);
+        aValue:= GetCorrectTextValue(aContentRow.Row[i].Value);
+
+        Result:= UTF8StringReplace(Result, aSearchParam, VarToStr(aValue), [rfReplaceAll, rfIgnoreCase]);
       end;
   end;
 end;

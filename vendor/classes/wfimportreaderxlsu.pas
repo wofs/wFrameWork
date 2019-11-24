@@ -1,3 +1,12 @@
+{
+This file is part of wfFrameWork.
+
+ wofs(c)2017-2019 [wofssirius@yandex.ru]
+ GNU LESSER GENERAL PUBLIC LICENSE v.2.1
+
+ Git: https://github.com/wofs/wFrameWork.git
+}
+
 unit wfImportReaderXLSU;
 
 {$mode objfpc}{$H+}
@@ -25,6 +34,7 @@ type
     procedure SetContentCells(var aContentRow: TwfImportContentRow; aCell: PCell);
     // Returns the line contained in the cell
     function GetDataString(aCell: PCell; const aValueType: TValueType=vtDefault): string;
+    function GetDataVariant(aCell: PCell; const aValueType: TValueType=vtDefault): variant;
     function GetField(aParam: string): string;
     // Returns font style
     function GetFontStyles(aCell: PCell): TsFontStyles;
@@ -69,7 +79,7 @@ begin
     begin
        aContentRow.Row[i].Name:= DataSection[i].Name;
        aContentRow.Row[i].Field:= GetField(DataSection[i].Name);
-       aContentRow.Row[i].Value:= GetDataString(aCell, DataSection[i].DataType);
+       aContentRow.Row[i].Value:= GetDataVariant(aCell, DataSection[i].DataType);
     end;
   end;
 end;
@@ -228,6 +238,32 @@ begin
   end
   else
   Result:='';
+end;
+
+function TwfImportReaderXLS.GetDataVariant(aCell: PCell; const aValueType: TValueType = vtDefault): variant;
+var
+  aValTmp: Double;
+  N: Integer;
+begin
+  Result:='';
+  if Assigned(aCell) then
+  begin
+    case aValueType of
+      vtDefault, vtNotUsed:
+            begin
+              case aCell^.ContentType of
+                cctNumber: Result := aCell^.NumberValue;
+                cctDateTime: Result := aCell^.DateTimeValue;
+                else
+                  Result := aCell^.UTF8StringValue;
+              end
+            end;
+      vtNumber:  Result := aCell^.NumberValue;
+      vtString:  Result:= aCell^.UTF8StringValue;
+    end;
+  end
+  else
+    Result:='';
 end;
 
 end.

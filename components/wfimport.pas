@@ -1,3 +1,12 @@
+{
+This file is part of wfFrameWork.
+
+ wofs(c)2017-2019 [wofssirius@yandex.ru]
+ GNU LESSER GENERAL PUBLIC LICENSE v.2.1
+
+ Git: https://github.com/wofs/wFrameWork.git
+}
+
 unit wfImport;
 
 {$mode objfpc}{$H+}
@@ -6,9 +15,9 @@ interface
 
 uses
   Classes, windows, SysUtils, math, IniFiles, LResources, Forms, Controls, Graphics, Dialogs, ComCtrls, PropEdits,
-  LazUTF8, LazFileUtils, wfBase, wfEntity, wfTypes, wfClasses, wfThreadU, wfFunc, wfResourceStrings, TwfProgressU,
+  LazUTF8, LazFileUtils, wfBase, wfEntity, wfTypes, wfClasses, wfFunc, wfResourceStrings, TwfProgressU,
   wfImportTemplatesU, wfDesignSQLItemsU, wfSQLPropertyEditorU, wfIniPropertyEditorU, wfStringsPropertyEditor,
-  wfFormatParserU;
+  wfFormatParserU, wfThreadU;
 
 type
 

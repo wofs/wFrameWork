@@ -1,8 +1,6 @@
 {
 This file is part of wfFrameWork.
 
- -= SQLTransaction =-
-
  wofs(c)2017-2019 [wofssirius@yandex.ru]
  GNU LESSER GENERAL PUBLIC LICENSE v.2.1
 
