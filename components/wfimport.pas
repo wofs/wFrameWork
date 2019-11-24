@@ -304,7 +304,7 @@ end;
 procedure TwfImportItem.ImportExecute(Sender: TwfThread; const Msg: Word; var Param: Variant);
 begin
   if Assigned(fonExecute) then fonExecute(self, Msg, Param)
-  { TODO : onExecute прописать! }
+  { TODO -owofs -cTwfImportItem : onExecute прописать }
   //else
   //  case fImportType of
   //    itCSV          : ImportExecuteDefaultCSV;

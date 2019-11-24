@@ -64,7 +64,7 @@ type
   TInt64List = specialize TFPGList<Int64>;
   TBaseIDList = specialize TFPGList<BaseID>;
 
-  TValueType = (vtDefault, vtNumber, vtString);
+  TValueType = (vtDefault, vtNumber, vtString, vtNotUsed);
   TBaseTaskType = (bttArray, bttDataSource, bttDataSet);
   TDirection = (dNone, dASC, dDESC);
   TSQLItemType = (stLike, stContaining, stIn, stUnknown);

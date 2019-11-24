@@ -9,7 +9,6 @@ uses
 
 type
    TwfGroupInRows = (girYes, girNo, girNotUsed);
-   TwfFormatDataType = (fdtNumber, fdtString, fdtDefault, fdtNotUsed);
 
    { TwfIniRecord }
 
@@ -42,8 +41,8 @@ type
    TwfIniSections = specialize TFPGObjectList<TwfIniSection>;
 
    TwfFormatRecord = record
-     Data: string;
-     DataType: TwfFormatDataType;
+     Name: string;
+     DataType: TValueType;
      Value: string;
      aComplexType: boolean;
      aCalculatedType: boolean;
@@ -65,7 +64,7 @@ type
      uSectionDataInBase   = 'Параметры';
      uSectionDataLogic    = 'Логика';
 
-   function GetDataType(aData: string): TwfFormatDataType;
+   function GetDataType(aData: string): TValueType;
    function GetSection(const aQueryDataType: boolean=false): TwfFormatSection;
    function IsCalculatedType(aValue: string): boolean;
    function IsComplexType(aValue: string): boolean;
@@ -88,6 +87,8 @@ type
    public
      constructor Create(aFormat: TStrings);
      destructor Destroy; override;
+
+     function GetValueByParam(aParam: string; var aSection: TwfFormatSection): variant;
 
      property WorkSheet: integer read GetWorkSheet;
      property FirstRow: integer read GetFirstRow;
@@ -171,10 +172,10 @@ begin
     end;
 end;
 
-function TwfFormatPaser.GetDataType(aData: string): TwfFormatDataType;
+function TwfFormatPaser.GetDataType(aData: string): TValueType;
 begin
-  { TODO : Добавить детект формата данных }
-  Result:= fdtDefault;
+  { TODO -owofs -cTwfFormatPaser : Добавить детект формата данных }
+  Result:= vtDefault;
 end;
 
 function TwfFormatPaser.IsCalculatedType(aValue: string):boolean;
@@ -215,12 +216,12 @@ begin
   SetLength(Result, aSection.Count);
 
   for i:= 0 to aSection.Count-1 do begin
-    Result[i].Data := GetOnlyCorrectChars(aSection.Content[i].Param);
+    Result[i].Name := GetOnlyCorrectChars(aSection.Content[i].Param);
 
     if aQueryDataType then
       Result[i].DataType := GetDataType(aSection.Content[i].Param)
     else
-      Result[i].DataType := fdtNotUsed;
+      Result[i].DataType := vtNotUsed;
 
     Result[i].Value := aSection.Content[i].Value;
     Result[i].aComplexType:= IsComplexType(Result[i].Value);
@@ -292,6 +293,19 @@ begin
   FreeAndNil(fSections);
   FreeAndNil(fFormatRaw);
   inherited Destroy;
+end;
+
+function TwfFormatPaser.GetValueByParam(aParam: string; var aSection: TwfFormatSection): variant;
+var
+  i: Integer;
+begin
+  Result:= 0;
+  for i:=0 to High(aSection) do begin
+    if UTF8UpperCase(aParam) = aSection[i].Name then
+       begin
+         Result:= aSection[i].Value;
+       end;
+  end;
 end;
 
 procedure TwfFormatPaser.AddContent(aSectionName: string; aParams, aValues: TStrings);

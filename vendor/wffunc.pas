@@ -86,6 +86,8 @@ function AsString(aArr: ArrayOfBaseID): string;
 function AsString(aArr: ArrayOfInt64): string;
 function AsString(aStrings: TStrings): string;
 
+function ArrayAsString(aString: string; aDelimiter: Char):ArrayOfString;
+
 implementation
 
 procedure WriteValue(aWorksheet: TsWorksheet; aRow, aCol: integer; aField: TField; const aFontStyles: TsFontStyles; aCellColor: TsColor; aFontColor: TsColor;
@@ -365,6 +367,25 @@ begin
 
 end;
 
+function ArrayAsString(aString: string; aDelimiter: Char): ArrayOfString;
+var
+  aList: TStringList;
+  i: Integer;
+begin
+  aList:= TStringList.Create;
+  try
+    aList.CommaText:=aDelimiter;
+    aList.DelimitedText:= aString;
+    SetLength(Result, aList.Count);
+
+    for i:=0 to aList.Count-1 do begin
+        Result[i]:= UTF8Trim(aList.Strings[i]);
+    end;
+  finally
+    FreeAndNil(aList);
+  end;
+end;
+
 function StringToVar(Value: string): variant;
 var
   aInt: int64;
@@ -459,7 +480,7 @@ begin
   Result:= aValue;
 end;
 
-function GetOnlyCorrectCharsUTF8(aValue:String):String;
+function GetOnlyCorrectCharsUTF8(aValue: string): string;
 
   function GetChar(aIndex: integer):string;
   begin
