@@ -85,10 +85,10 @@ type
      function GetWorkSheet: integer;
 
    public
-     constructor Create(aFormat: TStrings);
+     constructor Create(aFormat: TStrings); virtual;
      destructor Destroy; override;
 
-     function GetValueByParam(aParam: string; var aSection: TwfFormatSection): variant;
+     function GetValueByParam(aParam: string; aSection: TwfFormatSection): variant;
 
      property WorkSheet: integer read GetWorkSheet;
      property FirstRow: integer read GetFirstRow;
@@ -298,7 +298,7 @@ begin
   inherited Destroy;
 end;
 
-function TwfFormatPaser.GetValueByParam(aParam: string; var aSection: TwfFormatSection): variant;
+function TwfFormatPaser.GetValueByParam(aParam: string; aSection: TwfFormatSection): variant;
 var
   i: Integer;
 begin

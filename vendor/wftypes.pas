@@ -17,7 +17,7 @@ unit wfTypes;
 interface
 
 uses
-  Classes, SysUtils, fgl, LazUTF8, ComCtrls, MultiLog, db, gvector;
+  Classes, SysUtils, fgl, LazUTF8, ComCtrls, MultiLog, wfClasses, db, gvector;
 
 type
   {$IFDEF USEGUID}
@@ -60,6 +60,8 @@ type
   TProgressEvent = procedure(Sender: TObject; const aPosition: integer) of object;
   TProgressInitEvent = procedure(Sender: TObject; const aMax, aStep: integer) of object;
   TProgressMarqueeEvent = procedure(Sender: TObject; const aMarquee: Boolean) of object;
+
+  TwfWriteContentRowEvent = procedure (Sender: TObject; var aContentRow: TwfImportContentRow) of object;
 
   TInt64List = specialize TFPGList<Int64>;
   TBaseIDList = specialize TFPGList<BaseID>;
