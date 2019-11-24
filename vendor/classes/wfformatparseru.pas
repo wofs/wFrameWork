@@ -5,7 +5,7 @@ unit wfFormatParserU;
 interface
 
 uses
-  Classes, SysUtils, fgl, IniFiles, LazUTF8, LazFileUtils, LazStringUtils, wfTypes, wfFunc;
+  Classes, SysUtils, fgl, IniFiles, LazUTF8, LazFileUtils, LazStringUtils, wfTypes, wfFunc, wfFormatParserDefU;
 
 type
    TwfGroupInRows = (girYes, girNo, girNotUsed);
@@ -53,17 +53,7 @@ type
   { TwfFormatPaser }
 
    TwfFormatPaser = class
-   private const
-     uSectionInit         = 'ИНИТ';
-     uParamWorkSheet      = 'ЛИСТ';
-     uParamFistRow        = 'ПЕРВАЯСТРОКА';
-     uParamFistCol        = 'ПЕРВАЯКОЛОНКА';
-     uParamGroupInRows    = 'ГРУППЫВСТРОКАХ';
-
-     uSectionData         = 'ДАННЫЕ';
-     uSectionDataParams   = 'ПАРАМЕТРЫ';
-     uSectionDataLogic    = 'ЛОГИКА';
-
+   private
    procedure FormatRawUpperCase;
    function GetDataType(aData: string): TValueType;
    function GetSection(aSectionName: string; const aQueryDataType: boolean=false): TwfFormatSection;
@@ -192,31 +182,15 @@ begin
 end;
 
 function TwfFormatPaser.IsCalculatedType(aValue: string):boolean;
-const
-  uSymbols = ['+','-','/','*'];
-var
-  i: Integer;
 begin
-  for i:= Length(aValue) downto 1 do
-    if (aValue[i] in uSymbols) then
-      begin
-        Result:= true;
-        break;
-      end;
+  Result:= IsEntry(ufpCalculatedType, aValue);
 end;
 
 function TwfFormatPaser.IsComplexType(aValue: string):boolean;
-const
-  uSymbols = ['{','}'];
 var
   i: Integer;
 begin
-  for i:= Length(aValue) downto 1 do
-    if (aValue[i] in uSymbols) then
-      begin
-        Result:= true;
-        break;
-      end;
+  Result:= IsEntry(ufpComplexType, aValue);
 end;
 
 function TwfFormatPaser.GetSection(aSectionName: string; const aQueryDataType: boolean = false): TwfFormatSection;
@@ -245,28 +219,28 @@ end;
 function TwfFormatPaser.GetDataSection: TwfFormatSection;
 
 begin
-  Result:= GetSection(uSectionData, true);
+  Result:= GetSection(ufpSectionData, true);
 end;
 
 function TwfFormatPaser.GetFirstCol: integer;
 begin
-  Result:= VarToInt64(GetSectionByName(uSectionInit).ValueByParam(uParamFistCol));
+  Result:= VarToInt64(GetSectionByName(ufpSectionInit).ValueByParam(ufpParamFistCol));
 end;
 
 function TwfFormatPaser.GetFirstRow: integer;
 begin
-  Result:= VarToInt64(GetSectionByName(uSectionInit).ValueByParam(uParamFistRow));
+  Result:= VarToInt64(GetSectionByName(ufpSectionInit).ValueByParam(ufpParamFistRow));
 end;
 
 function TwfFormatPaser.GetGroupInRows: TwfGroupInRows;
 var
   aResultText: String;
 begin
-  aResultText:= VarToStr(GetSectionByName(uSectionInit).ValueByParam(uParamGroupInRows));
+  aResultText:= VarToStr(GetSectionByName(ufpSectionInit).ValueByParam(ufpParamGroupInRows));
 
   case aResultText of
-    'ДА'             : Result:= girYes;
-    'НЕТ'            : Result:= girNo;
+    ufpGroupInRowsYes  : Result:= girYes;
+    ufpGroupInRowsNo   : Result:= girNo;
    else
      Result:= girNotUsed;
   end;
@@ -274,12 +248,12 @@ end;
 
 function TwfFormatPaser.GetLogicSection: TwfFormatSection;
 begin
-  Result:= GetSection(uSectionDataLogic);
+  Result:= GetSection(ufpSectionDataLogic);
 end;
 
 function TwfFormatPaser.GetParamsSection: TwfFormatSection;
 begin
-  Result:= GetSection(uSectionDataParams);
+  Result:= GetSection(ufpSectionDataParams);
 end;
 
 function TwfFormatPaser.GetSectionByName(aSectionName: string): TwfIniSection;
@@ -298,7 +272,7 @@ end;
 
 function TwfFormatPaser.GetWorkSheet: integer;
 begin
-  Result:= VarToInt64(GetSectionByName(uSectionInit).ValueByParam(uParamWorkSheet))-1;
+  Result:= VarToInt64(GetSectionByName(ufpSectionInit).ValueByParam(ufpParamWorkSheet))-1;
 end;
 
 destructor TwfFormatPaser.Destroy;

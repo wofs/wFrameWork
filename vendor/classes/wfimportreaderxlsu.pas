@@ -81,9 +81,6 @@ var
   aRowCurrent, aFirstRow, aFirstCol: integer;
   aContentRow: TwfImportContentRow;
 begin
-{ TODO -owofs -cTwfImportReader : Дописать работу со сложными данными:
-Объединение строк
-Суммирование чисел }
   fWorksheet:= GetWorkSheet(Format.WorkSheet);
   aFirstRow:= Format.FirstRow-1;
   aFirstCol:= Format.FirstCol;

@@ -235,7 +235,7 @@ begin
   inherited Create(ACollection);
   fDescription:= TStringList.Create;
   fFormat:= TStringList.Create;
-  fFormat.Text:= uTemplateFormatHelp;
+  fFormat.Text:= uTemplateFormatHelpRus;
 end;
 
 destructor TwfFormatItem.Destroy;

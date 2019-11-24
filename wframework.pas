@@ -10,10 +10,10 @@ interface
 uses
   wfResourceStrings, wfImportTemplatesU, wfTypes, wfFunc, wfDialogs, wfThreadU, wfClasses, wfCustomSQLItemListU, 
   wfParamsU, wfIntSQLItemU, wfSQLPropertyEditorU, wfDesignSQLItemsU, wfCustomOrderByListU, wfIniPropertyEditorU, 
-  wfFormatParserU, wfImportReaderU, wfImportReaderXLSU, wfPlugins, wfLog, wfVersions, wfIBConnection, wfPQConnection, 
-  wfODBCConnection, wfBase, wfSQLQuery, wfSQLScript, wfSQLTransaction, wfTreeView, wfDBGrid, wfComboBox, 
-  wfStatusProgressBar, wfReport, wfImport, wfSettings, wfEntity, wfValueListEditor, TwfProgressU, wfReportViewer, 
-  wfStringsEditor, LazarusPackageIntf;
+  wfFormatParserU, wfImportReaderU, wfImportReaderXLSU, wfCalculatorU, wfPlugins, wfLog, wfVersions, wfIBConnection, 
+  wfPQConnection, wfODBCConnection, wfBase, wfSQLQuery, wfSQLScript, wfSQLTransaction, wfTreeView, wfDBGrid, 
+  wfComboBox, wfStatusProgressBar, wfReport, wfImport, wfSettings, wfEntity, wfValueListEditor, TwfProgressU, 
+  wfReportViewer, wfStringsEditor, wfFormatParserDefU, LazarusPackageIntf;
 
 implementation
 

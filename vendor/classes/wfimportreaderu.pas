@@ -5,8 +5,8 @@ unit wfImportReaderU;
 interface
 
 uses
-  Classes, SysUtils, wfTypes, wfClasses, wfFunc, wfBase, LazUTF8, wfFormatParserU, fpspreadsheet, fpsTypes,
-  fpsallformats, fpsutils;
+  Classes, SysUtils, wfTypes, wfClasses, wfFunc, wfFormatParserDefU, wfBase, LazUTF8, wfFormatParserU, wfCalculatorU,
+  fpspreadsheet, fpsTypes, fpsallformats, fpsutils;
 
 type
 
@@ -14,6 +14,7 @@ type
 
   TwfImportReader = class
   private
+    fCalc: TwfCalculator;
     fFormat: TwfFormatPaser;
     fonWriteContentRow: TwfWriteContentRowEvent;
 
@@ -23,7 +24,9 @@ type
     fLogicSection: TwfFormatSection;
     // Flag to stop import. To handle on their own.
     fTerminated: Boolean;
-    procedure WriteComplexType(var aContentRow: TwfImportContentRow);
+    function GetCalculatedValue(aCalculatedString: string; var aContentRow: TwfImportContentRow): Double;
+    procedure WriteCalculatedValue(var aContentRow: TwfImportContentRow);
+    procedure WriteComplexValue(var aContentRow: TwfImportContentRow);
 
 
   protected
@@ -34,7 +37,7 @@ type
     // Raises an event for the row's entry.
     procedure WriteContentRow(var aContentRow: TwfImportContentRow); virtual;
     // Replaces the specified parameters for string concatenation
-    function GetComplexTypeValue(aComplexString: string; var aContentRow: TwfImportContentRow): string;
+    function GetComplexValue(aComplexString: string; var aContentRow: TwfImportContentRow): string;
 
     property DataSection: TwfFormatSection read fDataSection write fDataSection;
     property ParamsSection: TwfFormatSection read fParamsSection write fParamsSection;
@@ -51,6 +54,8 @@ type
     property Format: TwfFormatPaser read fFormat;
     // Flag to stop import. To install and to handle on their own!
     property Terminated: boolean read fTerminated write fTerminated;
+    // Calculator
+    property Calc: TwfCalculator read fCalc write fCalc;
 
     {Events}
     // You must implement the data write event yourself
@@ -72,24 +77,52 @@ begin
   end;
 end;
 
-procedure TwfImportReader.WriteComplexType(var aContentRow: TwfImportContentRow);
+procedure TwfImportReader.WriteComplexValue(var aContentRow: TwfImportContentRow);
 var
   i: Integer;
+  aValue: String;
 begin
  for i:=0 to High(DataSection) do begin
    if DataSection[i].aComplexType then
-      aContentRow.Row[i].Value:= GetComplexTypeValue(DataSection[i].Value, aContentRow)
+   begin
+     aValue:= UTF8StringReplace(DataSection[i].Value, ufpComplexType, '', []);
+     aContentRow.Row[i].Value:= GetComplexValue(aValue, aContentRow);
+   end;
  end;
 end;
+
+procedure TwfImportReader.WriteCalculatedValue(var aContentRow: TwfImportContentRow);
+var
+  i: Integer;
+  aValue: String;
+begin
+ for i:=0 to High(DataSection) do begin
+   if DataSection[i].aCalculatedType then
+   begin
+     aValue:= UTF8StringReplace(DataSection[i].Value, ufpCalculatedType, '', []);
+     aContentRow.Row[i].Value:= GetCalculatedValue(aValue, aContentRow);
+   end;
+ end;
+end;
+
+function TwfImportReader.GetCalculatedValue(aCalculatedString: string; var aContentRow: TwfImportContentRow):Double;
+var
+  aFormula: String;
+begin
+  aFormula:= GetComplexValue(aCalculatedString, aContentRow);
+  Result:= Calc.Calculate(aFormula);
+end;
+
 procedure TwfImportReader.WriteContentRow(var aContentRow: TwfImportContentRow);
 begin
-  WriteComplexType(aContentRow);
+  WriteComplexValue(aContentRow);
+  WriteCalculatedValue(aContentRow);
 
   if Assigned(fonWriteContentRow) then
     fonWriteContentRow(self, aContentRow);
 end;
 
-function TwfImportReader.GetComplexTypeValue(aComplexString: string; var aContentRow: TwfImportContentRow): string;
+function TwfImportReader.GetComplexValue(aComplexString: string; var aContentRow: TwfImportContentRow): string;
 var
   i: Integer;
   aSearchParam: String;
@@ -108,15 +141,13 @@ begin
 end;
 
 function TwfImportReader.IsContent(var aContentRow: TwfImportContentRow):boolean;
-const
-  uIsContent = 'ЗАПИСЬЕСЛИ';
 var
   aRecordCondition: ArrayOfString;
   i, k, aCount: Integer;
 begin
  Result:= false;
  aCount:= 0;
- aRecordCondition:= ArrayAsString(Format.GetValueByParam(uIsContent, fLogicSection), '+');
+ aRecordCondition:= ArrayAsString(Format.GetValueByParam(ufpIsContent, fLogicSection), '+');
 
  for i:=0 to High(aContentRow.Row) do begin
    for k:= 0 to High(aRecordCondition) do begin
@@ -136,13 +167,14 @@ begin
   fDataSection:= fFormat.DataSection;
   fParamsSection:= fFormat.ParamsSection;
   fLogicSection:= fFormat.LogicSection;
-
+  fCalc:= TwfCalculator.Create(nil);
   //Use the Start procedure to start the import
 end;
 
 destructor TwfImportReader.Destroy;
 begin
   FreeAndNil(fFormat);
+  FreeAndNil(fCalc);
   inherited Destroy;
 end;
 
