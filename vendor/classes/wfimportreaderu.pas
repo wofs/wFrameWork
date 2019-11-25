@@ -25,6 +25,8 @@ type
   private
     fCalc: TwfCalculator;
     fFormat: TwfFormatPaser;
+    fContentRow: TwfImportContentRow;
+    fCotentGroups: TwfImportGroups;
     fonWriteContentRow: TwfWriteContentRowEvent;
 
     fSource: string;
@@ -44,11 +46,14 @@ type
 
   protected
     // Clearing the content line between fill interations
-    procedure ContentRowClear(var aContentRow: TwfImportContentRow);
+    procedure ContentRowClear();
     // Is this string content (based on the logic spelled out in the format)
-    function IsContent(var aContentRow: TwfImportContentRow): boolean; virtual;
+    function IsContent(): boolean; virtual;
     // Raises an event for the row's entry.
-    procedure WriteContentRow(var aContentRow: TwfImportContentRow); virtual;
+    procedure WriteContentRow(aGroups: TwfImportGroups; aContentRow: TwfImportContentRow); virtual;
+
+    procedure ContentRowSetLength(aLength: integer);
+
     // Replaces the specified parameters for string concatenation
     function GetComplexValue(aComplexString: string; var aContentRow: TwfImportContentRow): string;
     // Data section
@@ -58,6 +63,8 @@ type
     // Logic section
     property LogicSection: TwfFormatSection read fLogicSection write fLogicSection;
 
+    property ContentRow: TwfImportContentRow read fContentRow;
+    property CotentGroups: TwfImportGroups read fCotentGroups;
   public
     constructor Create(aSource: string; aFormat: TStrings); virtual;
     destructor Destroy; override;
@@ -82,14 +89,14 @@ implementation
 
 { TwfImportReader }
 
-procedure TwfImportReader.ContentRowClear(var aContentRow: TwfImportContentRow);
+procedure TwfImportReader.ContentRowClear();
 var
   i: Integer;
 begin
-  for i:=0 to High(aContentRow.Row) do begin
-    aContentRow.Row[i].Name:= wfEmptyStr;
-    aContentRow.Row[i].Field:= wfEmptyStr;
-    aContentRow.Row[i].Value:= wfEmptyInt;
+  for i:=0 to High(ContentRow.Row) do begin
+    ContentRow.Row[i].Name:= wfEmptyStr;
+    ContentRow.Row[i].Field:= wfEmptyStr;
+    ContentRow.Row[i].Value:= wfEmptyInt;
   end;
 end;
 
@@ -129,13 +136,18 @@ begin
   Result:= Calc.Calculate(aFormula);
 end;
 
-procedure TwfImportReader.WriteContentRow(var aContentRow: TwfImportContentRow);
+procedure TwfImportReader.WriteContentRow(aGroups: TwfImportGroups; aContentRow: TwfImportContentRow);
 begin
   WriteComplexValue(aContentRow);
   WriteCalculatedValue(aContentRow);
 
   if Assigned(fonWriteContentRow) then
-    fonWriteContentRow(self, aContentRow);
+    fonWriteContentRow(self, aGroups, aContentRow);
+end;
+
+procedure TwfImportReader.ContentRowSetLength(aLength: integer);
+begin
+  SetLength(fContentRow.Row, aLength);
 end;
 
 function TwfImportReader.GetCorrectTextValue(aValue: Variant):string;
@@ -181,7 +193,7 @@ begin
   end;
 end;
 
-function TwfImportReader.IsContent(var aContentRow: TwfImportContentRow):boolean;
+function TwfImportReader.IsContent(): boolean;
 var
   aRecordCondition: ArrayOfString;
   i, k, aCount: Integer;
@@ -190,9 +202,9 @@ begin
  aCount:= 0;
  aRecordCondition:= ArrayAsString(Format.GetValueByParam(ufpIsContent, fLogicSection), '+');
 
- for i:=0 to High(aContentRow.Row) do begin
+ for i:=0 to High(ContentRow.Row) do begin
    for k:= 0 to High(aRecordCondition) do begin
-     if aContentRow.Row[i].Name = aRecordCondition[k] then
+     if ContentRow.Row[i].Name = aRecordCondition[k] then
      inc(aCount);
    end;
  end;

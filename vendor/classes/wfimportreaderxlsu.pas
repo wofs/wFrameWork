@@ -32,11 +32,11 @@ type
     // Returns cell background color
     function GetBackground(aCell: PCell): TsColor;
     // We record the found content cells
-    procedure SetContentCells(var aContentRow: TwfImportContentRow; aCell: PCell);
+    procedure SetContentCells(aCell: PCell);
     // Returns the line contained in the cell
-    function GetDataString(aCell: PCell; const aValueType: TValueType=vtDefault): string;
+    function GetDataString(aCell: PCell; const aValueType: TDataType=dtDefault): string;
     // Returns the variant value contained in the cell.
-    function GetDataVariant(aCell: PCell; const aValueType: TValueType=vtDefault): variant;
+    function GetDataVariant(aCell: PCell; const aValueType: TDataType=dtDefault): variant;
     // Returns a table field by parameter name
     function GetField(aParam: string): string;
     // Returns font style
@@ -70,7 +70,7 @@ begin
 end;
 
 // We record the found content cells
-procedure TwfImportReaderXLS.SetContentCells(var aContentRow: TwfImportContentRow; aCell: PCell);
+procedure TwfImportReaderXLS.SetContentCells(aCell: PCell);
 var
   aRowCol: TwfRowCol;
   i, a: Integer;
@@ -80,9 +80,9 @@ begin
 
     if (aRowCol.Col = aCell^.Col) then
     begin
-       aContentRow.Row[i].Name:= DataSection[i].Name;
-       aContentRow.Row[i].Field:= GetField(DataSection[i].Name);
-       aContentRow.Row[i].Value:= GetDataVariant(aCell, DataSection[i].DataType);
+       ContentRow.Row[i].Name:= DataSection[i].Name;
+       ContentRow.Row[i].Field:= GetField(DataSection[i].Name);
+       ContentRow.Row[i].Value:= GetDataVariant(aCell, DataSection[i].DataType);
     end;
   end;
 end;
@@ -92,37 +92,36 @@ var
   ADataCell: PCell;
   aRow, aCol, aLastCol: Cardinal;
   aRowCurrent, aFirstRow, aFirstCol: integer;
-  aContentRow: TwfImportContentRow;
 begin
-  fWorksheet:= GetWorkSheet(Format.WorkSheet);
-  aFirstRow:= Format.FirstRow-1;
-  aFirstCol:= Format.FirstCol;
-  aLastCol:= fWorksheet.GetLastColNumber;
+    fWorksheet:= GetWorkSheet(Format.WorkSheet);
+    aFirstRow:= Format.FirstRow-1;
+    aFirstCol:= Format.FirstCol;
+    aLastCol:= fWorksheet.GetLastColNumber;
 
-  aRowCurrent:= -1;
-  SetLength(aContentRow.Row, Length(Format.DataSection));
+    aRowCurrent:= -1;
+    ContentRowSetLength(Length(Format.DataSection));
 
-     for ADataCell in fWorksheet.Cells do
-     begin
-       aRow:= aDataCell^.Row;
-       aCol:= aDataCell^.Col;
+       for ADataCell in fWorksheet.Cells do
+       begin
+         aRow:= aDataCell^.Row;
+         aCol:= aDataCell^.Col;
 
-       if (aRow >= aFirstRow) and (aCol >= aFirstCol) then begin
-         if (aRow <> aRowCurrent) then
-         begin
-           ContentRowClear(aContentRow);
-           aRowCurrent:= aRow;
-         end;
+         if (aRow >= aFirstRow) and (aCol >= aFirstCol) then begin
+           if (aRow <> aRowCurrent) then
+           begin
+             ContentRowClear();
+             aRowCurrent:= aRow;
+           end;
 
-          SetContentCells(aContentRow, ADataCell);
+            SetContentCells(ADataCell);
 
-         if (aCol = aLastCol) and (IsContent(aContentRow)) then
-         begin
-            WriteContentRow(aContentRow);
-            ContentRowClear(aContentRow);
+           if (aCol = aLastCol) and (IsContent()) then
+           begin
+              WriteContentRow(CotentGroups, ContentRow);
+              ContentRowClear();
+           end;
          end;
        end;
-     end;
 end;
 
 
@@ -201,7 +200,7 @@ begin
   aCol := aDataCell^.Col;
 end;
 
-function TwfImportReaderXLS.GetDataString(aCell: PCell; const aValueType: TValueType = vtDefault): string;
+function TwfImportReaderXLS.GetDataString(aCell: PCell; const aValueType: TDataType = dtDefault): string;
 var
   aValTmp: Double;
   N: Integer;
@@ -210,7 +209,7 @@ begin
   if Assigned(aCell) then
   begin
     case aValueType of
-      vtDefault, vtNotUsed:
+      dtDefault, dtNotUsed:
             begin
               case aCell^.ContentType of
                 cctNumber: Result := FloatToStr(aCell^.NumberValue);
@@ -219,7 +218,7 @@ begin
                   Result := UTF8StringReplace(aCell^.UTF8StringValue, #39, #39+#39,[]);
               end
             end;
-      vtNumber:
+      dtNumber:
             begin
               Result := UTF8StringReplace(aCell^.UTF8StringValue, ',',DefaultFormatSettings.DecimalSeparator,[]);
               Result := UTF8StringReplace(Result, '.',DefaultFormatSettings.DecimalSeparator,[]);
@@ -230,7 +229,7 @@ begin
               TryStrToFloat(Result,aValTmp);
               Result:= FloatToStr(aValTmp);
             end;
-      vtString:
+      dtString:
             begin
                 case aCell^.ContentType of
                   cctNumber: Result := FloatToStr(aCell^.Numbervalue);
@@ -243,7 +242,7 @@ begin
   Result:='';
 end;
 
-function TwfImportReaderXLS.GetDataVariant(aCell: PCell; const aValueType: TValueType = vtDefault): variant;
+function TwfImportReaderXLS.GetDataVariant(aCell: PCell; const aValueType: TDataType = dtDefault): variant;
 var
   aValTmp: Double;
   N: Integer;
@@ -252,7 +251,7 @@ begin
   if Assigned(aCell) then
   begin
     case aValueType of
-      vtDefault, vtNotUsed:
+      dtDefault, dtNotUsed:
             begin
               case aCell^.ContentType of
                 cctNumber: Result := aCell^.NumberValue;
@@ -261,8 +260,8 @@ begin
                   Result := aCell^.UTF8StringValue;
               end
             end;
-      vtNumber:  Result := aCell^.NumberValue;
-      vtString:  Result:= aCell^.UTF8StringValue;
+      dtNumber:  Result:= aCell^.NumberValue;
+      dtString, dtGroup:  Result:= aCell^.UTF8StringValue;
     end;
   end
   else

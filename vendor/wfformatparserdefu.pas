@@ -20,6 +20,9 @@ const
 
   ufpComplexType         = '[ОБЪЕДИНИТЬ]';
   ufpCalculatedType      = '[ВЫЧИСЛИТЬ]';
+  ufpNumberType          = '[ЧИСЛО]';
+  ufpStringType          = '[СТРОКА]';
+  ufpGroupType           = '[ГРУППА]';
 
   ufpGroupInRowsYes      = 'ДА';
   ufpGroupInRowsNo       = 'НЕТ';

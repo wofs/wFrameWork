@@ -59,7 +59,7 @@ type
    // Record of Format
    TwfFormatRecord = record
      Name: string;
-     DataType: TValueType;
+     DataType: TDataType;
      Value: string;
      aComplexType: boolean;
      aCalculatedType: boolean;
@@ -75,13 +75,17 @@ type
    // Converts the format to UpperCase
    procedure FormatRawUpperCase;
    // Returns the required data type
-   function GetDataType(aData: string): TValueType;
+   function GetDataType(aParam: string; aValue: variant): TDataType;
    // Returns the format section by name
    function GetSection(aSectionName: string; const aQueryDataType: boolean=false): TwfFormatSection;
    // If a value is computed
    function IsCalculatedType(aValue: string): boolean;
    // If a value is the result of combining a string of records
    function IsComplexType(aValue: string): boolean;
+   // If the interpretation of the read data as a number is specified
+   function IsNumberType(aParam: string): boolean;
+   // If the read data is interpreted as a string
+   function IsStringType(aParam: string): boolean;
 
    private
      fFormatRaw: TStrings;
@@ -209,10 +213,28 @@ begin
     end;
 end;
 
-function TwfFormatPaser.GetDataType(aData: string): TValueType;
+function TwfFormatPaser.GetDataType(aParam: string; aValue: variant): TDataType;
 begin
   { TODO -owofs -cTwfFormatPaser : Добавить детект формата данных }
-  Result:= vtDefault;
+  if IsCalculatedType(aValue) then Result:= dtCalculated
+  else
+    if IsComplexType(aValue) then Result:= dtComplex
+  else
+    if IsNumberType(aParam) then Result:= dtNumber
+    else
+      if IsStringType(aParam) then Result:= dtString
+      else
+        Result:= dtDefault;
+end;
+
+function TwfFormatPaser.IsNumberType(aParam: string):boolean;
+begin
+  Result:= IsEntry(ufpNumberType, aParam);
+end;
+
+function TwfFormatPaser.IsStringType(aParam: string):boolean;
+begin
+  Result:= IsEntry(ufpStringType, aParam);
 end;
 
 function TwfFormatPaser.IsCalculatedType(aValue: string):boolean;
@@ -240,9 +262,9 @@ begin
     Result[i].Name := GetOnlyCorrectCharsUTF8(aSection.Content[i].Param);
 
     if aQueryDataType then
-      Result[i].DataType := GetDataType(aSection.Content[i].Param)
+      Result[i].DataType := GetDataType(aSection.Content[i].Param, aSection.Content[i].Value)
     else
-      Result[i].DataType := vtNotUsed;
+      Result[i].DataType := dtNotUsed;
 
     Result[i].Value := aSection.Content[i].Value;
     Result[i].aComplexType:= IsComplexType(Result[i].Value);
