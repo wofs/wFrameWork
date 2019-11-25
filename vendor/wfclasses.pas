@@ -54,14 +54,14 @@ type
 
    TwfFields = array of TwfField;
 
-   TwfImportContentCell = Record
+   TwfContentCell = Record
      Name: string;
      Field: string;
      Value: variant;
    end;
 
-   TwfImportContentRow = Record
-     Row: array of TwfImportContentCell;
+   TwfContentRow = Record
+     Row: array of TwfContentCell;
    end;
 
 implementation

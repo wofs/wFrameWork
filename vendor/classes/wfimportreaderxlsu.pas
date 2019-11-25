@@ -117,7 +117,7 @@ begin
 
            if (aCol = aLastCol) and (IsContent()) then
            begin
-              WriteContentRow(CotentGroups, ContentRow);
+              WriteContentRow(ContentGroups, ContentRow);
               ContentRowClear();
            end;
          end;
