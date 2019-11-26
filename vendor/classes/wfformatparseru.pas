@@ -96,6 +96,7 @@ type
      procedure AddContent(aSectionName: string; aParams, aValues: TStrings);
 
      function GetDataSection: TwfFormatSection;
+     function GetGroupsSection: TwfFormatSection;
      function GetParamsSection: TwfFormatSection;
      function GetLogicSection: TwfFormatSection;
 
@@ -120,6 +121,8 @@ type
      property FirstCol: integer read GetFirstCol;
      // Groups in rows
      property GroupInRows: TwfGroupInRows read GetGroupInRows;
+     // Groups section
+     property GroupsSection: TwfFormatSection read GetGroupsSection;
      // Data section
      property DataSection: TwfFormatSection read GetDataSection;
      // Parameters section
@@ -276,6 +279,11 @@ function TwfFormatPaser.GetDataSection: TwfFormatSection;
 
 begin
   Result:= GetSection(ufpSectionData, true);
+end;
+
+function TwfFormatPaser.GetGroupsSection: TwfFormatSection;
+begin
+  Result:= GetSection(ufpSectionGroups, true);
 end;
 
 function TwfFormatPaser.GetFirstCol: integer;

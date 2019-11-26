@@ -14,6 +14,7 @@ const
   ufpParamFistCol        = 'ПЕРВАЯКОЛОНКА';
   ufpParamGroupInRows    = 'ГРУППЫВСТРОКАХ';
 
+  ufpSectionGroups       = 'ГРУППЫ';
   ufpSectionData         = 'ДАННЫЕ';
   ufpSectionDataParams   = 'ПАРАМЕТРЫ';
   ufpSectionDataLogic    = 'ЛОГИКА';

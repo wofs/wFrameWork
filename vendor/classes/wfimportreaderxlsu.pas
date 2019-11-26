@@ -80,9 +80,9 @@ begin
 
     if (aRowCol.Col = aCell^.Col) then
     begin
-       ContentRow.Row[i].Name:= DataSection[i].Name;
-       ContentRow.Row[i].Field:= GetField(DataSection[i].Name);
-       ContentRow.Row[i].Value:= GetDataVariant(aCell, DataSection[i].DataType);
+      ContentRow.Row[i].Name:= DataSection[i].Name;
+      ContentRow.Row[i].Field:= GetField(DataSection[i].Name);
+      ContentRow.Row[i].Value:= GetDataVariant(aCell, DataSection[i].DataType);
     end;
   end;
 end;

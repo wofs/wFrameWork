@@ -30,6 +30,7 @@ type
     fonWriteContentRow: TwfWriteContentRowEvent;
 
     fSource: string;
+    fGroupsSection: TwfFormatSection;
     fDataSection: TwfFormatSection;
     fParamsSection: TwfFormatSection;
     fLogicSection: TwfFormatSection;
@@ -63,6 +64,8 @@ type
 
     // Replaces the specified parameters for string concatenation
     function GetComplexValue(aComplexString: string; var aContentRow: TwfContentRow): string;
+    // Groups section
+    property GroupsSection: TwfFormatSection read fGroupsSection write fGroupsSection;
     // Data section
     property DataSection: TwfFormatSection read fDataSection write fDataSection;
     // Parameters section
@@ -247,6 +250,7 @@ begin
   fTerminated:= true;
   fSource:= aSource;
   fFormat:= TwfFormatPaser.Create(aFormat);
+  fGroupsSection:= fFormat.GroupsSection;
   fDataSection:= fFormat.DataSection;
   fParamsSection:= fFormat.ParamsSection;
   fLogicSection:= fFormat.LogicSection;
