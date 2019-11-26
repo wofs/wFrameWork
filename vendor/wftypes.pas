@@ -40,7 +40,7 @@ type
   ArrayOfArrayVariant = array of array of variant;
   ArrayOfArrayInteger = array of array of integer;
 
-  TwfContentGroups = specialize TVector<TwfContentCell>;
+  TwfGroups = specialize TVector<TwfGroupCell>;
   TInt64List = specialize TFPGList<Int64>;
   TBaseIDList = specialize TFPGList<BaseID>;
 
@@ -63,10 +63,10 @@ type
   TProgressInitEvent = procedure(Sender: TObject; const aMax, aStep: integer) of object;
   TProgressMarqueeEvent = procedure(Sender: TObject; const aMarquee: Boolean) of object;
 
-  TwfWriteContentRowEvent = procedure (Sender: TObject; aGroups: TwfContentGroups; aContentRow: TwfContentRow) of object;
+  TwfWriteContentRowEvent = procedure (Sender: TObject; aGroups: TwfGroups; aContentRow: TwfContentRow) of object;
 
 
-  TDataType = (dtDefault, dtNumber, dtString, dtComplex, dtCalculated, dtGroup, dtNotUsed);
+  TDataType = (dtDefault, dtNumber, dtString, dtComplex, dtCalculated, dtNotUsed);
   TBaseTaskType = (bttArray, bttDataSource, bttDataSet);
   TDirection = (dNone, dASC, dDESC);
   TSQLItemType = (stLike, stContaining, stIn, stUnknown);

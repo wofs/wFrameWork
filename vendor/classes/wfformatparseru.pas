@@ -74,6 +74,7 @@ type
    private
    // Converts the format to UpperCase
    procedure FormatRawUpperCase;
+   function GetCleanParam(aParam: string; DataType: TDataType): string;
    // Returns the required data type
    function GetDataType(aParam: string; aValue: variant): TDataType;
    // Returns the format section by name
@@ -218,7 +219,6 @@ end;
 
 function TwfFormatPaser.GetDataType(aParam: string; aValue: variant): TDataType;
 begin
-  { TODO -owofs -cTwfFormatPaser : Добавить детект формата данных }
   if IsCalculatedType(aValue) then Result:= dtCalculated
   else
     if IsComplexType(aValue) then Result:= dtComplex
@@ -228,6 +228,16 @@ begin
       if IsStringType(aParam) then Result:= dtString
       else
         Result:= dtDefault;
+end;
+
+function TwfFormatPaser.GetCleanParam(aParam: string; DataType: TDataType): string;
+begin
+  case DataType of
+    dtNumber: Result:= UTF8StringReplace(aParam, ufpNumberType, '',[]);
+    dtString: Result:= UTF8StringReplace(aParam, ufpStringType, '',[]);
+    else
+      Result:= aParam;
+  end;
 end;
 
 function TwfFormatPaser.IsNumberType(aParam: string):boolean;
@@ -262,13 +272,14 @@ begin
   SetLength(Result, aSection.Count);
 
   for i:= 0 to aSection.Count-1 do begin
-    Result[i].Name := GetOnlyCorrectCharsUTF8(aSection.Content[i].Param);
 
     if aQueryDataType then
       Result[i].DataType := GetDataType(aSection.Content[i].Param, aSection.Content[i].Value)
     else
       Result[i].DataType := dtNotUsed;
 
+    //Result[i].Name := GetOnlyCorrectCharsUTF8(aSection.Content[i].Param);
+    Result[i].Name := GetCleanParam(aSection.Content[i].Param, Result[i].DataType);
     Result[i].Value := aSection.Content[i].Value;
     Result[i].aComplexType:= IsComplexType(Result[i].Value);
     Result[i].aCalculatedType:= IsCalculatedType(Result[i].Value);

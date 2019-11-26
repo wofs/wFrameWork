@@ -14,8 +14,8 @@ unit wfImportReaderXLSU;
 interface
 
 uses
-  Classes, SysUtils, wfTypes, wfClasses, wfFunc, wfBase, LazUTF8, wfFormatParserU, wfImportReaderU, fpspreadsheet,
-  fpsTypes, fpsallformats, fpsutils;
+  Classes, SysUtils, gvector, wfTypes, wfClasses, wfFunc, wfBase, LazUTF8, wfFormatParserU, wfImportReaderU,
+  fpspreadsheet, fpsTypes, fpsallformats, fpsutils;
 
 type
 
@@ -31,8 +31,9 @@ type
     procedure FOpenWorkBook(Sender: TObject);
     // Returns cell background color
     function GetBackground(aCell: PCell): TsColor;
+    function GetGroupIndexByName(aName: string): integer;
     // We record the found content cells
-    procedure SetContentCells(aCell: PCell);
+    procedure ParseCell(aCell: PCell);
     // Returns the line contained in the cell
     function GetDataString(aCell: PCell; const aValueType: TDataType=dtDefault): string;
     // Returns the variant value contained in the cell.
@@ -69,24 +70,63 @@ begin
   Result:= Format.GetValueByParam(aParam, ParamsSection);
 end;
 
+function TwfImportReaderXLS.GetGroupIndexByName(aName: string):integer;
+var
+  i: QWord;
+  aGroup: TwfGroupCell;
+begin
+  Result:= -1;
+
+  for aGroup in Groups do begin
+    if aName = aGroup.Value then
+    begin
+      Result:= i+1;
+      Break;
+    end;
+  end;
+end;
+
 // We record the found content cells
-procedure TwfImportReaderXLS.SetContentCells(aCell: PCell);
+procedure TwfImportReaderXLS.ParseCell(aCell: PCell);
 var
   aRowCol: TwfRowCol;
-  i, a: Integer;
+  i, aIndexGroup: Integer;
 begin
   for i:= 0 to High(DataSection) do begin
     aRowCol:= GetRowCol(DataSection[i].Value);
 
     if (aRowCol.Col = aCell^.Col) then
     begin
+      //Content add
       ContentRow.Row[i].Name:= DataSection[i].Name;
       ContentRow.Row[i].Field:= GetField(DataSection[i].Name);
       ContentRow.Row[i].Value:= GetDataVariant(aCell, DataSection[i].DataType);
     end;
   end;
-end;
 
+  // Group add
+  if (Format.GroupInRows = girNo) then
+  begin
+    for i:= 0 to High(GroupsSection) do begin
+      aRowCol:= GetRowCol(GroupsSection[i].Value);
+      if (aRowCol.Col = aCell^.Col) then
+      begin
+      if (Groups.IsEmpty or
+         (GroupCurrent.Value <> aCell^.UTF8StringValue))
+       and
+         (UTF8Length(aCell^.UTF8StringValue)>0) then
+         begin
+           aIndexGroup:= GetGroupIndexByName(aCell^.UTF8StringValue);
+           if (aIndexGroup<0) then
+             aIndexGroup:= AddGroup(GroupsSection[i].Name, GetField(GroupsSection[i].Name), aCell^.UTF8StringValue);
+
+           ContentRowSetGroup(aIndexGroup);
+         end;
+      end;
+    end;
+  end;
+
+end;
 procedure TwfImportReaderXLS.FOpenWorkBook(Sender: TObject);
 var
   ADataCell: PCell;
@@ -109,15 +149,18 @@ begin
          if (aRow >= aFirstRow) and (aCol >= aFirstCol) then begin
            if (aRow <> aRowCurrent) then
            begin
+             if (Format.GroupInRows = girNo) then
+               Groups.Clear;
+
              ContentRowClear();
              aRowCurrent:= aRow;
            end;
 
-            SetContentCells(ADataCell);
+            ParseCell(ADataCell);
 
            if (aCol = aLastCol) and (IsContent()) then
            begin
-              WriteContentRow(ContentGroups, ContentRow);
+              WriteContentRow(Groups, ContentRow);
               ContentRowClear();
            end;
          end;
@@ -261,7 +304,7 @@ begin
               end
             end;
       dtNumber:  Result:= aCell^.NumberValue;
-      dtString, dtGroup:  Result:= aCell^.UTF8StringValue;
+      dtString:  Result:= aCell^.UTF8StringValue;
     end;
   end
   else

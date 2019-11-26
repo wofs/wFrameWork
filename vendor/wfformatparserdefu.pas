@@ -22,7 +22,7 @@ const
   ufpComplexType         = '[ОБЪЕДИНИТЬ]';
   ufpCalculatedType      = '[ВЫЧИСЛИТЬ]';
   ufpNumberType          = '[ЧИСЛО]';
-  ufpStringType          = '[СТРОКА]';
+  ufpStringType          = '[ТЕКСТ]';
   ufpGroupType           = '[ГРУППА]';
 
   ufpGroupInRowsYes      = 'ДА';

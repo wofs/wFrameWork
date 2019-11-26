@@ -60,8 +60,17 @@ type
      Value: variant;
    end;
 
+   TwfGroupCell = Record
+     Name: string;
+     Field: string;
+     Value: variant;
+     IsCurrent: boolean;
+     IsSubgroup: boolean;
+   end;
+
    TwfContentRow = Record
      Row: array of TwfContentCell;
+     GroupIndex: Integer;
    end;
 
 implementation

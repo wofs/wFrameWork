@@ -26,7 +26,7 @@ type
     fCalc: TwfCalculator;
     fFormat: TwfFormatPaser;
     fContentRow: TwfContentRow;
-    fContentGroups: TwfContentGroups;
+    fGroups: TwfGroups;
     fonWriteContentRow: TwfWriteContentRowEvent;
 
     fSource: string;
@@ -40,13 +40,16 @@ type
     function GetCalculatedValue(aCalculatedString: string; var aContentRow: TwfContentRow): Currency;
     // Fixes an issue in the calculation due to an incorrect fraction separator
     function GetCorrectTextValue(aValue: Variant): string;
+    function GetGroupBreadCrumbs(aIndex: Integer): string;
+    function GetGroupCurrent: TwfGroupCell;
+    procedure SetCurrentGroup(aIndex: SmallInt);
     // Writes the calculated value to the result string
     procedure WriteCalculatedValue(var aContentRow: TwfContentRow);
     // Writes the concatenated string to the result string
     procedure WriteComplexValue(var aContentRow: TwfContentRow);
 
     //Собираем и возвращаем TwfContentCell
-    function CreateContentGroup(aName, aField: string; aValue: string):TwfContentCell;
+    function CreateContentGroup(aName, aField: string; aValue: string; const aIsSubgroup: boolean):TwfGroupCell;
 
   protected
     // Clearing the content line between fill interations
@@ -54,13 +57,15 @@ type
     // Is this string content (based on the logic spelled out in the format)
     function IsContent(): boolean; virtual;
     // Raises an event for the row's entry.
-    procedure WriteContentRow(aGroups: TwfContentGroups; aContentRow: TwfContentRow); virtual;
+    procedure WriteContentRow(aGroups: TwfGroups; aContentRow: TwfContentRow); virtual;
     // Sets the ContentRow length.Row
     procedure ContentRowSetLength(aLength: integer);
+    procedure ContentRowSetGroup(aGroupIndex: integer);
+
     // Adds a group and returns the current index
-    function AddContentGroup(aName, aField: string; aValue: string): Integer;
+    function AddGroup(aName, aField: string; aValue: string): Integer;
     // Returns a group by index
-    function GetContentGroup(aIndex: Integer):TwfContentCell;
+    function GetGroup(aIndex: Integer):TwfGroupCell;
 
     // Replaces the specified parameters for string concatenation
     function GetComplexValue(aComplexString: string; var aContentRow: TwfContentRow): string;
@@ -75,7 +80,7 @@ type
     // Row of read values
     property ContentRow: TwfContentRow read fContentRow;
     // List of read groups
-    property ContentGroups: TwfContentGroups read fContentGroups;
+    property Groups: TwfGroups read fGroups;
   public
     constructor Create(aSource: string; aFormat: TStrings); virtual;
     destructor Destroy; override;
@@ -91,7 +96,9 @@ type
     // Calculator
     property Calc: TwfCalculator read fCalc write fCalc;
     // Returns a group by index
-    property ContentGroup[aIndex: Integer]: TwfContentCell read GetContentGroup;
+    property Group[aIndex: Integer]: TwfGroupCell read GetGroup;
+    property GroupBreadCrumbs[aIndex: Integer]:string read GetGroupBreadCrumbs;
+    property GroupCurrent: TwfGroupCell read GetGroupCurrent;
 
     {Events}
     // You must implement the data write event yourself
@@ -127,12 +134,14 @@ begin
  end;
 end;
 
-function TwfImportReader.CreateContentGroup(aName, aField: string; aValue: string): TwfContentCell;
+function TwfImportReader.CreateContentGroup(aName, aField: string; aValue: string; const aIsSubgroup: boolean
+  ): TwfGroupCell;
 begin
   with Result do begin
     Name:= aName;
     Field:= aField;
     Value:= aValue;
+    IsSubgroup:= aIsSubgroup;
   end;
 end;
 
@@ -158,7 +167,7 @@ begin
   Result:= Calc.Calculate(aFormula);
 end;
 
-procedure TwfImportReader.WriteContentRow(aGroups: TwfContentGroups; aContentRow: TwfContentRow);
+procedure TwfImportReader.WriteContentRow(aGroups: TwfGroups; aContentRow: TwfContentRow);
 begin
   WriteComplexValue(aContentRow);
   WriteCalculatedValue(aContentRow);
@@ -172,15 +181,47 @@ begin
   SetLength(fContentRow.Row, aLength);
 end;
 
-function TwfImportReader.AddContentGroup(aName, aField: string; aValue: string): Integer;
+procedure TwfImportReader.ContentRowSetGroup(aGroupIndex: integer);
+var
+  aContentRow: TwfContentRow;
 begin
-  ContentGroups.PushBack(CreateContentGroup(aName, aField, aValue));
-  Result:= ContentGroups.Size;
+  aContentRow:= fContentRow;
+  aContentRow.GroupIndex:= aGroupIndex;
+  fContentRow:= aContentRow;
+
+  SetCurrentGroup(aGroupIndex);
 end;
 
-function TwfImportReader.GetContentGroup(aIndex: Integer): TwfContentCell;
+function TwfImportReader.AddGroup(aName, aField: string; aValue: string): Integer;
 begin
-  Result:= ContentGroups.Items[aIndex];
+  Groups.PushBack(CreateContentGroup(aName, aField, aValue, Groups.Size>0));
+  Result:= Groups.Size-1;
+end;
+
+procedure TwfImportReader.SetCurrentGroup(aIndex: SmallInt);
+var
+  i: Integer;
+  aCell: TwfGroupCell;
+begin
+  for i:= 0 to Groups.Size-1 do begin
+    if (aIndex = i) then
+    begin
+      aCell:= Groups[i];
+      aCell.IsCurrent:= true;
+      Groups[i]:= aCell;
+    end
+    else
+    begin
+      aCell:= Groups[i];
+      aCell.IsCurrent:= false;
+      Groups[i]:= aCell;
+    end
+  end;
+end;
+
+function TwfImportReader.GetGroup(aIndex: Integer): TwfGroupCell;
+begin
+  Result:= Groups.Items[aIndex];
 end;
 
 function TwfImportReader.GetCorrectTextValue(aValue: Variant):string;
@@ -204,6 +245,32 @@ begin
      else
        WriteStr(Result, TVarData(aValue).VType)
    end;
+end;
+
+function TwfImportReader.GetGroupBreadCrumbs(aIndex: Integer): string;
+var
+  i: Integer;
+begin
+ Result:= wfEmptyStr;
+
+  for i:= 0 to aIndex do begin
+    if not IsEmpty(Result) then
+      Result += '\';
+    Result +=Groups[i].Value;
+  end;
+end;
+
+function TwfImportReader.GetGroupCurrent: TwfGroupCell;
+var
+  i: Integer;
+begin
+  for i:=0 to Groups.Size do begin
+    if Groups[i].IsCurrent then
+    begin
+      Result:= Groups[i];
+      break;
+    end;
+  end;
 end;
 
 function TwfImportReader.GetComplexValue(aComplexString: string; var aContentRow: TwfContentRow): string;
@@ -255,7 +322,7 @@ begin
   fParamsSection:= fFormat.ParamsSection;
   fLogicSection:= fFormat.LogicSection;
   fCalc:= TwfCalculator.Create(nil);
-  fContentGroups:= TwfContentGroups.Create;
+  fGroups:= TwfGroups.Create;
   //Use the Start procedure to start the import
 end;
 
@@ -263,7 +330,7 @@ destructor TwfImportReader.Destroy;
 begin
   FreeAndNil(fFormat);
   FreeAndNil(fCalc);
-  FreeAndNil(fContentGroups);
+  FreeAndNil(fGroups);
   inherited Destroy;
 end;
 
