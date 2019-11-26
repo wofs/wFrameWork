@@ -16,7 +16,7 @@ interface
 
 uses
   Classes, SysUtils, fgl, wfParamsU,
-  UITypes, Buttons, db;
+  UITypes, Buttons, fpsTypes, db;
 
 type
 
@@ -65,7 +65,7 @@ type
      Field: string;
      Value: variant;
      IsCurrent: boolean;
-     IsSubgroup: boolean;
+     Color: TsColor;
    end;
 
    TwfContentRow = Record

@@ -19,6 +19,12 @@ uses
 
 type
 
+  TwfGroupImportFlags = record
+    ColorGroup  : TsColor;
+    ColorCell   : TsColor;
+    FormatSaved : boolean;
+  end;
+
   { TwfImportReaderXLS }
 
   TwfImportReaderXLS = class (TwfImportReader)
@@ -26,6 +32,7 @@ type
 
     fWorkBook: TsWorkbook;
     fWorksheet: TsWorksheet;
+    fGroupImportFlags: TwfGroupImportFlags;
 
     // Procedure performed after opening a spreadsheet
     procedure FOpenWorkBook(Sender: TObject);
@@ -52,6 +59,12 @@ type
     procedure GetRowCol(aDataCell: PCell; out aRow: Cardinal; out aCol: Cardinal);
     // Returns the index sheet
     function GetWorkSheet(aIndex: integer): TsWorksheet;
+    // Reading groups
+    procedure ParseGroup(aCell: PCell);
+    // If the groups in the rows
+    procedure ParseGroupInRows(aName: string; aCell: PCell);
+    // If groups are in columns
+    procedure ParseGroupNoInRows(aName: string; aCell: PCell);
     // Initializes a record event of the collected data row.
 
   public
@@ -90,7 +103,7 @@ end;
 procedure TwfImportReaderXLS.ParseCell(aCell: PCell);
 var
   aRowCol: TwfRowCol;
-  i, aIndexGroup: Integer;
+  i: Integer;
 begin
   for i:= 0 to High(DataSection) do begin
     aRowCol:= GetRowCol(DataSection[i].Value);
@@ -104,29 +117,110 @@ begin
     end;
   end;
 
-  // Group add
-  if (Format.GroupInRows = girNo) then
-  begin
-    for i:= 0 to High(GroupsSection) do begin
-      aRowCol:= GetRowCol(GroupsSection[i].Value);
-      if (aRowCol.Col = aCell^.Col) then
-      begin
-      if (Groups.IsEmpty or
-         (GroupCurrent.Value <> aCell^.UTF8StringValue))
-       and
-         (UTF8Length(aCell^.UTF8StringValue)>0) then
-         begin
-           aIndexGroup:= GetGroupIndexByName(aCell^.UTF8StringValue);
-           if (aIndexGroup<0) then
-             aIndexGroup:= AddGroup(GroupsSection[i].Name, GetField(GroupsSection[i].Name), aCell^.UTF8StringValue);
+  ParseGroup(aCell);
+end;
 
-           ContentRowSetGroup(aIndexGroup);
-         end;
-      end;
-    end;
+procedure TwfImportReaderXLS.ParseGroupNoInRows(aName: string; aCell: PCell);
+var
+  i, aIndexGroup: Integer;
+  aRowCol: TwfRowCol;
+begin
+  if (Groups.IsEmpty or
+     (GroupCurrent.Value <> aCell^.UTF8StringValue))
+   and
+     (UTF8Length(aCell^.UTF8StringValue)>0) then
+     begin
+       aIndexGroup:= GetGroupIndexByName(aCell^.UTF8StringValue);
+       if (aIndexGroup<0) then
+         aIndexGroup:= AddGroup(aName, GetField(aName), aCell^.UTF8StringValue);
+
+       ContentRowSetGroup(aIndexGroup);
+     end;
+end;
+
+procedure TwfImportReaderXLS.ParseGroupInRows(aName: string; aCell: PCell);
+var
+  i, aIndexGroup: Integer;
+  aRowCol: TwfRowCol;
+  aValue: String;
+begin
+  if not fGroupImportFlags.FormatSaved then
+  begin
+    fGroupImportFlags.ColorGroup := GetBackground(aCell);
+    fGroupImportFlags.FormatSaved := True;
+  end;
+
+  fGroupImportFlags.ColorCell:= GetBackground(aCell);
+  aValue:= UTF8Trim(aCell^.UTF8StringValue);
+
+  if (fGroupImportFlags.ColorGroup = fGroupImportFlags.ColorCell) and (UTF8Length(aValue) = 0) then
+  begin
+   Groups.Clear;
+   aIndexGroup:= AddGroup(aName, GetField(aName), aValue, fGroupImportFlags.ColorCell);
+
+   ContentRowSetGroup(aIndexGroup);
+
+   //GroupCunnrentName := UTF8Copy(Trim(ADataCell^.UTF8StringValue),1,255);
+   //GroupCunnrentIndex:= Base.SQLInsert('PL_GROUP',['IDPARENT','NAME','IDOWNER','IDFORMATS','FTIMESTAMP'],[GroupRootIndex,GroupCunnrentName,OwnerID ,FormatID ,TimeStamp],'IDOWNER, NAME, IDPARENT',false);
+   //
+   //GroupCunnrentLevel := FGroup.AddObject(IntToStr(GroupRootIndex), TwData.Create(GroupCunnrentIndex,_bgColorCell));
+   //
+  end
+  else   // иначе
+  begin
+    { TODO -owofs -cwfImportReaderXLSU : Дописать детект групп }
+      // GroupAlgorithmCol / проверяем не пусто ли 0 - цена, 1 - идентификатор
+     if (Length(GetDataString(FWorksheet.Cells.FindCell(ADataCell^.Row, CollArray[DetectGroupColumn]-1))) = 0) and (Length(ADataCell^.UTF8StringValue)>0) then
+     begin
+       _LevelFromColor := ColorInUsed(ADataCell, FGroup);
+
+       if _LevelFromColor > 0 then
+       begin
+
+         GroupCunnrentName := UTF8Copy(Trim(ADataCell^.UTF8StringValue),1,255);
+         GroupCunnrentLevel:= _LevelFromColor;
+
+         for igroup:= FGroup.Count-1 downto GroupCunnrentLevel+1 do
+          begin
+            TwData(FGroup.Objects[igroup]).Free;
+            FGroup.Delete(igroup);
+          end;
+         GroupCunnrentIndex:= Base.SQLInsert('PL_GROUP',['IDPARENT','NAME','IDOWNER','IDFORMATS','FTIMESTAMP'],[FGroup.Strings[GroupCunnrentLevel],GroupCunnrentName,OwnerID ,FormatID ,TimeStamp],'IDOWNER, NAME, IDPARENT',false);
+
+         TwData(FGroup.Objects[GroupCunnrentLevel]).ID:=GroupCunnrentIndex;
+       end
+       else
+       begin
+         GroupCunnrentName := UTF8Copy(Trim(ADataCell^.UTF8StringValue),1,255);
+         GroupCunnrentIndex:= Base.SQLInsert('PL_GROUP',['IDPARENT','NAME','IDOWNER','IDFORMATS','FTIMESTAMP'],[TwData(FGroup.Objects[GroupCunnrentLevel]).ID,GroupCunnrentName,OwnerID ,FormatID ,TimeStamp],'IDOWNER, NAME, IDPARENT',false);
+
+
+         GroupCunnrentLevel := FGroup.AddObject(IntToStr(TwData(FGroup.Objects[GroupCunnrentLevel]).ID), TwData.Create(GroupCunnrentIndex,_bgColorCell));
+       end;
+     end;
   end;
 
 end;
+
+procedure TwfImportReaderXLS.ParseGroup(aCell: PCell);
+var
+  aName, aValue: String;
+  i: Integer;
+  aRowCol: TwfRowCol;
+begin
+  for i:= 0 to High(GroupsSection) do begin
+    aName:= GroupsSection[i].Name;
+    aValue:= GroupsSection[i].Value;
+    aRowCol:= GetRowCol(aValue);
+
+    if (aRowCol.Col = aCell^.Col) then
+      case Format.GroupInRows of
+        girNo   : ParseGroupNoInRows(aName, aCell);
+        girYes  : ParseGroupInRows(aName, aCell);
+      end;
+  end;
+end;
+
 procedure TwfImportReaderXLS.FOpenWorkBook(Sender: TObject);
 var
   ADataCell: PCell;
@@ -175,6 +269,12 @@ begin
 
   fWorkBook.Options := fWorkBook.Options + [boBufStream];
   fWorkBook.OnOpenWorkbook:= @FOpenWorkBook;
+
+  with fGroupImportFlags do begin
+    ColorCell:= 0;
+    ColorGroup:= 0;
+    FormatSaved:= false;
+  end;
   //Use the Start procedure to start the import
 end;
 

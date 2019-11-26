@@ -42,14 +42,14 @@ type
     function GetCorrectTextValue(aValue: Variant): string;
     function GetGroupBreadCrumbs(aIndex: Integer): string;
     function GetGroupCurrent: TwfGroupCell;
-    procedure SetCurrentGroup(aIndex: SmallInt);
+    procedure SetCurrentGroup(aIndex: integer);
     // Writes the calculated value to the result string
     procedure WriteCalculatedValue(var aContentRow: TwfContentRow);
     // Writes the concatenated string to the result string
     procedure WriteComplexValue(var aContentRow: TwfContentRow);
 
     //Собираем и возвращаем TwfContentCell
-    function CreateContentGroup(aName, aField: string; aValue: string; const aIsSubgroup: boolean):TwfGroupCell;
+    function CreateContentGroup(aName, aField: string; aValue: string; aBgColor: TsColor): TwfGroupCell;
 
   protected
     // Clearing the content line between fill interations
@@ -63,7 +63,7 @@ type
     procedure ContentRowSetGroup(aGroupIndex: integer);
 
     // Adds a group and returns the current index
-    function AddGroup(aName, aField: string; aValue: string): Integer;
+    function AddGroup(aName, aField: string; aValue: string; const aBgColor: TsColor = 0): Integer;
     // Returns a group by index
     function GetGroup(aIndex: Integer):TwfGroupCell;
 
@@ -81,6 +81,7 @@ type
     property ContentRow: TwfContentRow read fContentRow;
     // List of read groups
     property Groups: TwfGroups read fGroups;
+
   public
     constructor Create(aSource: string; aFormat: TStrings); virtual;
     destructor Destroy; override;
@@ -134,14 +135,14 @@ begin
  end;
 end;
 
-function TwfImportReader.CreateContentGroup(aName, aField: string; aValue: string; const aIsSubgroup: boolean
-  ): TwfGroupCell;
+function TwfImportReader.CreateContentGroup(aName, aField: string; aValue: string; aBgColor: TsColor): TwfGroupCell;
 begin
   with Result do begin
     Name:= aName;
     Field:= aField;
     Value:= aValue;
-    IsSubgroup:= aIsSubgroup;
+    Color:= aBgColor;
+    IsCurrent:= false;
   end;
 end;
 
@@ -192,13 +193,13 @@ begin
   SetCurrentGroup(aGroupIndex);
 end;
 
-function TwfImportReader.AddGroup(aName, aField: string; aValue: string): Integer;
+function TwfImportReader.AddGroup(aName, aField: string; aValue: string; const aBgColor: TsColor): Integer;
 begin
-  Groups.PushBack(CreateContentGroup(aName, aField, aValue, Groups.Size>0));
+  Groups.PushBack(CreateContentGroup(aName, aField, aValue, aBgColor));
   Result:= Groups.Size-1;
 end;
 
-procedure TwfImportReader.SetCurrentGroup(aIndex: SmallInt);
+procedure TwfImportReader.SetCurrentGroup(aIndex: integer);
 var
   i: Integer;
   aCell: TwfGroupCell;
