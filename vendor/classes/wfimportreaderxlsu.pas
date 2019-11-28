@@ -177,7 +177,7 @@ begin
   // Looking for a candidate for the group
   for i:= 0 to High(GroupsSection) do begin
     aName:= GetDataString(aCell, dtString);
-    aValue:= GetDataString(aCell, dtString);
+    aValue:= GroupsSection[i].Value;
     aRowCol:= GetRowCol(aValue);
 
     if (aRowCol.Col = aCell^.Col) then
@@ -194,6 +194,7 @@ var
   aRow, aCol, aLastCol: Cardinal;
   aRowCurrent, aFirstRow, aFirstCol: integer;
 begin
+    Log('Opening the data source... [OK]');
     fWorksheet:= GetWorkSheet(Format.WorkSheet);
     aFirstRow:= Format.FirstRow-1;
     aFirstCol:= Format.FirstCol;
@@ -201,6 +202,8 @@ begin
 
     aRowCurrent:= -1;
     ContentRowSetLength(Length(Format.DataSection));
+
+    Log('I am reading the data...');
 
        for ADataCell in fWorksheet.Cells do
        begin
@@ -233,6 +236,7 @@ begin
            end;
          end;
        end;
+     Log('I am reading the data... [COMPLETED]');
 end;
 
 procedure TwfImportReaderXLS.GroupInRowsDetect();
@@ -338,6 +342,7 @@ end;
 
 procedure TwfImportReaderXLS.Start;
 begin
+  Log(SysUtils.Format('%s [%s]',['Opening the data source... ', Source]));
   fWorkBook.ReadFromFile(Source);
 end;
 

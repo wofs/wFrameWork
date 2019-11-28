@@ -27,6 +27,7 @@ type
     fFormat: TwfFormatPaser;
     fContentRow: TwfContentRow;
     fGroups: TwfGroups;
+    fonLog: TTextEvent;
     fonWriteContentRow: TwfWriteContentRowEvent;
 
     fSource: string;
@@ -62,6 +63,7 @@ type
     procedure ContentRowSetLength(aLength: integer);
     procedure ContentRowSetGroup(aGroupIndex: integer);
 
+    procedure Log(aValue: string);
     // Adds a group and returns the current index
     function AddGroup(aName, aField: string; aValue: string; const aBgColor: TsColor = 0): Integer;
     // Returns a group by index
@@ -104,6 +106,7 @@ type
     {Events}
     // You must implement the data write event yourself
     property onWriteContentRow: TwfWriteContentRowEvent read fonWriteContentRow write fonWriteContentRow;
+    property onLog: TTextEvent read fonLog write fonLog;
   end;
 
 implementation
@@ -192,6 +195,11 @@ begin
   fContentRow:= aContentRow;
 
   SetCurrentGroup(aGroupIndex);
+end;
+
+procedure TwfImportReader.Log(aValue: string);
+begin
+  if Assigned(fonLog) then fonLog(self, aValue);
 end;
 
 function TwfImportReader.AddGroup(aName, aField: string; aValue: string; const aBgColor: TsColor): Integer;
@@ -319,23 +327,31 @@ end;
 
 constructor TwfImportReader.Create(aSource: string; aFormat: TStrings);
 begin
-  fTerminated:= true;
-  fSource:= aSource;
-  fFormat:= TwfFormatPaser.Create(aFormat);
-  fGroupsSection:= fFormat.GroupsSection;
-  fDataSection:= fFormat.DataSection;
-  fParamsSection:= fFormat.ParamsSection;
-  fLogicSection:= fFormat.LogicSection;
-  fCalc:= TwfCalculator.Create(nil);
-  fGroups:= TwfGroups.Create;
+  try
+    Log('Initialization of the reader...');
+    fTerminated:= true;
+    fSource:= aSource;
+    fFormat:= TwfFormatPaser.Create(aFormat);
+    fGroupsSection:= fFormat.GroupsSection;
+    fDataSection:= fFormat.DataSection;
+    fParamsSection:= fFormat.ParamsSection;
+    fLogicSection:= fFormat.LogicSection;
+    fCalc:= TwfCalculator.Create(nil);
+    fGroups:= TwfGroups.Create;
+    Log('Initialization of the reader... [OK]');
+  except
+    raise;
+  end;
   //Use the Start procedure to start the import
 end;
 
 destructor TwfImportReader.Destroy;
 begin
+  Log('Unloading the reader...');
   FreeAndNil(fFormat);
   FreeAndNil(fCalc);
   FreeAndNil(fGroups);
+  Log('Unloading the reader... [OK]');
   inherited Destroy;
 end;
 

@@ -14,13 +14,15 @@ unit wfCalculatorU;
 interface
 
 uses
-  Classes, SysUtils, wfTypes, fpexprpars;
+  Classes, SysUtils, wfTypes, wfFunc, fpexprpars;
 
 type
 
   { TwfCalculator }
 
   TwfCalculator = class (TFPExpressionParser)
+  private
+    function TrimFormula(aFormula: string):string;
 
   public
     function Calculate(aFormula: string): Currency;
@@ -31,13 +33,22 @@ implementation
 
 { TwfCalculator }
 
+function TwfCalculator.TrimFormula(aFormula: string): string;
+var
+  i: Integer;
+begin
+  if not (aFormula[1] in ['0'..'9']) then Delete(aFormula, 1, 1);
+
+  Result:= aFormula;
+end;
+
 function TwfCalculator.Calculate(aFormula: string): Currency;
 begin
   try
-    self.Expression:=aFormula;
+    self.Expression:=TrimFormula(aFormula);
     Result:=self.Evaluate.ResFloat;
   except
-    Result:= wfEmptyDouble;
+    raise;
   end;
 end;
 

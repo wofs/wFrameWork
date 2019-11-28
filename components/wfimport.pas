@@ -17,12 +17,12 @@ uses
   Classes, windows, SysUtils, math, IniFiles, LResources, Forms, Controls, Graphics, Dialogs, ComCtrls, PropEdits,
   LazUTF8, LazFileUtils, wfBase, wfEntity, wfTypes, wfClasses, wfFunc, wfResourceStrings, TwfProgressU,
   wfImportTemplatesU, wfDesignSQLItemsU, wfSQLPropertyEditorU, wfIniPropertyEditorU, wfStringsPropertyEditor,
-  wfFormatParserU, wfThreadU;
+  wfFormatParserU, wfThreadU, wfImportReaderXLSU;
 
 type
 
   // Enumeration: input types
-  TwfImportType = (itSpreadSheet, itCSV);
+  TwfImportType = (itSpreadSheet{, itCSV});
 
   TwfImportItem = class;
 
@@ -85,8 +85,11 @@ type
       fDescription: TStrings;
       fDescriptionShort: string;
       fEntity: TwfEntity;
+      fFormatName: string;
       fFormats: TwfFormatItems;
       fImportType: TwfImportType;
+      fonLog: TTextEvent;
+      fonWriteContentRow: TwfWriteContentRowEvent;
       fProgressBarStyle: TProgressBarStyle;
       fSource: string;
       fTerminated: boolean;
@@ -101,6 +104,7 @@ type
       fonProgress: TwfImportProgress;
       fSQLItems: TwfDesignSQLItems;
       fUseProgressBar: boolean;
+      XLSReader: TwfImportReaderXLS;
 
 
       function GetEntity: TwfEntity;
@@ -109,7 +113,10 @@ type
       procedure ImportFinish(Sender: TwfThread; const Msg: Word; const Param: Variant);
       procedure ImportMessage(Sender: TwfThread; const Msg: Word; const Param: Variant);
       procedure ImportProgress(Sender: TwfThread; const Msg: Word; const Value: Word);
+      procedure PonLog(Sender: TObject; const aValue: string);
+      procedure PonWriteContentRow(Sender: TObject; aGroups: TwfGroups; aContentRow: TwfContentRow);
       procedure SetDescription(aValue: TStrings);
+      procedure StartXLSImport();
       function ThreadInit: boolean;
 
       procedure SetTerminated(aValue: boolean);
@@ -121,13 +128,14 @@ type
 
     protected
       function GetDisplayName: string; override;
-
+      procedure Log(aValue: string);
     public
       constructor Create(ACollection: TCollection); override;
       destructor Destroy; override;
 
       property Import: TwfImportThread read fImportThread;
       property OwnerComponent: TPersistent read GetOwner;
+      property FormatName: string read fFormatName write fFormatName;
 
     published
       property SQLItems: TwfDesignSQLItems read fSQLItems write fSQLItems;
@@ -145,6 +153,7 @@ type
       property UseProgressBar: boolean read fUseProgressBar write fUseProgressBar default false;
       property ProgressBarStyle: TProgressBarStyle read fProgressBarStyle write fProgressBarStyle default pbstNormal;
 
+      {Events}
       //onExecute
       //Use PostProgress or PostMessage to communicate with LCL
       //If not assigned, export will be performed by default
@@ -158,6 +167,9 @@ type
       property onProgress: TwfImportProgress read fonProgress write fonProgress;
       //Event, PostMessage
       property onMessage: TwfImportMessage read fonMessage write fonMessage;
+      // You must implement the data write event yourself
+      property onWriteContentRow: TwfWriteContentRowEvent read fonWriteContentRow write fonWriteContentRow;
+      property onLog: TTextEvent read fonLog write fonLog;
   end;
 
   { TwfImportItems }
@@ -180,13 +192,17 @@ type
   private
     fBase: TwfBase;
     fItems: TwfImportItems;
+    fonLog: TTextEvent;
+    fonWriteContentRow: TwfWriteContentRowEvent;
     fRootPath: String;
     fSilentMode: boolean;
     function DialogsOpenLoadDialog(aCaption: string; aFilter: string; const aFilterIndex: word=1): string;
     function GetBase: TwfBase;
     function GetIsDesigning: boolean;
+    procedure PonLog(Sender: TObject; const aValue: string);
+    procedure PonWriteContentRow(Sender: TObject; aGroups: TwfGroups; aContentRow: TwfContentRow);
   protected
-
+    procedure Log(aValue: string);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -206,6 +222,9 @@ type
     // Disables all questions to the user during export.
     //An exception will be thrown if there is a lack of data.
     property SilentMode: boolean read fSilentMode write fSilentMode default false;
+    // You must implement the data write event yourself
+    property onWriteContentRow: TwfWriteContentRowEvent read fonWriteContentRow write fonWriteContentRow;
+    property onLog: TTextEvent read fonLog write fonLog;
   end;
 
 
@@ -318,13 +337,21 @@ end;
 
 procedure TwfImportItem.ImportExecute(Sender: TwfThread; const Msg: Word; var Param: Variant);
 begin
-  if Assigned(fonExecute) then fonExecute(self, Msg, Param)
-  { TODO -owofs -cTwfImportItem : onExecute прописать }
-  //else
-  //  case fImportType of
-  //    itCSV          : ImportExecuteDefaultCSV;
-  //    itSpreadSheet  : ImportExecuteDefaultSpreadSheet;
-  //  end;
+  if Assigned(fonExecute) then fonExecute(self, Msg, Param) else
+    begin
+      case ImportType of
+        itSpreadSheet: StartXLSImport();
+        //itCSV: ;
+      end;
+    end;
+end;
+
+procedure TwfImportItem.StartXLSImport();
+begin
+  XLSReader:= TwfImportReaderXLS.Create(Self.Source, Formats.ItemByName(FormatName).Format);
+  XLSReader.onLog:= @PonLog;
+  XLSReader.onWriteContentRow:= @PonWriteContentRow;
+  XLSReader.Start;
 end;
 
 function TwfImportItem.GetEntity: TwfEntity;
@@ -335,15 +362,24 @@ end;
 
 procedure TwfImportItem.ImportFinish(Sender: TwfThread; const Msg: Word; const Param: Variant);
 begin
-  if not Terminated then
-    Terminated:= true;
+  try
+    if not Terminated then
+      Terminated:= true;
 
-  fImportThread:= nil;
+    fImportThread:= nil;
 
-  if Assigned(fonFinish) then fonFinish(self, Msg, Param);
+    if Assigned(XLSReader) then
+      FreeAndNil(XLSReader);
 
-  if Assigned(fProgress) then
-      fProgress.ForceClose;
+    if Assigned(fonFinish) then fonFinish(self, Msg, Param);
+
+    if Assigned(fProgress) then
+        fProgress.ForceClose;
+
+    Log('Import completed successfully.');
+  except
+    raise;
+  end;
 end;
 
 procedure TwfImportItem.ImportMessage(Sender: TwfThread; const Msg: Word; const Param: Variant);
@@ -356,6 +392,17 @@ begin
   if Assigned(fProgress) then
     fProgress.SetBar(Value);
   if Assigned(onProgress) then onProgress(self, Msg, Value);
+end;
+
+procedure TwfImportItem.PonLog(Sender: TObject; const aValue: string);
+begin
+  if Assigned(fonLog) then fonLog(Sender, aValue);
+end;
+
+procedure TwfImportItem.PonWriteContentRow(Sender: TObject; aGroups: TwfGroups; aContentRow: TwfContentRow);
+begin
+  if Assigned(onWriteContentRow) then onWriteContentRow(Sender, aGroups, aContentRow);
+  { TODO -owofs -cTwfImportItem : Написать реализацию импорта по-умолчанию }
 end;
 
 procedure TwfImportItem.SetDescription(aValue: TStrings);
@@ -397,6 +444,11 @@ begin
    Result:=inherited GetDisplayName;
 end;
 
+procedure TwfImportItem.Log(aValue: string);
+begin
+  if Assigned(fonLog) then fonLog(self, aValue);
+end;
+
 constructor TwfImportItem.Create(ACollection: TCollection);
 begin
   inherited Create(ACollection);
@@ -429,6 +481,21 @@ end;
 function TwfImport.GetIsDesigning: boolean;
 begin
   Result:= csDesigning in ComponentState;
+end;
+
+procedure TwfImport.PonLog(Sender: TObject; const aValue: string);
+begin
+  if Assigned(fonLog) then fonLog(Sender, aValue);
+end;
+
+procedure TwfImport.PonWriteContentRow(Sender: TObject; aGroups: TwfGroups; aContentRow: TwfContentRow);
+begin
+  if Assigned(onWriteContentRow) then onWriteContentRow(Sender, aGroups, aContentRow);
+end;
+
+procedure TwfImport.Log(aValue: string);
+begin
+  if Assigned(fonLog) then fonLog(self, aValue);;
 end;
 
 constructor TwfImport.Create(AOwner: TComponent);
@@ -482,6 +549,9 @@ var
   aDialogFilter: String;
 begin
   aImport:= fItems.ItemByName(aImportName);
+  aImport.FormatName:= aFormatName;
+  aImport.onLog:= @PonLog;
+  aImport.onWriteContentRow:= @PonWriteContentRow;
 
   if Assigned(aImport) then
     begin
@@ -493,7 +563,7 @@ begin
 
           case aImport.ImportType of
             itSpreadSheet     : aDialogFilter:= 'preadsheets (*.ods;*.xls;*.xlsx)|*.ods;*.xls;*.xlsx';
-            itCSV             : aDialogFilter:= 'Comma Text (*.csv)|*.csv'
+            //itCSV             : aDialogFilter:= 'Comma Text (*.csv)|*.csv'
             else
               aDialogFilter:='';
           end;
