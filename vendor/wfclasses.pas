@@ -58,6 +58,7 @@ type
      Name: string;
      Field: string;
      Value: variant;
+     Color: TsColor;
    end;
 
    TwfGroupCell = Record

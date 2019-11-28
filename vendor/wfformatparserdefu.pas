@@ -23,12 +23,13 @@ const
   ufpCalculatedType      = '[ВЫЧИСЛИТЬ]';
   ufpNumberType          = '[ЧИСЛО]';
   ufpStringType          = '[ТЕКСТ]';
-  ufpGroupType           = '[ГРУППА]';
 
   ufpGroupInRowsYes      = 'ДА';
   ufpGroupInRowsNo       = 'НЕТ';
 
   ufpIsContent           = 'ЗАПИСЬЕСЛИ';
+  ufpIsGroup             = 'ГРУППАЕСЛИ';
+  ufpGroupBackground     = 'ФОН';
 
 implementation
 

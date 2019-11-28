@@ -65,6 +65,7 @@ procedure WriteValue(aWorksheet:TsWorksheet; aRow, aCol: integer; aField: TField
 procedure ChangeColor(Sender: TObject);
 
 function IsEmpty(aString: string): boolean;
+function IsEmpty(aValue: variant): boolean;
 function EmptyBaseID:variant;
 function IsEmpty(aID: BaseID):boolean;
 function IsEmpty(aStrings:TStrings):boolean;
@@ -205,6 +206,24 @@ end;
 function IsEmpty(aString: string): boolean;
 begin
   Result:= (Length(aString)=0) or (aString = null);
+end;
+
+function IsEmpty(aValue: variant): boolean;
+begin
+Result := false;
+if aValue <> null then
+  case TVarData(aValue).VType of
+    varSmallInt,
+    varInteger,
+    varint64,
+    varSingle        : Result := aValue=0;
+    varDouble,
+    varCurrency      : Result := aValue=0.0;
+    varBoolean       : Result:= false;
+    varString        : Result := UTF8Length(aValue)=0
+    else
+      Result:= false;
+  end;
 end;
 
 function EmptyBaseID: variant;

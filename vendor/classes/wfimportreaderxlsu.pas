@@ -14,14 +14,16 @@ unit wfImportReaderXLSU;
 interface
 
 uses
-  Classes, SysUtils, gvector, wfTypes, wfClasses, wfFunc, wfBase, LazUTF8, wfFormatParserU, wfImportReaderU,
-  fpspreadsheet, fpsTypes, fpsallformats, fpsutils;
+  Classes, SysUtils, gvector, wfTypes, wfClasses, wfFunc, wfFormatParserDefU, wfBase, LazUTF8, wfFormatParserU,
+  wfImportReaderU, fpspreadsheet, fpsTypes, fpsallformats, fpsutils;
 
 type
 
   TwfGroupImportFlags = record
+    Name: string;
+    Value: string;
     ColorGroup  : TsColor;
-    ColorCell   : TsColor;
+    ColorCell: TsColor;
     FormatSaved : boolean;
   end;
 
@@ -39,6 +41,13 @@ type
     // Returns cell background color
     function GetBackground(aCell: PCell): TsColor;
     function GetGroupIndexByName(aName: string): integer;
+    function GroupColorInUsed(aColor: TsColor): integer;
+    // Detect groups in a row
+    procedure GroupInRowsDetect();
+    // Check the candidate's compliance with the conditions
+    function IsGroup(aGroupCondition: ArrayOfString): boolean;
+    // Check whether the candidate in the group meets the specified conditions (Background+Price (empty))
+    procedure GroupByBackground();
     // We record the found content cells
     procedure ParseCell(aCell: PCell);
     // Returns the line contained in the cell
@@ -114,6 +123,7 @@ begin
       ContentRow.Row[i].Name:= DataSection[i].Name;
       ContentRow.Row[i].Field:= GetField(DataSection[i].Name);
       ContentRow.Row[i].Value:= GetDataVariant(aCell, DataSection[i].DataType);
+      ContentRow.Row[i].Color:= GetBackground(aCell);
     end;
   end;
 
@@ -144,63 +154,19 @@ var
   aRowCol: TwfRowCol;
   aValue: String;
 begin
+  // Remember the background color of the main group
   if not fGroupImportFlags.FormatSaved then
   begin
     fGroupImportFlags.ColorGroup := GetBackground(aCell);
     fGroupImportFlags.FormatSaved := True;
   end;
 
+  // Remember the name, value and color of the candidate for the group (only the column matches, without conditions)
+  fGroupImportFlags.Name:=aName;
+  fGroupImportFlags.Value:= GetDataString(aCell, dtString);
   fGroupImportFlags.ColorCell:= GetBackground(aCell);
-  aValue:= UTF8Trim(aCell^.UTF8StringValue);
-
-  if (fGroupImportFlags.ColorGroup = fGroupImportFlags.ColorCell) and (UTF8Length(aValue) = 0) then
-  begin
-   Groups.Clear;
-   aIndexGroup:= AddGroup(aName, GetField(aName), aValue, fGroupImportFlags.ColorCell);
-
-   ContentRowSetGroup(aIndexGroup);
-
-   //GroupCunnrentName := UTF8Copy(Trim(ADataCell^.UTF8StringValue),1,255);
-   //GroupCunnrentIndex:= Base.SQLInsert('PL_GROUP',['IDPARENT','NAME','IDOWNER','IDFORMATS','FTIMESTAMP'],[GroupRootIndex,GroupCunnrentName,OwnerID ,FormatID ,TimeStamp],'IDOWNER, NAME, IDPARENT',false);
-   //
-   //GroupCunnrentLevel := FGroup.AddObject(IntToStr(GroupRootIndex), TwData.Create(GroupCunnrentIndex,_bgColorCell));
-   //
-  end
-  else   // иначе
-  begin
-    { TODO -owofs -cwfImportReaderXLSU : Дописать детект групп }
-      // GroupAlgorithmCol / проверяем не пусто ли 0 - цена, 1 - идентификатор
-     if (Length(GetDataString(FWorksheet.Cells.FindCell(ADataCell^.Row, CollArray[DetectGroupColumn]-1))) = 0) and (Length(ADataCell^.UTF8StringValue)>0) then
-     begin
-       _LevelFromColor := ColorInUsed(ADataCell, FGroup);
-
-       if _LevelFromColor > 0 then
-       begin
-
-         GroupCunnrentName := UTF8Copy(Trim(ADataCell^.UTF8StringValue),1,255);
-         GroupCunnrentLevel:= _LevelFromColor;
-
-         for igroup:= FGroup.Count-1 downto GroupCunnrentLevel+1 do
-          begin
-            TwData(FGroup.Objects[igroup]).Free;
-            FGroup.Delete(igroup);
-          end;
-         GroupCunnrentIndex:= Base.SQLInsert('PL_GROUP',['IDPARENT','NAME','IDOWNER','IDFORMATS','FTIMESTAMP'],[FGroup.Strings[GroupCunnrentLevel],GroupCunnrentName,OwnerID ,FormatID ,TimeStamp],'IDOWNER, NAME, IDPARENT',false);
-
-         TwData(FGroup.Objects[GroupCunnrentLevel]).ID:=GroupCunnrentIndex;
-       end
-       else
-       begin
-         GroupCunnrentName := UTF8Copy(Trim(ADataCell^.UTF8StringValue),1,255);
-         GroupCunnrentIndex:= Base.SQLInsert('PL_GROUP',['IDPARENT','NAME','IDOWNER','IDFORMATS','FTIMESTAMP'],[TwData(FGroup.Objects[GroupCunnrentLevel]).ID,GroupCunnrentName,OwnerID ,FormatID ,TimeStamp],'IDOWNER, NAME, IDPARENT',false);
-
-
-         GroupCunnrentLevel := FGroup.AddObject(IntToStr(TwData(FGroup.Objects[GroupCunnrentLevel]).ID), TwData.Create(GroupCunnrentIndex,_bgColorCell));
-       end;
-     end;
-  end;
-
 end;
+
 
 procedure TwfImportReaderXLS.ParseGroup(aCell: PCell);
 var
@@ -208,9 +174,10 @@ var
   i: Integer;
   aRowCol: TwfRowCol;
 begin
+  // Looking for a candidate for the group
   for i:= 0 to High(GroupsSection) do begin
-    aName:= GroupsSection[i].Name;
-    aValue:= GroupsSection[i].Value;
+    aName:= GetDataString(aCell, dtString);
+    aValue:= GetDataString(aCell, dtString);
     aRowCol:= GetRowCol(aValue);
 
     if (aRowCol.Col = aCell^.Col) then
@@ -252,6 +219,13 @@ begin
 
             ParseCell(ADataCell);
 
+           //If the group rows, then work with them
+           if (aCol = aLastCol) and (Format.GroupInRows = girYes) then
+           begin
+             // Check whether the candidate in the group meets the specified conditions (Background+Price (empty))
+             GroupInRowsDetect();
+           end;
+
            if (aCol = aLastCol) and (IsContent()) then
            begin
               WriteContentRow(Groups, ContentRow);
@@ -261,6 +235,83 @@ begin
        end;
 end;
 
+procedure TwfImportReaderXLS.GroupInRowsDetect();
+begin
+  { TODO -owofs : Make a choice of background or options
+ }
+  // Check whether the candidate in the group meets the specified conditions (Background+Price (empty))
+  GroupByBackground;
+end;
+
+function TwfImportReaderXLS.GroupColorInUsed(aColor: TsColor): integer;
+var
+  i: Integer;
+begin
+  Result:= -1;
+  for i:=0 to Groups.Size-1 do
+    if Groups[i].Color = aColor then
+    begin
+      Result:= i;
+      Break;
+    end;
+end;
+
+procedure TwfImportReaderXLS.GroupByBackground();
+var
+  aGroupCondition: ArrayOfString;
+  aIndex, i: Integer;
+  aAlgoritm: String;
+begin
+
+  // Check whether the candidate in the group meets the specified conditions (Background+Price (empty))
+  // Read and prepare the verification algorithm for analysis
+ aAlgoritm:= UTF8StringReplace(Format.GetValueByParam(ufpIsGroup, LogicSection), ufpGroupBackground+'+','',[]);
+ aGroupCondition:= ArrayAsString(aAlgoritm, '+');
+
+ // Check the candidate's compliance with additional conditions (for example, no price)
+ if IsGroup(aGroupCondition) then
+       // If it matches, then check the background colors
+      if (fGroupImportFlags.ColorGroup = fGroupImportFlags.ColorCell) then  //fGroupImportFlags.ColorCell = 14469044
+      begin
+        // If the cell color matches the root group
+        Groups.Clear;
+        aIndex:= AddGroup(fGroupImportFlags.Name, '', fGroupImportFlags.Value, fGroupImportFlags.ColorCell);
+        ContentRowSetGroup(aIndex);
+      end else
+      begin
+         aIndex:= GroupColorInUsed(fGroupImportFlags.ColorCell);   //???
+         if aIndex>0 then
+           ContentRowSetGroup(aIndex)
+         else
+         begin
+           aIndex:= AddGroup(fGroupImportFlags.Name, '', fGroupImportFlags.Value, fGroupImportFlags.ColorCell);
+           ContentRowSetGroup(aIndex);
+         end;
+
+      end;
+
+end;
+
+function TwfImportReaderXLS.IsGroup(aGroupCondition: ArrayOfString): boolean;
+var
+  k: Integer;
+  i, aCount: Integer;
+  aGroupConditionValue: String;
+begin
+ // Check the candidate's compliance with the conditions
+  aCount:= 0;
+  Result:= false;
+  for i:=0 to High(ContentRow.Row) do begin
+    for k:= 0 to High(aGroupCondition) do begin
+      aGroupConditionValue:= aGroupCondition[k];
+      if ContentRow.Row[i].Name = aGroupCondition[k] then
+        if (UTF8Length(ContentRow.Row[i].Value) = 0) or (ContentRow.Row[i].Value=0) then
+          inc(aCount);
+    end;
+  end;
+
+  Result:= aCount = Length(aGroupCondition);
+end;
 
 constructor TwfImportReaderXLS.Create(aSource: string; aFormat: TStrings);
 begin
@@ -271,7 +322,8 @@ begin
   fWorkBook.OnOpenWorkbook:= @FOpenWorkBook;
 
   with fGroupImportFlags do begin
-    ColorCell:= 0;
+    Name:= wfEmptyStr;
+    Value:= wfEmptyStr;
     ColorGroup:= 0;
     FormatSaved:= false;
   end;
@@ -319,7 +371,6 @@ var
   aAddressTemp: String;
   aCol: Longint;
 begin
-  //aAddress:= 'A5*10';
   aAddressTemp:= aAddress;
 
   with Result do begin

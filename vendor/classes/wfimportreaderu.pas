@@ -48,7 +48,7 @@ type
     // Writes the concatenated string to the result string
     procedure WriteComplexValue(var aContentRow: TwfContentRow);
 
-    //Собираем и возвращаем TwfContentCell
+    //Собираем и возвращаем TwfGroupCell
     function CreateContentGroup(aName, aField: string; aValue: string; aBgColor: TsColor): TwfGroupCell;
 
   protected
@@ -118,6 +118,7 @@ begin
     ContentRow.Row[i].Name:= wfEmptyStr;
     ContentRow.Row[i].Field:= wfEmptyStr;
     ContentRow.Row[i].Value:= wfEmptyInt;
+    ContentRow.Row[i].Color:= wfEmptyInt;
   end;
 end;
 
@@ -298,15 +299,18 @@ function TwfImportReader.IsContent(): boolean;
 var
   aRecordCondition: ArrayOfString;
   i, k, aCount: Integer;
+  aValue: variant;
 begin
  Result:= false;
  aCount:= 0;
  aRecordCondition:= ArrayAsString(Format.GetValueByParam(ufpIsContent, fLogicSection), '+');
 
  for i:=0 to High(ContentRow.Row) do begin
+   aValue:= ContentRow.Row[i].Value;
    for k:= 0 to High(aRecordCondition) do begin
      if ContentRow.Row[i].Name = aRecordCondition[k] then
-     inc(aCount);
+       if  not IsEmpty(aValue) then
+         inc(aCount);
    end;
  end;
 

@@ -14,7 +14,7 @@ unit wfCalculatorU;
 interface
 
 uses
-  Classes, SysUtils, fpexprpars;
+  Classes, SysUtils, wfTypes, fpexprpars;
 
 type
 
@@ -33,8 +33,12 @@ implementation
 
 function TwfCalculator.Calculate(aFormula: string): Currency;
 begin
-  self.Expression:=aFormula;
-  Result:=self.Evaluate.ResFloat;
+  try
+    self.Expression:=aFormula;
+    Result:=self.Evaluate.ResFloat;
+  except
+    Result:= wfEmptyDouble;
+  end;
 end;
 
 end.
