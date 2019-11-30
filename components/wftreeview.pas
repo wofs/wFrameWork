@@ -369,7 +369,7 @@ begin
 
   aCurrentId:= CurrentId;
 
-  if Assigned(fBase) then
+  if Assigned(fBase) and fBase.Connection.Connected then
   begin
     Fill(nil);
     ExpandThis(aCurrentId);
@@ -704,6 +704,8 @@ var
   aParams: TwfParams;
   aSQL: String;
 begin
+  if not fBase.Connection.Connected then exit;
+
   aNewNode:= nil;
   aData:= nil;
   aParams:= nil;
