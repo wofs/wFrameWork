@@ -16,7 +16,7 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, Grids, StdCtrls, Buttons, Spin, PropEdits, wfFunc,
-  wfTypes, wfClasses, wfSQLPropertyEditorU, wfStringsPropertyEditor, wfTextPropertyEditorU, wfBase, wfComboBox;
+  wfTypes, wfClasses, wfSQLPropertyEditorU, wfStringsPropertyEditor, wfBase, wfComboBox;
 
 type
   TwfValueListEditor = class;
