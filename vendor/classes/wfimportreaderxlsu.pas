@@ -285,9 +285,14 @@ begin
       begin
          aIndex:= GroupColorInUsed(fGroupImportFlags.ColorCell);   //???
          if aIndex>0 then
+         begin
+           // If this level already exists, then replace the existing group with a new one
+           ReplaceGroup(aIndex, fGroupImportFlags.Name, '', fGroupImportFlags.Value, fGroupImportFlags.ColorCell);
            ContentRowSetGroup(aIndex)
+         end
          else
          begin
+           // If this level does not exist yet, then add
            aIndex:= AddGroup(fGroupImportFlags.Name, '', fGroupImportFlags.Value, fGroupImportFlags.ColorCell);
            ContentRowSetGroup(aIndex);
          end;

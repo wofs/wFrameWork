@@ -66,6 +66,8 @@ type
     procedure Log(aValue: string);
     // Adds a group and returns the current index
     function AddGroup(aName, aField: string; aValue: string; const aBgColor: TsColor = 0): Integer;
+    // Replaces the specified group with a new one
+    procedure ReplaceGroup(aIndex: integer; aName, aField: string; aValue: string; const aBgColor: TsColor);
     // Returns a group by index
     function GetGroup(aIndex: Integer):TwfGroupCell;
 
@@ -206,6 +208,16 @@ function TwfImportReader.AddGroup(aName, aField: string; aValue: string; const a
 begin
   Groups.PushBack(CreateContentGroup(aName, aField, aValue, aBgColor));
   Result:= Groups.Size-1;
+end;
+
+procedure TwfImportReader.ReplaceGroup(aIndex: integer; aName, aField: string; aValue: string; const aBgColor: TsColor);
+var
+  i: QWord;
+begin
+  for i:= Groups.Size-1 downto aIndex do begin
+    Groups.PopBack;
+  end;
+  AddGroup(aName, aField, aValue, aBgColor);
 end;
 
 procedure TwfImportReader.SetCurrentGroup(aIndex: integer);
