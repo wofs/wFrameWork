@@ -1022,21 +1022,32 @@ begin
 end;
 
 function TwfBase.WriteOrderBy(const uSQL: string; aOrderBy: string): string;
+const
+  uOrderBy = ' ORDER BY ';
 var
   aPosEnd: Integer;
   aPosOrderBy: PtrInt;
+  aOldOrderBy: String;
 begin
+ aPosOrderBy:= 0;
+ aOldOrderBy:= '';
  Result:= UTF8UpperCase(uSQL);
  aPosEnd:= Length(Result);
- aPosOrderBy:= UTF8Pos('ORDER',Result,1);
+ aPosOrderBy:= UTF8Pos(uOrderBy,Result,1);
 
   if aPosOrderBy>0 then
-    UTF8Delete(Result,aPosOrderBy,aPosEnd-aPosOrderBy+1)
+   begin
+     aOldOrderBy:= UTF8Trim(UTF8Copy(Result, aPosOrderBy+Length(uOrderBy), aPosEnd-aPosOrderBy+Length(uOrderBy)));
+     UTF8Delete(Result,aPosOrderBy,aPosEnd-aPosOrderBy+1)
+   end
   else
     aPosOrderBy:= aPosEnd+1;
 
   if Length(aOrderBy)>0 then
-    UTF8Insert(' ORDER BY '+aOrderBy,Result,aPosOrderBy);
+    UTF8Insert(uOrderBy+aOrderBy,Result,aPosOrderBy)
+  else
+    if Length(aOldOrderBy)>0 then
+      UTF8Insert(uOrderBy+aOldOrderBy,Result,aPosOrderBy);
 end;
 
 procedure TwfBase.CreateNewDataBaseFireBird(const uHost, uPort, uBaseName, uUserName,
@@ -1625,7 +1636,7 @@ end;
 -------------------------------------------------------------------------------}
 function TwfBase.AsString(aArr: ArrayOfString): string;
 begin
- wfFunc.AsString(aArr);
+ Result:= wfFunc.AsString(aArr);
 end;
 
 {@@ ----------------------------------------------------------------------------
@@ -1635,7 +1646,7 @@ end;
 -------------------------------------------------------------------------------}
 function TwfBase.AsString(aArr: ArrayOfBaseID): string;
 begin
- wfFunc.AsString(aArr);
+ Result:= wfFunc.AsString(aArr);
 end;
 
 {@@ ----------------------------------------------------------------------------
