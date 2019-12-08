@@ -345,7 +345,7 @@ begin
     begin
       for i:=0 to aIn.Count-1 do
       begin
-        if (i>0) and (UTF8Length(Result)>0) then
+        if (i>0) and (UTF8Length(aInText)>0) then
           aInText:= aInText+' AND ';
 
           aInText:= aInText+' '+aIn.Strings[i]+' ';
