@@ -28,6 +28,7 @@ type
       fParseSQL: Boolean;
       fSQL: TStrings;
       fParams: TwfParams;
+      fTableName: string;
 
       function GetParams: TwfParams;
       function GetSQL: TStrings;
@@ -40,6 +41,8 @@ type
 
     published
       property Name: string read fName write fName;
+      // The name of the table (reference)
+      property TableName: string read fTableName write fTableName;
       property SQL: TStrings read GetSQL write SetSQL;
       property ParseSQL : Boolean read fParseSQL write fParseSQL default true;
       property Params: TwfParams read GetParams write SetParams;
@@ -56,8 +59,9 @@ type
   protected
 
   public
-    function ItemByName(aName: string):TwfDesignSQLItem;
-    function ItemByNameSQL(aName: string): string;
+    function ItemByName(aItemName: string):TwfDesignSQLItem;
+    function GetSQL(aItemName: string): string;
+    function GetTableName(aItemName: string): string;
 
   end;
 
@@ -66,14 +70,14 @@ implementation
 
 { TwfDesignSQLItems }
 
-function TwfDesignSQLItems.ItemByName(aName: string): TwfDesignSQLItem;
+function TwfDesignSQLItems.ItemByName(aItemName: string): TwfDesignSQLItem;
 var
   i: Integer;
 begin
 Result:= nil;
 
 for i:=0 to Count-1 do
- if UTF8UpperCase(TwfDesignSQLItem(Items[i]).Name) = UTF8UpperCase(aName) then
+ if UTF8UpperCase(TwfDesignSQLItem(Items[i]).Name) = UTF8UpperCase(aItemName) then
    begin
      Result:= TwfDesignSQLItem(Items[i]);
      Break;
@@ -83,9 +87,14 @@ if not Assigned(Result) then
   raise Exception.Create(Format(rsExceptObjectNotAssigned,['']));
 end;
 
-function TwfDesignSQLItems.ItemByNameSQL(aName: string): string;
+function TwfDesignSQLItems.GetSQL(aItemName: string): string;
 begin
-  Result:= ItemByName(aName).SQL.Text;
+  Result:= ItemByName(aItemName).SQL.Text;
+end;
+
+function TwfDesignSQLItems.GetTableName(aItemName: string): string;
+begin
+  Result:= ItemByName(aItemName).TableName;
 end;
 
 { TwfDesignSQLItem }

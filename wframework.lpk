@@ -515,8 +515,8 @@ convey the exclusion of warranty; and each file should have at least the
 
 Degtyarev Alexander A. 
 E-mail: degtyarev.alexander.code@yandex.ru"/>
-    <Version Minor="19" Release="1" Build="33"/>
-    <Files Count="42">
+    <Version Minor="20" Release="1" Build="1"/>
+    <Files Count="43">
       <Item1>
         <Filename Value="strings\wfresourcestrings.pas"/>
         <UnitName Value="wfResourceStrings"/>
@@ -693,30 +693,35 @@ E-mail: degtyarev.alexander.code@yandex.ru"/>
         <UnitName Value="wfEntity"/>
       </Item36>
       <Item37>
+        <Filename Value="components\wfsqlstrings.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="wfSQLStrings"/>
+      </Item37>
+      <Item38>
         <Filename Value="components\wfvaluelisteditor.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="wfValueListEditor"/>
-      </Item37>
-      <Item38>
-        <Filename Value="forms\twfprogressu.pas"/>
-        <UnitName Value="TwfProgressU"/>
       </Item38>
       <Item39>
-        <Filename Value="forms\wfreportviewer.pas"/>
-        <UnitName Value="wfReportViewer"/>
+        <Filename Value="forms\twfprogressu.pas"/>
+        <UnitName Value="TwfProgressU"/>
       </Item39>
       <Item40>
-        <Filename Value="forms\wfstringseditor.pas"/>
-        <UnitName Value="wfStringsEditor"/>
+        <Filename Value="forms\wfreportviewer.pas"/>
+        <UnitName Value="wfReportViewer"/>
       </Item40>
       <Item41>
-        <Filename Value="def.inc"/>
-        <UnitName Value="def"/>
+        <Filename Value="forms\wfstringseditor.pas"/>
+        <UnitName Value="wfStringsEditor"/>
       </Item41>
       <Item42>
+        <Filename Value="def.inc"/>
+        <UnitName Value="def"/>
+      </Item42>
+      <Item43>
         <Filename Value="vendor\wfformatparserdefu.pas"/>
         <UnitName Value="wfFormatParserDefU"/>
-      </Item42>
+      </Item43>
     </Files>
     <RequiredPkgs Count="6">
       <Item1>

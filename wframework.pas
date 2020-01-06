@@ -12,8 +12,8 @@ uses
   wfParamsU, wfIntSQLItemU, wfSQLPropertyEditorU, wfDesignSQLItemsU, wfCustomOrderByListU, wfIniPropertyEditorU, 
   wfFormatParserU, wfImportReaderU, wfImportReaderXLSU, wfCalculatorU, wfPlugins, wfLog, wfVersions, wfIBConnection, 
   wfPQConnection, wfODBCConnection, wfBase, wfSQLQuery, wfSQLScript, wfSQLTransaction, wfTreeView, wfDBGrid, 
-  wfComboBox, wfStatusProgressBar, wfReport, wfImport, wfSettings, wfEntity, wfValueListEditor, TwfProgressU, 
-  wfReportViewer, wfStringsEditor, wfFormatParserDefU, LazarusPackageIntf;
+  wfComboBox, wfStatusProgressBar, wfReport, wfImport, wfSettings, wfEntity, wfSQLStrings, wfValueListEditor, 
+  TwfProgressU, wfReportViewer, wfStringsEditor, wfFormatParserDefU, LazarusPackageIntf;
 
 implementation
 
@@ -37,6 +37,7 @@ begin
   RegisterUnit('wfImport', @wfImport.Register);
   RegisterUnit('wfSettings', @wfSettings.Register);
   RegisterUnit('wfEntity', @wfEntity.Register);
+  RegisterUnit('wfSQLStrings', @wfSQLStrings.Register);
   RegisterUnit('wfValueListEditor', @wfValueListEditor.Register);
 end;
 
