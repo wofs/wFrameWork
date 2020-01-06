@@ -69,6 +69,7 @@ type
     procedure SetSQLItemNew(aValue: TStrings);
     procedure SetSQLItemUpdate(aValue: TStrings);
     procedure SetSQLCreateTable();
+    procedure SetSQLShortListPresets();
     procedure SetSQLTreeDragNode(aValue: TStrings);
     procedure SetSQLTreeGetRoot(aValue: TStrings);
     procedure SetSQLTreePresets();
@@ -365,11 +366,20 @@ begin
              +'     NAME      CHARACTER VARYING(500) '+wfLE
              +' );',[TableName]));
       {$ELSE}
+      case aSQLPresets of
+        spShortList:
           AppendText(fSQLCreate,Format('CREATE TABLE %s ( '+wfLE
-             +'     ID        BIGSERIAL PRIMARY KEY, '+wfLE
-             +'     IDPARENT  BIGINT, '+wfLE
-             +'     NAME      CHARACTER VARYING(500) '+wfLE
-             +' );',[TableName]));
+                   +'     ID        BIGSERIAL PRIMARY KEY, '+wfLE
+                   +'     NAME      CHARACTER VARYING(500) '+wfLE
+                   +' );',[TableName]));
+        else
+          AppendText(fSQLCreate,Format('CREATE TABLE %s ( '+wfLE
+                   +'     ID        BIGSERIAL PRIMARY KEY, '+wfLE
+                   +'     IDPARENT  BIGINT, '+wfLE
+                   +'     NAME      CHARACTER VARYING(500) '+wfLE
+                   +' );',[TableName]));
+      end;
+
       {$ENDIF}
     end;
     else
@@ -491,6 +501,39 @@ begin
       fSQLDrop.Text:= Format('DROP TABLE %s;',[TableName]);
 end;
 
+procedure TwfEntity.SetSQLShortListPresets();
+begin
+   if fSQLCreate.Count = 0 then
+      SetSQLCreateTable();
+
+   if fSQLGetList.Count = 0 then
+      fSQLGetList.Text:= Format('SELECT ID, NAME FROM %s',[TableName]);
+
+   if fSQLGetListFull.Count = 0 then
+      fSQLGetListFull.Text:= Format('SELECT * FROM %s',[TableName]);
+
+   if fSQLGetListShort.Count = 0 then
+      fSQLGetListShort.Text:= Format('SELECT * FROM %s',[TableName]);
+
+   if fSQLItemDel.Count = 0 then
+      fSQLItemDel.Text:= Format('DELETE FROM %s WHERE ID=:ID',[TableName]);
+
+   if fSQLItemGet.Count = 0 then
+      fSQLItemGet.Text:= Format('SELECT * FROM %s WHERE ID=:ID',[TableName]);
+
+   if fSQLItemNew.Count = 0 then
+      fSQLItemNew.Text:= Format('INSERT INTO %s '+wfLE+'(NAME) '+wfLE+'VALUES (:NAME) RETURNING ID',[TableName]);
+
+   if fSQLItemUpdate.Count = 0 then
+      fSQLItemUpdate.Text:= Format('UPDATE '+wfLE+'%s '+wfLE+'SET NAME=:NAME '+wfLE+'WHERE ID=:ID RETURNING ID',[TableName]);
+
+   if fSQLTreeGetRoot.Count = 0 then
+      fSQLTreeGetRoot.Text:= '';
+
+   if fSQLDrop.Count = 0 then
+      fSQLDrop.Text:= Format('DROP TABLE %s;',[TableName]);
+end;
+
 procedure TwfEntity.SetSQLPresets(aValue: TwfEntitySQLPresets);
 begin
   if faSQLPresets = aValue then exit;
@@ -515,6 +558,7 @@ case aValue of
     end;
   spTree: SetSQLTreePresets();
   spList: SetSQLListPresets();
+  spShortList: SetSQLShortListPresets();
 end;
 end;
 

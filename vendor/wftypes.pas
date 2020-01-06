@@ -72,7 +72,7 @@ type
   TSQLItemType = (stLike, stContaining, stIn, stUnknown);
   TwfSQLEngine = (seFirebird, seODBC, sePostgreSQL, seUnknown);
 
-  TwfEntitySQLPresets = (spNone, spTree, spList);
+  TwfEntitySQLPresets = (spNone, spTree, spList, spShortList);
   TwfEntitySQLType = (estList, estListFull, estListShort, estItemDel, estItemGet, estItemNew, estItemUpdate, estTreeGetRoot, estTreeDragNode);
   TwfEntityScriptType = (esctCreate, esctDrop);
 
