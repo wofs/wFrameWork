@@ -515,8 +515,8 @@ convey the exclusion of warranty; and each file should have at least the
 
 Degtyarev Alexander A. 
 E-mail: degtyarev.alexander.code@yandex.ru"/>
-    <Version Minor="20" Release="1" Build="2"/>
-    <Files Count="43">
+    <Version Minor="20" Release="1" Build="4"/>
+    <Files Count="44">
       <Item1>
         <Filename Value="strings\wfresourcestrings.pas"/>
         <UnitName Value="wfResourceStrings"/>
@@ -715,13 +715,17 @@ E-mail: degtyarev.alexander.code@yandex.ru"/>
         <UnitName Value="wfStringsEditor"/>
       </Item41>
       <Item42>
-        <Filename Value="def.inc"/>
-        <UnitName Value="def"/>
+        <Filename Value="forms\wfsimpledataeditor.pas"/>
+        <UnitName Value="wfSimpleDataEditor"/>
       </Item42>
       <Item43>
+        <Filename Value="def.inc"/>
+        <UnitName Value="def"/>
+      </Item43>
+      <Item44>
         <Filename Value="vendor\wfformatparserdefu.pas"/>
         <UnitName Value="wfFormatParserDefU"/>
-      </Item43>
+      </Item44>
     </Files>
     <RequiredPkgs Count="6">
       <Item1>

@@ -47,6 +47,7 @@ type
     fSQLTreeGetRoot: TStrings;
     fTableName: string;
     fBase: TwfBase;
+    fTablePrefix: string;
     procedure AppendText(var aStrings: TStrings; const aText: string);
     function GetBase: TwfBase;
     function GetTableName: string;
@@ -104,6 +105,8 @@ type
     property Description: TStrings read fDescription write SetDescription;
     // The table name in the database
     property TableName: string read GetTableName write fTableName;
+    // Table name prefix
+    property TablePrefix: string read fTablePrefix write fTablePrefix;
 
     property SQLCreate: TStrings read fSQLCreate write SetSQLCreate;
 
@@ -223,11 +226,22 @@ begin
 end;
 
 function TwfEntity.GetTableName: string;
+var
+  aPrefix: string;
 begin
+  aPrefix:= EmptyStr;
+
+  if not IsEmpty(fTablePrefix) then
+    aPrefix:= UTF8UpperCase(fTablePrefix)+'_';
+
   if Length(fTableName)=0 then
     Result:= UTF8UpperCase(self.Name)
   else
     Result:= fTableName;
+
+    Result:= UTF8StringReplace(Result, aPrefix, '', [rfReplaceAll]);
+
+    Result:= aPrefix+ Result;
 end;
 
 function TwfEntity.GetBase: TwfBase;

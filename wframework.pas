@@ -13,7 +13,7 @@ uses
   wfFormatParserU, wfImportReaderU, wfImportReaderXLSU, wfCalculatorU, wfPlugins, wfLog, wfVersions, wfIBConnection, 
   wfPQConnection, wfODBCConnection, wfBase, wfSQLQuery, wfSQLScript, wfSQLTransaction, wfTreeView, wfDBGrid, 
   wfComboBox, wfStatusProgressBar, wfReport, wfImport, wfSettings, wfEntity, wfSQLStrings, wfValueListEditor, 
-  TwfProgressU, wfReportViewer, wfStringsEditor, wfFormatParserDefU, LazarusPackageIntf;
+  TwfProgressU, wfReportViewer, wfStringsEditor, wfSimpleDataEditor, wfFormatParserDefU, LazarusPackageIntf;
 
 implementation
 
