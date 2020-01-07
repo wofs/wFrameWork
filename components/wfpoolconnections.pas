@@ -25,7 +25,7 @@ type
 
   TwfPoolConnections = class(TComponent)
   private
-    fConnectionsCount: integer;
+    fMaxConnectionsCount: integer;
     fConnPool: TThreadList;
     fBaseName: string;
     fHost: string;
@@ -36,6 +36,7 @@ type
     fSQLEngine: TwfSQLEngine;
     fUserName: string;
     function CreateNewConnection(): TSQLConnection;
+    function GetCount: integer;
     procedure wOnLog(Sender: TObject; const aValue: string);
     procedure wOnNoAvailableConnections(Sender: TObject; const aValue: string);
     procedure SetSQLEngine(aValue: TwfSQLEngine);
@@ -53,6 +54,7 @@ type
 
      procedure Init;
 
+     property Count: integer read GetCount;
   published
      property SQLEngine: TwfSQLEngine read fSQLEngine write SetSQLEngine;
      property Host: string read fHost write fHost;
@@ -61,8 +63,7 @@ type
      property UserName: string read fUserName write fUserName;
      property Password: string read fPassword write fPassword;
      // Number of connections. Default = 10
-     property ConnectionsCount: integer read fConnectionsCount write fConnectionsCount;
-
+     property MaxConnectionsCount: integer read fMaxConnectionsCount write fMaxConnectionsCount;
      property onLog:TTextEvent read fonLog write fonLog;
      property onNoAvailableConnections:TTextEvent read fonNoAvailableConnections write fonNoAvailableConnections;
   end;
@@ -83,7 +84,7 @@ constructor TwfPoolConnections.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   fConnPool:= TThreadList.Create;
-  ConnectionsCount:= 10;
+  MaxConnectionsCount:= 10;
   SQLEngine:= sePostgreSQL;
 end;
 
@@ -119,7 +120,7 @@ begin
   fList:= fConnPool.LockList;
 
   try
-    for i := 0 to fConnectionsCount - 1 do
+    for i := 0 to fMaxConnectionsCount - 1 do
        fList.Add(CreateNewConnection());
 
     fCount:= fList.Count;
@@ -127,7 +128,7 @@ begin
     fConnPool.UnlockList;
   end;
 
-  wOnLog(self, Format(rsPoolConnectionsConnectecCount,[fCount, fConnectionsCount]));
+  wOnLog(self, Format(rsPoolConnectionsConnectecCount,[fCount, fMaxConnectionsCount]));
 end;
 
 function TwfPoolConnections.CreateNewConnection():TSQLConnection;
@@ -143,6 +144,19 @@ begin
       TwfPQConnection(Result).OnLog:=@wOnLog;
       TwfPQConnection(Result).Connect(Host, Port, BaseName, UserName, Password);
     end;
+  end;
+end;
+
+function TwfPoolConnections.GetCount: integer;
+var
+  fList: TList;
+begin
+  fList:=fConnPool.LockList;
+
+  try
+    Result:= fList.Count;
+  finally
+    fConnPool.UnlockList;
   end;
 end;
 
