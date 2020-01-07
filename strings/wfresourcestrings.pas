@@ -84,7 +84,7 @@ uses
     rsProgressBarLogPosition                          = 'Progress: %d from %d';
 
     {-= wfPoolConnections =-}
-    rsPoolConnectionsConnectecCount                   ='Created %d connections from %d';
+    rsPoolConnectionsConnected                        ='Connected %d connections from %d';
     rsPoolConnectionsIssConnect                       ='One connection is issued. Available: %d';
     rsPoolConnectionsRetConnect                       ='One connection is returned. Available: %d';
     rsPoolConnectionsNoAvConnect                      ='There are no available connections!';

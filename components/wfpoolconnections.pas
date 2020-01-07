@@ -37,6 +37,7 @@ type
     fUserName: string;
     function CreateNewConnection(): TSQLConnection;
     function GetCount: integer;
+    procedure InitConnect(aConnect: TSQLConnection);
     procedure wOnLog(Sender: TObject; const aValue: string);
     procedure wOnNoAvailableConnections(Sender: TObject; const aValue: string);
     procedure SetSQLEngine(aValue: TwfSQLEngine);
@@ -52,7 +53,7 @@ type
      procedure ReturnConnToPool(aConnect: TSQLConnection);
      procedure ReturnRecConnToPool(aRecConnect: TwfSQLConnectRec);
 
-     procedure Init;
+     procedure Connect;
 
      property Count: integer read GetCount;
   published
@@ -81,11 +82,25 @@ end;
 { TwfPoolConnections }
 
 constructor TwfPoolConnections.Create(AOwner: TComponent);
+var
+  i, fCount: Integer;
+  fList: TList;
 begin
   inherited Create(AOwner);
   fConnPool:= TThreadList.Create;
   MaxConnectionsCount:= 10;
   SQLEngine:= sePostgreSQL;
+
+  fList:= fConnPool.LockList;
+
+  try
+    for i := 0 to fMaxConnectionsCount - 1 do
+       fList.Add(CreateNewConnection());
+
+    fCount:= fList.Count;
+  finally
+    fConnPool.UnlockList;
+  end;
 end;
 
 destructor TwfPoolConnections.Destroy;
@@ -112,7 +127,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TwfPoolConnections.Init;
+procedure TwfPoolConnections.Connect;
 var
   i, fCount: Integer;
   fList: TList;
@@ -121,14 +136,26 @@ begin
 
   try
     for i := 0 to fMaxConnectionsCount - 1 do
-       fList.Add(CreateNewConnection());
+       InitConnect(TSQLConnection(fList.Items[i]));
 
     fCount:= fList.Count;
   finally
     fConnPool.UnlockList;
   end;
 
-  wOnLog(self, Format(rsPoolConnectionsConnectecCount,[fCount, fMaxConnectionsCount]));
+  wOnLog(self, Format(rsPoolConnectionsConnected,[fCount, fMaxConnectionsCount]));
+end;
+
+procedure TwfPoolConnections.InitConnect(aConnect: TSQLConnection);
+begin
+  case SQLEngine of
+    seFirebird: begin
+      TwfIBConnection(aConnect).Connect(Host, Port, BaseName, UserName, Password);
+    end;
+    sePostgreSQL: begin
+      TwfPQConnection(aConnect).Connect(Host, Port, BaseName, UserName, Password);
+    end;
+  end;
 end;
 
 function TwfPoolConnections.CreateNewConnection():TSQLConnection;
@@ -137,12 +164,12 @@ begin
     seFirebird: begin
       Result:= TwfIBConnection.Create(self);
       TwfIBConnection(Result).OnLog:= @wOnLog;
-      TwfIBConnection(Result).Connect(Host, Port, BaseName, UserName, Password);
+      //TwfIBConnection(Result).Connect(Host, Port, BaseName, UserName, Password);
     end;
     sePostgreSQL: begin
       Result:= TwfPQConnection.Create(self);
       TwfPQConnection(Result).OnLog:=@wOnLog;
-      TwfPQConnection(Result).Connect(Host, Port, BaseName, UserName, Password);
+      //TwfPQConnection(Result).Connect(Host, Port, BaseName, UserName, Password);
     end;
   end;
 end;
