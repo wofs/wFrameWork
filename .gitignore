@@ -1,9 +1,5 @@
 *.bak
 *.FDB
-*.lpi
-*.lps
-*.lfm
-*.pas
 *.compiled
 *.o
 *.obj
@@ -12,3 +8,5 @@
 *.dbg
 *.exe
 *.rsj
+lib
+.backup

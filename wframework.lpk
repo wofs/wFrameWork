@@ -515,8 +515,8 @@ convey the exclusion of warranty; and each file should have at least the
 
 Degtyarev Alexander A. 
 E-mail: degtyarev.alexander.code@yandex.ru"/>
-    <Version Minor="20" Release="1" Build="4"/>
-    <Files Count="44">
+    <Version Minor="21" Release="1" Build="4"/>
+    <Files Count="45">
       <Item1>
         <Filename Value="strings\wfresourcestrings.pas"/>
         <UnitName Value="wfResourceStrings"/>
@@ -623,109 +623,114 @@ E-mail: degtyarev.alexander.code@yandex.ru"/>
         <UnitName Value="wfODBCConnection"/>
       </Item24>
       <Item25>
+        <Filename Value="components\wfpoolconnections.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="wfPoolConnections"/>
+      </Item25>
+      <Item26>
         <Filename Value="components\wfbase.pas"/>
         <HasRegisterProc Value="True"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="wfBase"/>
-      </Item25>
-      <Item26>
+      </Item26>
+      <Item27>
         <Filename Value="components\wfsqlquery.pas"/>
         <HasRegisterProc Value="True"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="wfSQLQuery"/>
-      </Item26>
-      <Item27>
+      </Item27>
+      <Item28>
         <Filename Value="components\wfsqlscript.pas"/>
         <HasRegisterProc Value="True"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="wfSQLScript"/>
-      </Item27>
-      <Item28>
+      </Item28>
+      <Item29>
         <Filename Value="components\wfsqltransaction.pas"/>
         <HasRegisterProc Value="True"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="wfSQLTransaction"/>
-      </Item28>
-      <Item29>
+      </Item29>
+      <Item30>
         <Filename Value="components\wftreeview.pas"/>
         <HasRegisterProc Value="True"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="wfTreeView"/>
-      </Item29>
-      <Item30>
+      </Item30>
+      <Item31>
         <Filename Value="components\wfdbgrid.pas"/>
         <HasRegisterProc Value="True"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="wfDBGrid"/>
-      </Item30>
-      <Item31>
+      </Item31>
+      <Item32>
         <Filename Value="components\wfcombobox.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="wfComboBox"/>
-      </Item31>
-      <Item32>
+      </Item32>
+      <Item33>
         <Filename Value="components\wfstatusprogressbar.pas"/>
         <HasRegisterProc Value="True"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="wfStatusProgressBar"/>
-      </Item32>
-      <Item33>
+      </Item33>
+      <Item34>
         <Filename Value="components\wfreport.pas"/>
         <HasRegisterProc Value="True"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="wfReport"/>
-      </Item33>
-      <Item34>
+      </Item34>
+      <Item35>
         <Filename Value="components\wfimport.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="wfImport"/>
-      </Item34>
-      <Item35>
+      </Item35>
+      <Item36>
         <Filename Value="components\wfsettings.pas"/>
         <HasRegisterProc Value="True"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="wfSettings"/>
-      </Item35>
-      <Item36>
+      </Item36>
+      <Item37>
         <Filename Value="components\wfentity.pas"/>
         <HasRegisterProc Value="True"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="wfEntity"/>
-      </Item36>
-      <Item37>
+      </Item37>
+      <Item38>
         <Filename Value="components\wfsqlstrings.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="wfSQLStrings"/>
-      </Item37>
-      <Item38>
+      </Item38>
+      <Item39>
         <Filename Value="components\wfvaluelisteditor.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="wfValueListEditor"/>
-      </Item38>
-      <Item39>
-        <Filename Value="forms\twfprogressu.pas"/>
-        <UnitName Value="TwfProgressU"/>
       </Item39>
       <Item40>
-        <Filename Value="forms\wfreportviewer.pas"/>
-        <UnitName Value="wfReportViewer"/>
+        <Filename Value="forms\twfprogressu.pas"/>
+        <UnitName Value="TwfProgressU"/>
       </Item40>
       <Item41>
-        <Filename Value="forms\wfstringseditor.pas"/>
-        <UnitName Value="wfStringsEditor"/>
+        <Filename Value="forms\wfreportviewer.pas"/>
+        <UnitName Value="wfReportViewer"/>
       </Item41>
       <Item42>
-        <Filename Value="forms\wfsimpledataeditor.pas"/>
-        <UnitName Value="wfSimpleDataEditor"/>
+        <Filename Value="forms\wfstringseditor.pas"/>
+        <UnitName Value="wfStringsEditor"/>
       </Item42>
       <Item43>
-        <Filename Value="def.inc"/>
-        <UnitName Value="def"/>
+        <Filename Value="forms\wfsimpledataeditor.pas"/>
+        <UnitName Value="wfSimpleDataEditor"/>
       </Item43>
       <Item44>
+        <Filename Value="def.inc"/>
+        <UnitName Value="def"/>
+      </Item44>
+      <Item45>
         <Filename Value="vendor\wfformatparserdefu.pas"/>
         <UnitName Value="wfFormatParserDefU"/>
-      </Item44>
+      </Item45>
     </Files>
     <RequiredPkgs Count="6">
       <Item1>

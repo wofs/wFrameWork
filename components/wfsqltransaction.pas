@@ -16,7 +16,7 @@ uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, sqldb;
 
 type
-  TwfSQLTransactionType = (wtRead, wtWrite);
+  TwfSQLTransactionType = (wtRead, wtWrite, wtBlank);
 
   { TwfSQLTransaction }
 
@@ -74,6 +74,7 @@ begin
 case fTransactionType of
   wtRead: AddParamsRead;
   wtWrite: AddParamsWrite;
+  wtBlank: self.Params.Clear;
 end;
 
 end;

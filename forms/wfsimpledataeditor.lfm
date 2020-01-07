@@ -1,0 +1,92 @@
+object FmSimpleDataEditor: TFmSimpleDataEditor
+  Left = 405
+  Height = 402
+  Top = 335
+  Width = 613
+  Caption = 'FmSimpleDataEditor'
+  ClientHeight = 402
+  ClientWidth = 613
+  Position = poScreenCenter
+  LCLVersion = '2.0.2.0'
+  object pBottom: TPanel
+    Left = 0
+    Height = 34
+    Top = 368
+    Width = 613
+    Align = alBottom
+    ClientHeight = 34
+    ClientWidth = 613
+    TabOrder = 0
+    object BitBtn1: TBitBtn
+      AnchorSideTop.Control = pBottom
+      AnchorSideTop.Side = asrCenter
+      AnchorSideRight.Control = pBottom
+      AnchorSideRight.Side = asrBottom
+      Left = 468
+      Height = 30
+      Top = 2
+      Width = 129
+      Anchors = [akTop, akRight]
+      BorderSpacing.Right = 15
+      DefaultCaption = True
+      Kind = bkClose
+      ModalResult = 11
+      TabOrder = 0
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 368
+    Top = 0
+    Width = 613
+    Align = alClient
+    Caption = 'Panel2'
+    ClientHeight = 368
+    ClientWidth = 613
+    TabOrder = 1
+    object DBGrid1: TDBGrid
+      Left = 1
+      Height = 341
+      Top = 1
+      Width = 611
+      Align = alClient
+      AutoFillColumns = True
+      Color = clWindow
+      Columns = <>
+      DataSource = DataSource
+      TabOrder = 0
+    end
+    object DBNavigator1: TDBNavigator
+      Left = 1
+      Height = 25
+      Top = 342
+      Width = 611
+      Align = alBottom
+      BevelOuter = bvNone
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.EnlargeVertical = crsScaleChilds
+      ChildSizing.ShrinkHorizontal = crsScaleChilds
+      ChildSizing.ShrinkVertical = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 100
+      ClientHeight = 25
+      ClientWidth = 611
+      DataSource = DataSource
+      OnClick = DBNavigator1Click
+      Options = []
+      TabOrder = 1
+      VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast, nbInsert, nbDelete, nbEdit, nbPost, nbCancel]
+    end
+  end
+  object SQLQuery: TwfSQLQuery
+    FieldDefs = <>
+    Params = <>
+    left = 64
+    top = 24
+  end
+  object DataSource: TDataSource
+    DataSet = SQLQuery
+    left = 112
+    top = 24
+  end
+end
