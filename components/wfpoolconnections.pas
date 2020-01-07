@@ -25,7 +25,10 @@ type
 
   TwfPoolConnections = class(TComponent)
   private
-    fMaxConnectionsCount: integer;
+    const
+      fMaxConnectionsCount = 15;
+  private
+
     fConnPool: TThreadList;
     fBaseName: string;
     fHost: string;
@@ -35,7 +38,10 @@ type
     fPort: string;
     fSQLEngine: TwfSQLEngine;
     fUserName: string;
+
     function CreateNewConnection(): TSQLConnection;
+    procedure Disconnect(aConnect: TSQLConnection);
+    procedure DisConnect;
     function GetCount: integer;
     procedure InitConnect(aConnect: TSQLConnection);
     procedure wOnLog(Sender: TObject; const aValue: string);
@@ -45,6 +51,8 @@ type
 
   public
      constructor Create(AOwner: TComponent); override;
+     constructor Create(AOwner: TComponent; const uHost, uPort, uBaseName, uUserName, uPassword: string);
+
      destructor Destroy; override;
 
      function GetConnFromPool(): TSQLConnection;
@@ -63,8 +71,6 @@ type
      property BaseName: string read fBaseName write fBaseName;
      property UserName: string read fUserName write fUserName;
      property Password: string read fPassword write fPassword;
-     // Number of connections. Default = 10
-     property MaxConnectionsCount: integer read fMaxConnectionsCount write fMaxConnectionsCount;
      property onLog:TTextEvent read fonLog write fonLog;
      property onNoAvailableConnections:TTextEvent read fonNoAvailableConnections write fonNoAvailableConnections;
   end;
@@ -83,12 +89,11 @@ end;
 
 constructor TwfPoolConnections.Create(AOwner: TComponent);
 var
-  i, fCount: Integer;
   fList: TList;
+  i: Integer;
 begin
   inherited Create(AOwner);
   fConnPool:= TThreadList.Create;
-  MaxConnectionsCount:= 10;
   SQLEngine:= sePostgreSQL;
 
   fList:= fConnPool.LockList;
@@ -97,10 +102,20 @@ begin
     for i := 0 to fMaxConnectionsCount - 1 do
        fList.Add(CreateNewConnection());
 
-    fCount:= fList.Count;
   finally
     fConnPool.UnlockList;
   end;
+end;
+
+constructor TwfPoolConnections.Create(AOwner: TComponent; const uHost, uPort, uBaseName, uUserName, uPassword: string);
+begin
+  inherited Create(AOwner);
+
+  Host:= uHost;
+  Port:= uPort;
+  BaseName:= uBaseName;
+  UserName:= uUserName;
+  Password:= uPassword;
 end;
 
 destructor TwfPoolConnections.Destroy;
@@ -108,6 +123,8 @@ var
   fList:TList;
   fConn:TSQLConnection;
 begin
+  DisConnect;
+
   // kill the connection
   fList := fConnPool.LockList;
 
@@ -146,6 +163,25 @@ begin
   wOnLog(self, Format(rsPoolConnectionsConnected,[fCount, fMaxConnectionsCount]));
 end;
 
+procedure TwfPoolConnections.DisConnect;
+var
+  i, fCount: Integer;
+  fList: TList;
+begin
+  fList:= fConnPool.LockList;
+
+  try
+    for i := 0 to fMaxConnectionsCount - 1 do
+       Disconnect(TSQLConnection(fList.Items[i]));
+
+    fCount:= fList.Count;
+  finally
+    fConnPool.UnlockList;
+  end;
+
+  wOnLog(self, Format(rsPoolConnectionsConnected,[fCount, fMaxConnectionsCount]));
+end;
+
 procedure TwfPoolConnections.InitConnect(aConnect: TSQLConnection);
 begin
   case SQLEngine of
@@ -154,6 +190,18 @@ begin
     end;
     sePostgreSQL: begin
       TwfPQConnection(aConnect).Connect(Host, Port, BaseName, UserName, Password);
+    end;
+  end;
+end;
+
+procedure TwfPoolConnections.Disconnect(aConnect: TSQLConnection);
+begin
+  case SQLEngine of
+    seFirebird: begin
+      TwfIBConnection(aConnect).Disconnect;
+    end;
+    sePostgreSQL: begin
+      TwfPQConnection(aConnect).Disconnect;
     end;
   end;
 end;
@@ -173,6 +221,7 @@ begin
     end;
   end;
 end;
+
 
 function TwfPoolConnections.GetCount: integer;
 var

@@ -85,6 +85,7 @@ uses
 
     {-= wfPoolConnections =-}
     rsPoolConnectionsConnected                        ='Connected %d connections from %d';
+    rsPoolConnectionsDisConnected                     ='Disconnected %d connections from %d';
     rsPoolConnectionsIssConnect                       ='One connection is issued. Available: %d';
     rsPoolConnectionsRetConnect                       ='One connection is returned. Available: %d';
     rsPoolConnectionsNoAvConnect                      ='There are no available connections!';
